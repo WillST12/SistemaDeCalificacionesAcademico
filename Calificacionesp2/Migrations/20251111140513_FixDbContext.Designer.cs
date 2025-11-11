@@ -4,6 +4,7 @@ using Backend.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Calificacionesp2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251111140513_FixDbContext")]
+    partial class FixDbContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,8 +64,7 @@ namespace Calificacionesp2.Migrations
 
                     b.HasKey("IdAlumno");
 
-                    b.HasIndex("IdUsuario")
-                        .IsUnique();
+                    b.HasIndex("IdUsuario");
 
                     b.ToTable("Alumnos");
                 });
@@ -109,6 +111,9 @@ namespace Calificacionesp2.Migrations
                     b.Property<int>("IdProfesor")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MateriaIdMateria")
+                        .HasColumnType("int");
+
                     b.Property<string>("Periodo")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -119,6 +124,8 @@ namespace Calificacionesp2.Migrations
                     b.HasIndex("IdMateria");
 
                     b.HasIndex("IdProfesor");
+
+                    b.HasIndex("MateriaIdMateria");
 
                     b.ToTable("Clases");
                 });
@@ -233,11 +240,16 @@ namespace Calificacionesp2.Migrations
                     b.Property<int>("IdProfesor")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MateriaIdMateria")
+                        .HasColumnType("int");
+
                     b.HasKey("IdProfesorMateria");
 
                     b.HasIndex("IdMateria");
 
                     b.HasIndex("IdProfesor");
+
+                    b.HasIndex("MateriaIdMateria");
 
                     b.ToTable("ProfesorMaterias");
                 });
@@ -252,8 +264,7 @@ namespace Calificacionesp2.Migrations
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("IdRol");
 
@@ -310,9 +321,9 @@ namespace Calificacionesp2.Migrations
             modelBuilder.Entity("Backend.API.Models.Alumno", b =>
                 {
                     b.HasOne("Backend.API.Models.Usuario", "Usuario")
-                        .WithOne()
-                        .HasForeignKey("Backend.API.Models.Alumno", "IdUsuario")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Usuario");
@@ -321,9 +332,9 @@ namespace Calificacionesp2.Migrations
             modelBuilder.Entity("Backend.API.Models.Calificacion", b =>
                 {
                     b.HasOne("Backend.API.Models.ClaseAlumno", "ClaseAlumno")
-                        .WithMany("Calificaciones")
+                        .WithMany()
                         .HasForeignKey("IdClaseAlumno")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ClaseAlumno");
@@ -342,6 +353,10 @@ namespace Calificacionesp2.Migrations
                         .HasForeignKey("IdProfesor")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Backend.API.Models.Materia", null)
+                        .WithMany("Clases")
+                        .HasForeignKey("MateriaIdMateria");
 
                     b.Navigation("Materia");
 
@@ -392,6 +407,10 @@ namespace Calificacionesp2.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Backend.API.Models.Materia", null)
+                        .WithMany("ProfesorMaterias")
+                        .HasForeignKey("MateriaIdMateria");
+
                     b.Navigation("Materia");
 
                     b.Navigation("Profesor");
@@ -400,9 +419,9 @@ namespace Calificacionesp2.Migrations
             modelBuilder.Entity("Backend.API.Models.Usuario", b =>
                 {
                     b.HasOne("Backend.API.Models.Rol", "Rol")
-                        .WithMany()
+                        .WithMany("Usuarios")
                         .HasForeignKey("IdRol")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Rol");
@@ -418,9 +437,11 @@ namespace Calificacionesp2.Migrations
                     b.Navigation("ClaseAlumnos");
                 });
 
-            modelBuilder.Entity("Backend.API.Models.ClaseAlumno", b =>
+            modelBuilder.Entity("Backend.API.Models.Materia", b =>
                 {
-                    b.Navigation("Calificaciones");
+                    b.Navigation("Clases");
+
+                    b.Navigation("ProfesorMaterias");
                 });
 
             modelBuilder.Entity("Backend.API.Models.Profesor", b =>
@@ -428,6 +449,11 @@ namespace Calificacionesp2.Migrations
                     b.Navigation("Clases");
 
                     b.Navigation("ProfesorMaterias");
+                });
+
+            modelBuilder.Entity("Backend.API.Models.Rol", b =>
+                {
+                    b.Navigation("Usuarios");
                 });
 #pragma warning restore 612, 618
         }

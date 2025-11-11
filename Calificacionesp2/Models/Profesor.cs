@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.API.Models
 {
@@ -21,10 +22,13 @@ namespace Backend.API.Models
 
         public bool Activo { get; set; } = true;
 
+        // 🔗 Relación con Usuario
+        [ForeignKey("Usuario")]
         public int IdUsuario { get; set; }
         public Usuario Usuario { get; set; }
 
-        public ICollection<ProfesorMateria> ProfesorMaterias { get; set; }
-        public ICollection<Clase> Clases { get; set; }
+        // 🔗 Relaciones con otras tablas
+        public ICollection<ProfesorMateria> ProfesorMaterias { get; set; } = new List<ProfesorMateria>();
+        public ICollection<Clase> Clases { get; set; } = new List<Clase>();
     }
 }

@@ -7,11 +7,13 @@ namespace Backend.API.Models
         [Key]
         public int IdClase { get; set; }
 
-        public int IdMateria { get; set; }
-        public Materia Materia { get; set; }
-
+        [Required]
         public int IdProfesor { get; set; }
         public Profesor Profesor { get; set; }
+
+        [Required]
+        public int IdMateria { get; set; }
+        public Materia Materia { get; set; }
 
         [Required, MaxLength(20)]
         public string Periodo { get; set; }

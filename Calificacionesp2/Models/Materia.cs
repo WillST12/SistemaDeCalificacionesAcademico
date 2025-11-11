@@ -17,8 +17,5 @@ namespace Backend.API.Models
         public string Descripcion { get; set; }
 
         public bool Activo { get; set; } = true;
-
-        public ICollection<ProfesorMateria> ProfesorMaterias { get; set; }
-        public ICollection<Clase> Clases { get; set; }
     }
 }

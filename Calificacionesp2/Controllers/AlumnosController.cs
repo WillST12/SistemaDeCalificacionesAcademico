@@ -9,7 +9,7 @@ namespace Backend.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")] // 🔒 Solo el Admin tiene acceso total
+    [Authorize(Roles = "Admin")] 
     public class AlumnosController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +19,7 @@ namespace Backend.API.Controllers
             _context = context;
         }
 
-        // ✅ Crear alumno (Solo Admin)
+      
         [HttpPost]
         public async Task<IActionResult> CrearAlumno([FromBody] AlumnoDTO dto)
         {

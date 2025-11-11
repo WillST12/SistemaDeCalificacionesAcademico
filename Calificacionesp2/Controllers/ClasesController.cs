@@ -36,7 +36,7 @@ namespace Backend.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetClases()
         {
             var clases = await _context.Clases
@@ -45,5 +45,35 @@ namespace Backend.API.Controllers
                 .ToListAsync();
             return Ok(clases);
         }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditarClase(int id, [FromBody] ClaseDTO dto)
+        {
+            var clase = await _context.Clases.FindAsync(id);
+            if (clase == null) return NotFound();
+
+            clase.IdProfesor = dto.IdProfesor;
+            clase.IdMateria = dto.IdMateria;
+            clase.Periodo = dto.Periodo;
+            clase.Activo = dto.Activo;
+
+            await _context.SaveChangesAsync();
+            return Ok("Clase actualizada correctamente.");
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EliminarClase(int id)
+        {
+            var clase = await _context.Clases.FindAsync(id);
+            if (clase == null) return NotFound();
+
+            _context.Clases.Remove(clase);
+            await _context.SaveChangesAsync();
+
+            return Ok("Clase eliminada correctamente.");
+        }
+
     }
 }
