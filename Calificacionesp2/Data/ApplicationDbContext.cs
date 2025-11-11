@@ -10,7 +10,7 @@ namespace Backend.API.Data
         {
         }
 
-        // Tablas principales
+        // ✅ Tablas principales
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Rol> Roles { get; set; }
         public DbSet<Alumno> Alumnos { get; set; }
@@ -25,14 +25,14 @@ namespace Backend.API.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // ✅ Carga inicial de Roles
+            // 🔹 Datos iniciales (roles)
             modelBuilder.Entity<Rol>().HasData(
                 new Rol { IdRol = 1, Nombre = "Admin" },
                 new Rol { IdRol = 2, Nombre = "Profesor" },
                 new Rol { IdRol = 3, Nombre = "Alumno" }
             );
 
-            // ✅ Relación N:M Profesor - Materia
+            // 🔹 Relación N:M Profesor–Materia
             modelBuilder.Entity<ProfesorMateria>()
                 .HasOne(pm => pm.Profesor)
                 .WithMany(p => p.ProfesorMaterias)
@@ -41,11 +41,11 @@ namespace Backend.API.Data
 
             modelBuilder.Entity<ProfesorMateria>()
                 .HasOne(pm => pm.Materia)
-                .WithMany(m => m.ProfesorMaterias)
+                .WithMany()
                 .HasForeignKey(pm => pm.IdMateria)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ✅ Relación N:M Clase - Alumno
+            // 🔹 Relación N:M Clase–Alumno
             modelBuilder.Entity<ClaseAlumno>()
                 .HasOne(ca => ca.Clase)
                 .WithMany(c => c.ClaseAlumnos)
@@ -58,21 +58,20 @@ namespace Backend.API.Data
                 .HasForeignKey(ca => ca.IdAlumno)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ✅ Clase → Profesor
+            // 🔹 Clase → Profesor y Materia
             modelBuilder.Entity<Clase>()
                 .HasOne(c => c.Profesor)
                 .WithMany(p => p.Clases)
                 .HasForeignKey(c => c.IdProfesor)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ✅ Clase → Materia
             modelBuilder.Entity<Clase>()
                 .HasOne(c => c.Materia)
-                .WithMany(m => m.Clases)
+                .WithMany()
                 .HasForeignKey(c => c.IdMateria)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ✅ Precisión de Nota
+            // 🔹 Calificación con precisión decimal
             modelBuilder.Entity<Calificacion>()
                 .Property(c => c.Nota)
                 .HasPrecision(5, 2);

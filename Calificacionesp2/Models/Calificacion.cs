@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.API.Models
 {
@@ -7,10 +8,14 @@ namespace Backend.API.Models
         [Key]
         public int IdCalificacion { get; set; }
 
+        [ForeignKey("ClaseAlumno")]
         public int IdClaseAlumno { get; set; }
         public ClaseAlumno ClaseAlumno { get; set; }
 
-        public decimal Nota { get; set; } // DECIMAL(5,2)
+        [Range(0, 100)]
+        public decimal Nota { get; set; }
+
         public DateTime FechaRegistro { get; set; } = DateTime.Now;
     }
 }
+

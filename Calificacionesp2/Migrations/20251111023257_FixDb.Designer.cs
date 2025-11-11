@@ -4,6 +4,7 @@ using Backend.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Calificacionesp2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251111023257_FixDb")]
+    partial class FixDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,9 +62,12 @@ namespace Calificacionesp2.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("UsuarioIdUsuario")
+                        .HasColumnType("int");
+
                     b.HasKey("IdAlumno");
 
-                    b.HasIndex("IdUsuario");
+                    b.HasIndex("UsuarioIdUsuario");
 
                     b.ToTable("Alumnos");
                 });
@@ -310,9 +316,12 @@ namespace Calificacionesp2.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("RolIdRol")
+                        .HasColumnType("int");
+
                     b.HasKey("IdUsuario");
 
-                    b.HasIndex("IdRol");
+                    b.HasIndex("RolIdRol");
 
                     b.ToTable("Usuarios");
                 });
@@ -321,7 +330,7 @@ namespace Calificacionesp2.Migrations
                 {
                     b.HasOne("Backend.API.Models.Usuario", "Usuario")
                         .WithMany()
-                        .HasForeignKey("IdUsuario")
+                        .HasForeignKey("UsuarioIdUsuario")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -331,7 +340,7 @@ namespace Calificacionesp2.Migrations
             modelBuilder.Entity("Backend.API.Models.Calificacion", b =>
                 {
                     b.HasOne("Backend.API.Models.ClaseAlumno", "ClaseAlumno")
-                        .WithMany()
+                        .WithMany("Calificaciones")
                         .HasForeignKey("IdClaseAlumno")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -419,7 +428,7 @@ namespace Calificacionesp2.Migrations
                 {
                     b.HasOne("Backend.API.Models.Rol", "Rol")
                         .WithMany("Usuarios")
-                        .HasForeignKey("IdRol")
+                        .HasForeignKey("RolIdRol")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -434,6 +443,11 @@ namespace Calificacionesp2.Migrations
             modelBuilder.Entity("Backend.API.Models.Clase", b =>
                 {
                     b.Navigation("ClaseAlumnos");
+                });
+
+            modelBuilder.Entity("Backend.API.Models.ClaseAlumno", b =>
+                {
+                    b.Navigation("Calificaciones");
                 });
 
             modelBuilder.Entity("Backend.API.Models.Materia", b =>

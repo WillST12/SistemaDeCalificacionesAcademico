@@ -145,3 +145,4 @@ C:\Users\willn\source\repos\Calificacionesp2\Calificacionesp2\obj\Debug\net8.0\r
 C:\Users\willn\source\repos\Calificacionesp2\Calificacionesp2\obj\Debug\net8.0\Calificacionesp2.pdb
 C:\Users\willn\source\repos\Calificacionesp2\Calificacionesp2\obj\Debug\net8.0\Calificacionesp2.genruntimeconfig.cache
 C:\Users\willn\source\repos\Calificacionesp2\Calificacionesp2\obj\Debug\net8.0\ref\Calificacionesp2.dll
+C:\Users\willn\source\repos\Calificacionesp2\Calificacionesp2\obj\Debug\net8.0\Calificacionesp2.sourcelink.json

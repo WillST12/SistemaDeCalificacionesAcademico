@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Backend.API.Models
@@ -16,6 +17,7 @@ namespace Backend.API.Models
         public string ContrasenaHash { get; set; }
 
         [Required]
+        [ForeignKey("Rol")]   
         public int IdRol { get; set; }
 
         [JsonIgnore]

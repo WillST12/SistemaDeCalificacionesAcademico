@@ -8,27 +8,31 @@ namespace Backend.API.Models
         [Key]
         public int IdAlumno { get; set; }
 
-        [Required, MaxLength(100)]
+        [Required]
+        [MaxLength(100)]
         public string Nombre { get; set; }
 
-        [Required, MaxLength(100)]
+        [Required]
+        [MaxLength(100)]
         public string Apellido { get; set; }
 
+        [Required]
         public DateTime FechaNac { get; set; }
 
-        [Required, MaxLength(20)]
+        [Required]
+        [MaxLength(20)]
         public string Matricula { get; set; }
 
-        [Required, MaxLength(100)]
+        [MaxLength(100)]
         public string Correo { get; set; }
 
         public bool Activo { get; set; } = true;
 
-        // 🔗 Relación con Usuario (Login)
+        [ForeignKey("Usuario")]
         public int IdUsuario { get; set; }
         public Usuario Usuario { get; set; }
 
-        // 🔗 Relación con ClaseAlumnos
-        public ICollection<ClaseAlumno> ClaseAlumnos { get; set; }
+        // 🔥 Propiedad necesaria para la relación N:M con Clases
+        public ICollection<ClaseAlumno> ClaseAlumnos { get; set; } = new List<ClaseAlumno>();
     }
 }
