@@ -143,6 +143,38 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Backend.API.Controllers.CalificacionesController",
+    "Method": "GetCalificacionesPorClase",
+    "RelativePath": "api/Calificaciones/clase/{idClase}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idClase",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.CalificacionesController",
+    "Method": "GetCalificacionesPorMateria",
+    "RelativePath": "api/Calificaciones/materia/{idMateria}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idMateria",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Backend.API.Controllers.ClasesController",
     "Method": "CrearClase",
     "RelativePath": "api/Clases",

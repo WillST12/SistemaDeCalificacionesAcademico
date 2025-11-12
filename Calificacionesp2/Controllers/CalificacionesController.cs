@@ -18,12 +18,13 @@ namespace Backend.API.Controllers
             _context = context;
         }
 
-        // ✅ Asignar calificación (solo profesor)
+        // ✅ 1. Asignar calificación (solo profesor)
         [HttpPost]
         [Authorize(Roles = "Profesor")]
         public async Task<IActionResult> AsignarCalificacion([FromBody] CalificacionDTO dto)
         {
             var claseAlumno = await _context.ClaseAlumnos
+                .Include(ca => ca.Clase)
                 .FirstOrDefaultAsync(ca => ca.IdClaseAlumno == dto.IdClaseAlumno);
 
             if (claseAlumno == null)
@@ -42,7 +43,7 @@ namespace Backend.API.Controllers
             return Ok("✅ Calificación registrada correctamente.");
         }
 
-
+        // ✅ 2. Obtener calificaciones por alumno
         [HttpGet("alumno/{idAlumno}")]
         [Authorize(Roles = "Alumno,Profesor,Admin")]
         public async Task<IActionResult> GetCalificacionesAlumno(int idAlumno)
@@ -52,6 +53,7 @@ namespace Backend.API.Controllers
                     .ThenInclude(ca => ca.Clase)
                         .ThenInclude(cl => cl.ProfesorMateria)
                             .ThenInclude(pm => pm.Materia)
+                .Include(c => c.ClaseAlumno.Clase.ProfesorMateria.Profesor)
                 .Where(c => c.ClaseAlumno.IdAlumno == idAlumno)
                 .Select(c => new
                 {
@@ -70,5 +72,60 @@ namespace Backend.API.Controllers
             return Ok(calificaciones);
         }
 
+        // ✅ 3. Obtener calificaciones por clase (Admin y Profesor)
+        [HttpGet("clase/{idClase}")]
+        [Authorize(Roles = "Admin,Profesor")]
+        public async Task<IActionResult> GetCalificacionesPorClase(int idClase)
+        {
+            var calificaciones = await _context.Calificaciones
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Alumno)
+                .Include(c => c.ClaseAlumno.Clase)
+                    .ThenInclude(cl => cl.ProfesorMateria)
+                        .ThenInclude(pm => pm.Materia)
+                .Where(c => c.ClaseAlumno.IdClase == idClase)
+                .Select(c => new
+                {
+                    Alumno = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
+                    Materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
+                    Nota = c.Nota,
+                    Fecha = c.FechaRegistro,
+                    Periodo = c.ClaseAlumno.Clase.Periodo
+                })
+                .ToListAsync();
+
+            if (!calificaciones.Any())
+                return NotFound("No hay calificaciones registradas para esta clase.");
+
+            return Ok(calificaciones);
+        }
+
+        // ✅ 4. Obtener calificaciones por materia (solo Admin)
+        [HttpGet("materia/{idMateria}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetCalificacionesPorMateria(int idMateria)
+        {
+            var calificaciones = await _context.Calificaciones
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Alumno)
+                .Include(c => c.ClaseAlumno.Clase)
+                    .ThenInclude(cl => cl.ProfesorMateria)
+                        .ThenInclude(pm => pm.Materia)
+                .Where(c => c.ClaseAlumno.Clase.ProfesorMateria.IdMateria == idMateria)
+                .Select(c => new
+                {
+                    Alumno = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
+                    Materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
+                    Profesor = c.ClaseAlumno.Clase.ProfesorMateria.Profesor.Nombre + " " + c.ClaseAlumno.Clase.ProfesorMateria.Profesor.Apellido,
+                    Nota = c.Nota,
+                    Periodo = c.ClaseAlumno.Clase.Periodo
+                })
+                .ToListAsync();
+
+            if (!calificaciones.Any())
+                return NotFound("No hay calificaciones registradas para esta materia.");
+
+            return Ok(calificaciones);
+        }
     }
 }
