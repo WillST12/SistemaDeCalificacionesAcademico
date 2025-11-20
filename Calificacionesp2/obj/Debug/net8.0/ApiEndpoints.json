@@ -112,6 +112,16 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.AuthController",
+    "Method": "Me",
+    "RelativePath": "api/Auth/MiPersona",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.AuthController",
     "Method": "RegistrarUsuario",
     "RelativePath": "api/Auth/register",
     "HttpMethod": "POST",
@@ -124,6 +134,16 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.AuthController",
+    "Method": "Test",
+    "RelativePath": "api/Auth/test",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {

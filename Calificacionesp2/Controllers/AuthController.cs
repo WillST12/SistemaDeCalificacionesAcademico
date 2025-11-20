@@ -103,23 +103,55 @@ namespace Backend.API.Controllers
         [Authorize]
         public async Task<IActionResult> CambiarContrasena([FromBody] CambiarContrasenaDTO dto)
         {
-            var userId = int.Parse(User.FindFirst("idUsuario")!.Value);
-
-            var usuario = await _context.Usuarios.FindAsync(userId);
+            var usuario = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.NombreUsuario == dto.NombreUsuario && u.Activo == true);
 
             if (usuario == null)
-                return Unauthorized();
+                return Unauthorized("Usuario no encontrado.");
 
-            // Validar contraseña actual
             if (usuario.ContrasenaHash != dto.ContrasenaActual)
-                return BadRequest("La contraseña actual es incorrecta.");
+                return Unauthorized("La contraseña actual es incorrecta.");
 
             usuario.ContrasenaHash = dto.NuevaContrasena;
             usuario.CambiarContrasena = false;
-
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Contraseña cambiada correctamente." });
+            return Ok(new { message = "Contraseña actualizada correctamente." });
         }
+
+        [HttpGet("MiPersona")]
+        [Authorize]
+        public async Task<IActionResult> Me()
+        {
+            var claim = User.FindFirst("idUsuario");
+            if (claim == null) return Unauthorized();
+
+            if (!int.TryParse(claim.Value, out int userId))
+                return Unauthorized();
+
+            var usuario = await _context.Usuarios
+                .Include(u => u.Rol)
+                .FirstOrDefaultAsync(u => u.IdUsuario == userId);
+
+            if (usuario == null) return NotFound();
+
+            return Ok(new
+            {
+                usuario.IdUsuario,
+                usuario.NombreUsuario,
+                IdRol = usuario.IdRol,
+                Rol = usuario.Rol?.Nombre,
+                usuario.CambiarContrasena,
+                usuario.Activo
+            });
+        }
+
+        [HttpGet("test")]
+        public IActionResult Test()
+        {
+            return Ok("API funcionando correctamente");
+        }
+
+
     }
 }
