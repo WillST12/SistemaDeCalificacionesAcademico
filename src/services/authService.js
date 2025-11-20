@@ -1,15 +1,5 @@
-// src/services/authService.js
-import { api } from "./api";
+import { api } from "./axiosConfig";
 
 export const authService = {
-  login: async (payload) => {
-   
-    const body = {
-      NombreUsuario: payload.nombreUsuario ?? payload.user ?? payload.username,
-      Contrasena: payload.contrasena ?? payload.password ?? payload.pass
-    };
-
-    const res = await api.post("/auth/login", body);
-    return res.data;
-  },
+  login: (data) => api.post("/auth/login", data),
 };

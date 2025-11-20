@@ -9,26 +9,31 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const data = await authService.login(form);
-      // data expected: { token: "...", rol: "Admin", ... }
-      login(data);
-      // redirige segun rol si quieres:
+      const response = await authService.login(form);
+      // response esperado:
+      // { token: "...", rol: "Admin" }
+
+      login(response);
       navigate("/dashboard");
     } catch (err) {
-      console.error(err);
-      alert("Error al autenticar. Verifica credenciales o levanta la API.");
+      console.error("❌ Error login:", err);
+      alert("Credenciales incorrectas o API no disponible.");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow w-full max-w-md">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-8 rounded shadow w-full max-w-md"
+      >
         <h2 className="text-xl font-bold mb-4">Iniciar sesión</h2>
 
         <input
@@ -48,7 +53,9 @@ export default function Login() {
           className="w-full p-2 mb-4 border rounded"
         />
 
-        <button className="w-full bg-blue-600 text-white py-2 rounded">Entrar</button>
+        <button className="w-full bg-blue-600 text-white py-2 rounded">
+          Entrar
+        </button>
       </form>
     </div>
   );
