@@ -103,21 +103,32 @@ namespace Backend.API.Controllers
         [Authorize]
         public async Task<IActionResult> CambiarContrasena([FromBody] CambiarContrasenaDTO dto)
         {
+            // Leer ID desde el JWT
+            var claim = User.FindFirst("idUsuario");
+            if (claim == null) return Unauthorized();
+
+            int idUsuario = int.Parse(claim.Value);
+
+            // Buscar usuario en DB
             var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.NombreUsuario == dto.NombreUsuario && u.Activo == true);
+                .FirstOrDefaultAsync(u => u.IdUsuario == idUsuario && u.Activo == true);
 
             if (usuario == null)
                 return Unauthorized("Usuario no encontrado.");
 
+            // Validar contraseña actual
             if (usuario.ContrasenaHash != dto.ContrasenaActual)
                 return Unauthorized("La contraseña actual es incorrecta.");
 
+            // Actualizar contraseña
             usuario.ContrasenaHash = dto.NuevaContrasena;
             usuario.CambiarContrasena = false;
+
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Contraseña actualizada correctamente." });
         }
+ 
 
         [HttpGet("MiPersona")]
         [Authorize]
