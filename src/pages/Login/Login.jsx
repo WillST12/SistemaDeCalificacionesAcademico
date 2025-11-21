@@ -1,6 +1,6 @@
 // src/pages/login/Login.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { authService } from "../../services/authService";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -72,12 +72,12 @@ export default function Login() {
         </form>
 
         <div className="text-center mt-4">
-          <button
+          <Link
+            to="/recuperar-password"
             className="text-blue-600 hover:underline text-sm"
-            onClick={() => alert("Pronto implementamos recuperación de contraseña")}
           >
             ¿Olvidaste tu contraseña?
-          </button>
+          </Link>
         </div>
 
       </div>
