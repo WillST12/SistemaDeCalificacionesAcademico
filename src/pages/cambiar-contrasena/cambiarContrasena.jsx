@@ -1,36 +1,38 @@
 import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
 import { authService } from "../../services/authService";
+import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 export default function CambiarContrasena() {
-  const [form, setForm] = useState({ actual: "", nueva: "" });
-  const { user, updateUser } = useAuth();
+  const [form, setForm] = useState({
+    contrasenaActual: "",
+    nuevaContrasena: ""
+  });
+
+  const { user, login } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await authService.cambiarContrasena({
-        idUsuario: user.idUsuario,
-        contrasenaActual: form.actual,
-        nuevaContrasena: form.nueva,
+      const result = await authService.cambiarContrasena(form);
+
+      // Actualizar estado del usuario (debeCambiarContrasena = false)
+      login({
+        ...user,
+        debeCambiarContrasena: false
       });
 
-      // Actualizamos el user en contexto
-      updateUser({ ...user, CambiarContrasena: false });
+      alert(result.message || "Contraseña actualizada.");
 
-      alert("Contraseña cambiada correctamente.");
       navigate("/dashboard");
-
     } catch (err) {
       console.error(err);
-      alert("Error al cambiar la contraseña.");
+      alert("Error cambiando la contraseña.");
     }
   };
 
@@ -38,22 +40,24 @@ export default function CambiarContrasena() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow w-full max-w-md"
+        className="bg-white p-8 rounded-lg shadow w-full max-w-lg"
       >
         <h2 className="text-2xl font-bold mb-4">Cambiar Contraseña</h2>
 
         <input
           type="password"
-          name="actual"
+          name="contrasenaActual"
           placeholder="Contraseña actual"
+          value={form.contrasenaActual}
           onChange={handleChange}
           className="w-full p-2 border rounded mb-3"
         />
 
         <input
           type="password"
-          name="nueva"
+          name="nuevaContrasena"
           placeholder="Nueva contraseña"
+          value={form.nuevaContrasena}
           onChange={handleChange}
           className="w-full p-2 border rounded mb-4"
         />

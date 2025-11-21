@@ -1,13 +1,13 @@
 import { api } from "./axiosConfig";
 
 export const authService = {
-  login: async (credentials) => {
-    const { data } = await api.post("/auth/login", credentials);
-    return data;
+  login: async (data) => {
+    const response = await api.post("/auth/login", data);
+    return response.data;
   },
 
-  cambiarPassword: async (payload) => {
-    const { data } = await api.post("/auth/cambiar-contrasena", payload);
-    return data;
+  cambiarContrasena: async (data) => {
+    const response = await api.post("/auth/cambiar-contrasena", data);
+    return response.data;
   }
 };

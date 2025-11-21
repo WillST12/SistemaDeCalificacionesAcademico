@@ -17,8 +17,7 @@ export default function Login() {
 
     try {
       const response = await authService.login(form);
-      // response esperado:
-      // { token: "...", rol: "Admin" }
+  
 
       login(response);
       navigate("/dashboard");
