@@ -37,7 +37,7 @@ export default function Login() {
       <div className="bg-white shadow-lg rounded-2xl p-10 w-full max-w-md border border-blue-100">
         
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Calificiones LogicOne
+          Calificaciones LogicOne
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
