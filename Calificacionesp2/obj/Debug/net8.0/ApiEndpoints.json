@@ -162,7 +162,7 @@
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "RecuperarPasswordDTO",
+        "Type": "RecuperacionRequest",
         "IsRequired": true
       }
     ],
@@ -170,12 +170,18 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.AuthController",
-    "Method": "Test",
-    "RelativePath": "api/Auth/test",
-    "HttpMethod": "GET",
+    "Method": "VerificarCodigo",
+    "RelativePath": "api/Auth/verificar-codigo",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "VerificarCodigoDTO",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {

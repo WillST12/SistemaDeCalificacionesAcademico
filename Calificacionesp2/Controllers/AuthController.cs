@@ -24,18 +24,20 @@ namespace Backend.API.Controllers
             _config = config;
         }
 
+        // -------------------------
+        // Register (Admin only)
+        // -------------------------
         [HttpPost("register")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RegistrarUsuario([FromBody] RegistrarUsuarioDTO dto)
         {
-            // Verifica si ya existe
             if (await _context.Usuarios.AnyAsync(u => u.NombreUsuario == dto.NombreUsuario))
                 return BadRequest("El nombre de usuario ya está en uso.");
 
             var usuario = new Usuario
             {
                 NombreUsuario = dto.NombreUsuario,
-                ContrasenaHash = dto.Contrasena,  
+                ContrasenaHash = dto.Contrasena,
                 IdRol = dto.IdRol,
                 Activo = true,
                 CambiarContrasena = true
@@ -54,10 +56,13 @@ namespace Backend.API.Controllers
             });
         }
 
-       
+        // -------------------------
+        // Login
+        // -------------------------
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest dto)
         {
+            // Buscar usuario por NombreUsuario
             var usuario = await _context.Usuarios
                 .Include(u => u.Rol)
                 .FirstOrDefaultAsync(u => u.NombreUsuario == dto.NombreUsuario && u.Activo == true);
@@ -68,12 +73,11 @@ namespace Backend.API.Controllers
             if (usuario.ContrasenaHash != dto.Contrasena)
                 return Unauthorized("Contraseña incorrecta.");
 
-            // Crear JWT
             var claims = new[]
             {
-        new Claim("idUsuario", usuario.IdUsuario.ToString()),
-        new Claim(ClaimTypes.Role, usuario.Rol.Nombre)
-    };
+                new Claim("idUsuario", usuario.IdUsuario.ToString()),
+                new Claim(ClaimTypes.Role, usuario.Rol.Nombre)
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -86,7 +90,6 @@ namespace Backend.API.Controllers
                 signingCredentials: creds
             );
 
-            // SIEMPRE DEVOLVEMOS TOKEN
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -95,116 +98,9 @@ namespace Backend.API.Controllers
             });
         }
 
-
-        [HttpPost("solicitar-recuperacion")]
-        public async Task<IActionResult> SolicitarRecuperacion([FromBody] RecuperarPasswordDTO dto)
-        {
-            var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.NombreUsuario == dto.NombreUsuario);
-
-            if (usuario == null)
-                return BadRequest("El usuario no existe.");
-
-            // generar código de 6 dígitos
-            var codigo = new Random().Next(100000, 999999).ToString();
-
-            usuario.CodigoRecuperacion = codigo;
-            usuario.ExpiracionCodigo = DateTime.UtcNow.AddMinutes(10);
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new
-            {
-                message = "Código generado correctamente.",
-                usuario = usuario.NombreUsuario,
-                codigo // <-- tú lo ves en Swagger para dárselo al usuario
-            });
-        }
-
-        [HttpPost("restablecer-password")]
-        public async Task<IActionResult> RestablecerPassword([FromBody] RestablecerPasswordDTO dto)
-        {
-            var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(u =>
-                    u.NombreUsuario == dto.NombreUsuario &&
-                    u.CodigoRecuperacion == dto.Codigo
-                );
-
-            if (usuario == null)
-                return BadRequest("Código inválido.");
-
-            if (usuario.ExpiracionCodigo < DateTime.UtcNow)
-                return BadRequest("El código expiró.");
-
-            // Cambiar contraseña y limpiar código
-            usuario.ContrasenaHash = dto.NuevaContrasena;
-            usuario.CodigoRecuperacion = null;
-            usuario.ExpiracionCodigo = null;
-            usuario.CambiarContrasena = false;
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Contraseña restablecida correctamente." });
-        }
-
-
-        [HttpPost("cambiar-contrasena")]
-        [Authorize]
-        public async Task<IActionResult> CambiarContrasena([FromBody] CambiarContrasenaDTO dto)
-        {
-            // Leer ID desde el JWT
-            var claim = User.FindFirst("idUsuario");
-            if (claim == null) return Unauthorized();
-
-            int idUsuario = int.Parse(claim.Value);
-
-            // Buscar usuario en DB
-            var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.IdUsuario == idUsuario && u.Activo == true);
-
-            if (usuario == null)
-                return Unauthorized("Usuario no encontrado.");
-
-            // Validar contraseña actual
-            if (usuario.ContrasenaHash != dto.ContrasenaActual)
-                return Unauthorized("La contraseña actual es incorrecta.");
-
-            // Actualizar contraseña
-            usuario.ContrasenaHash = dto.NuevaContrasena;
-            usuario.CambiarContrasena = false;
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Contraseña actualizada correctamente." });
-        }
- 
-
-        [HttpGet("MiPersona")]
-        [Authorize]
-        public async Task<IActionResult> Me()
-        {
-            var claim = User.FindFirst("idUsuario");
-            if (claim == null) return Unauthorized();
-
-            if (!int.TryParse(claim.Value, out int userId))
-                return Unauthorized();
-
-            var usuario = await _context.Usuarios
-                .Include(u => u.Rol)
-                .FirstOrDefaultAsync(u => u.IdUsuario == userId);
-
-            if (usuario == null) return NotFound();
-
-            return Ok(new
-            {
-                usuario.IdUsuario,
-                usuario.NombreUsuario,
-                IdRol = usuario.IdRol,
-                Rol = usuario.Rol?.Nombre,
-                usuario.CambiarContrasena,
-                usuario.Activo
-            });
-        }
+        // -------------------------
+        // Solicitar recuperación (por correo de Alumno/Profesor -> vincula a Usuario)
+        // -------------------------
         [HttpPost("solicitar-recuperacion")]
         public async Task<IActionResult> SolicitarRecuperacion([FromBody] RecuperacionRequest dto)
         {
@@ -269,6 +165,14 @@ namespace Backend.API.Controllers
             return Ok(new { message = "Código verificado correctamente." });
         }
 
+
+        // pequeña helper para evitar repetición en la verificación de profesor al obtener IdUsuario
+        private int professorHelper(Profesor professor)
+        {
+            return professor != null ? professor.IdUsuario : 0;
+        }
+
+
         [HttpPost("restablecer-password")]
         public async Task<IActionResult> RestablecerPassword([FromBody] RestablecerPasswordDTO dto)
         {
@@ -300,6 +204,61 @@ namespace Backend.API.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Contraseña restablecida con éxito." });
+        }
+
+
+        // -------------------------
+        // Cambiar contraseña (usuario autenticado)
+        // -------------------------
+        [HttpPost("cambiar-contrasena")]
+        [Authorize]
+        public async Task<IActionResult> CambiarContrasena([FromBody] CambiarContrasenaDTO dto)
+        {
+            var claim = User.FindFirst("idUsuario");
+            if (claim == null) return Unauthorized();
+
+            if (!int.TryParse(claim.Value, out int idUsuario)) return Unauthorized();
+
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.IdUsuario == idUsuario && u.Activo == true);
+            if (usuario == null) return Unauthorized("Usuario no encontrado.");
+
+            if (usuario.ContrasenaHash != dto.ContrasenaActual)
+                return Unauthorized("La contraseña actual es incorrecta.");
+
+            usuario.ContrasenaHash = dto.NuevaContrasena;
+            usuario.CambiarContrasena = false;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Contraseña actualizada correctamente." });
+        }
+
+        // -------------------------
+        // Me (info del usuario)
+        // -------------------------
+        [HttpGet("MiPersona")]
+        [Authorize]
+        public async Task<IActionResult> Me()
+        {
+            var claim = User.FindFirst("idUsuario");
+            if (claim == null) return Unauthorized();
+            if (!int.TryParse(claim.Value, out int userId)) return Unauthorized();
+
+            var usuario = await _context.Usuarios
+                .Include(u => u.Rol)
+                .FirstOrDefaultAsync(u => u.IdUsuario == userId);
+
+            if (usuario == null) return NotFound();
+
+            return Ok(new
+            {
+                usuario.IdUsuario,
+                usuario.NombreUsuario,
+                IdRol = usuario.IdRol,
+                Rol = usuario.Rol?.Nombre,
+                usuario.CambiarContrasena,
+                usuario.Activo
+            });
         }
 
     }

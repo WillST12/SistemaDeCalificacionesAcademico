@@ -201,17 +201,48 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RecuperarPasswordDTO"
+                "$ref": "#/components/schemas/RecuperacionRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/RecuperarPasswordDTO"
+                "$ref": "#/components/schemas/RecuperacionRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/RecuperarPasswordDTO"
+                "$ref": "#/components/schemas/RecuperacionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/verificar-codigo": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerificarCodigoDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerificarCodigoDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerificarCodigoDTO"
               }
             }
           }
@@ -286,18 +317,6 @@
       }
     },
     "/api/Auth/MiPersona": {
-      "get": {
-        "tags": [
-          "Auth"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Auth/test": {
       "get": {
         "tags": [
           "Auth"
@@ -1111,10 +1130,10 @@
         },
         "additionalProperties": false
       },
-      "RecuperarPasswordDTO": {
+      "RecuperacionRequest": {
         "type": "object",
         "properties": {
-          "nombreUsuario": {
+          "correo": {
             "type": "string",
             "nullable": true
           }
@@ -1142,7 +1161,7 @@
       "RestablecerPasswordDTO": {
         "type": "object",
         "properties": {
-          "nombreUsuario": {
+          "correo": {
             "type": "string",
             "nullable": true
           },
@@ -1151,6 +1170,20 @@
             "nullable": true
           },
           "nuevaContrasena": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VerificarCodigoDTO": {
+        "type": "object",
+        "properties": {
+          "correo": {
+            "type": "string",
+            "nullable": true
+          },
+          "codigo": {
             "type": "string",
             "nullable": true
           }

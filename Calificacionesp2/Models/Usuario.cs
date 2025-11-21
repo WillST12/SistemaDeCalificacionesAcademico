@@ -1,35 +1,32 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Backend.API.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace Backend.API.Models
+public class Usuario
 {
-    public class Usuario
-    {
-        [Key]
-        public int IdUsuario { get; set; }
+    [Key]
+    public int IdUsuario { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        public string NombreUsuario { get; set; }
+    [Required]
+    [MaxLength(50)]
+    public string NombreUsuario { get; set; }
 
-        [Required]
-        public string ContrasenaHash { get; set; }
+    [Required]
+    public string ContrasenaHash { get; set; }
 
-        public bool CambiarContrasena { get; set; } = true;   
-        public string? CodigoRecuperacion { get; set; }
-        public DateTime? CodigoExpira { get; set; }
+    public bool CambiarContrasena { get; set; } = true;
 
-        public string? CodigoRecuperacion { get; set; }
-        public DateTime? ExpiracionCodigo { get; set; }
+    public string? CodigoRecuperacion { get; set; }
 
-        [Required]
-        [ForeignKey("Rol")]   
-        public int IdRol { get; set; }
+    public DateTime? ExpiracionCodigo { get; set; }  
 
-        [JsonIgnore]
-        public Rol Rol { get; set; }
+    [Required]
+    [ForeignKey("Rol")]
+    public int IdRol { get; set; }
 
-        public bool Activo { get; set; } = true;
-    }
+    [JsonIgnore]
+    public Rol Rol { get; set; }
+
+    public bool Activo { get; set; } = true;
 }
