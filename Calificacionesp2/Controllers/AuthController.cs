@@ -54,9 +54,7 @@ namespace Backend.API.Controllers
             });
         }
 
-        // ============================================================
-        // 2. LOGIN - Retorna JWT y si debe cambiar contraseña
-        // ============================================================
+       
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest dto)
         {
@@ -156,13 +154,102 @@ namespace Backend.API.Controllers
                 usuario.Activo
             });
         }
-
-        [HttpGet("test")]
-        public IActionResult Test()
+        [HttpPost("solicitar-recuperacion")]
+        public async Task<IActionResult> SolicitarRecuperacion([FromBody] RecuperacionRequest dto)
         {
-            return Ok("API funcionando correctamente");
+            // 1. Buscar correo en alumnos
+            var alumno = await _context.Alumnos
+                .FirstOrDefaultAsync(a => a.Correo == dto.Correo);
+
+            // 2. Si no es alumno, buscar profesor
+            var profesor = alumno == null
+                ? await _context.Profesores.FirstOrDefaultAsync(p => p.Correo == dto.Correo)
+                : null;
+
+            if (alumno == null && profesor == null)
+                return NotFound("No existe un usuario con ese correo.");
+
+            // 3. Obtener IdUsuario
+            int idUsuario = alumno != null ? alumno.IdUsuario : profesor.IdUsuario;
+
+            var usuario = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.IdUsuario == idUsuario);
+
+            if (usuario == null)
+                return NotFound("El usuario no está vinculado correctamente.");
+
+            // 4. Generar código
+            var codigo = new Random().Next(100000, 999999).ToString();
+
+            usuario.CodigoRecuperacion = codigo;
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Código generado correctamente.",
+                codigo // SOLO para pruebas
+            });
         }
 
+        [HttpPost("verificar-codigo")]
+        public async Task<IActionResult> VerificarCodigo([FromBody] VerificarCodigoDTO dto)
+        {
+            var alumno = await _context.Alumnos
+                .FirstOrDefaultAsync(a => a.Correo == dto.Correo);
+
+            var profesor = alumno == null
+                ? await _context.Profesores.FirstOrDefaultAsync(p => p.Correo == dto.Correo)
+                : null;
+
+            if (alumno == null && profesor == null)
+                return NotFound("No existe un usuario con ese correo.");
+
+            int idUsuario = alumno != null ? alumno.IdUsuario : profesor.IdUsuario;
+
+            var usuario = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.IdUsuario == idUsuario);
+
+            if (usuario == null)
+                return NotFound("Usuario no vinculado.");
+
+            if (usuario.CodigoRecuperacion != dto.Codigo)
+                return BadRequest("El código es incorrecto.");
+
+            return Ok(new { message = "Código verificado correctamente." });
+        }
+
+        [HttpPost("restablecer-password")]
+        public async Task<IActionResult> RestablecerPassword([FromBody] RestablecerPasswordDTO dto)
+        {
+            var alumno = await _context.Alumnos
+                .FirstOrDefaultAsync(a => a.Correo == dto.Correo);
+
+            var profesor = alumno == null
+                ? await _context.Profesores.FirstOrDefaultAsync(p => p.Correo == dto.Correo)
+                : null;
+
+            if (alumno == null && profesor == null)
+                return NotFound("No existe un usuario con ese correo.");
+
+            int idUsuario = alumno != null ? alumno.IdUsuario : profesor.IdUsuario;
+
+            var usuario = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.IdUsuario == idUsuario);
+
+            if (usuario == null)
+                return NotFound("Usuario no vinculado.");
+
+            if (string.IsNullOrEmpty(usuario.CodigoRecuperacion))
+                return BadRequest("Debe verificar el código antes de cambiar la contraseña.");
+
+            usuario.ContrasenaHash = dto.NuevaContrasena;
+            usuario.CodigoRecuperacion = null;
+            usuario.CambiarContrasena = false;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Contraseña restablecida con éxito." });
+        }
 
     }
 }

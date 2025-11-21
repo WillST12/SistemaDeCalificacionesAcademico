@@ -16,7 +16,9 @@ namespace Backend.API.Models
         [Required]
         public string ContrasenaHash { get; set; }
 
-        public bool CambiarContrasena { get; set; } = true;
+        public bool CambiarContrasena { get; set; } = true;   
+        public string? CodigoRecuperacion { get; set; }
+        public DateTime? CodigoExpira { get; set; }
 
         [Required]
         [ForeignKey("Rol")]   

@@ -138,12 +138,50 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.AuthController",
-    "Method": "Test",
-    "RelativePath": "api/Auth/test",
-    "HttpMethod": "GET",
+    "Method": "RestablecerPassword",
+    "RelativePath": "api/Auth/restablecer-password",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "RestablecerPasswordDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.AuthController",
+    "Method": "SolicitarRecuperacion",
+    "RelativePath": "api/Auth/solicitar-recuperacion",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "RecuperacionRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.AuthController",
+    "Method": "VerificarCodigo",
+    "RelativePath": "api/Auth/verificar-codigo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "VerificarCodigoDTO",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
