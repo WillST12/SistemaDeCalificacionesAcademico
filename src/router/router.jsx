@@ -20,7 +20,7 @@ import CrearAlumno from "../pages/admin/alumnos/CrearAlumno";
 import EditarAlumno from "../pages/admin/alumnos/EditarAlumno";
 
 // PROFESOR / ALUMNO (layouts)
-import ProfesorLayout from "../components/layout/ProfesorLayout.jsx";
+import ProfesorLayout from "../components/layout/ProfesorLayout";
 import AlumnoLayout from "../components/layout/AlumnoLayout";
 
 export const router = createBrowserRouter([
@@ -57,7 +57,7 @@ export const router = createBrowserRouter([
   },
 
   // ============================
-  // DASHBOARD GENERAL (para cualquier rol)
+  // DASHBOARD GENERAL (CUALQUIER ROL)
   // ============================
   {
     path: "/dashboard",
@@ -87,7 +87,7 @@ export const router = createBrowserRouter([
       { path: "alumnos/crear", element: <CrearAlumno /> },
       { path: "alumnos/editar/:id", element: <EditarAlumno /> },
 
-      // ⬇ Aquí después agregamos profesores, materias, clases, calificaciones…
+      // Aquí luego agregamos profesores, materias, clases, calificaciones…
     ],
   },
 
@@ -103,7 +103,7 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Dashboard /> },
-      // módulos personalizados después
+      // módulos del profesor próximamente
     ],
   },
 
@@ -119,7 +119,7 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Dashboard /> },
-      // módulos personalizados después
+      // módulos del alumno próximamente
     ],
   },
 ]);

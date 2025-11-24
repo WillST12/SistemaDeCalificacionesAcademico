@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 
 export default function DashboardLayout() {
   return (
@@ -8,6 +8,14 @@ export default function DashboardLayout() {
       <aside className="w-64 bg-blue-700 text-white p-6">
         <h2 className="text-lg font-bold">Menú</h2>
         <p className="text-sm opacity-80 mt-2">Layout funcionando ✔️</p>
+
+        <ul className="mt-4 space-y-2">
+          <li>
+            <Link to="/admin/alumnos" className="menu-link">
+              Alumnos
+            </Link>
+          </li>
+        </ul>
       </aside>
 
       {/* CONTENIDO */}
