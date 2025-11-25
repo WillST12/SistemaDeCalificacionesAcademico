@@ -1,65 +1,77 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../../../services/axiosConfig";
-
-
+import alumnoService from "../../../services/alumnoService";
 
 export default function AlumnosListado() {
   const [alumnos, setAlumnos] = useState([]);
 
-  useEffect(() => {
-    api.get("/alumnos").then((res) => setAlumnos(res.data));
-  }, []);
-
-  const eliminar = async (id) => {
-    if (!confirm("¿Seguro que deseas eliminar este alumno?")) return;
-
-    await api.delete(`/alumnos/${id}`);
-    setAlumnos(alumnos.filter((a) => a.idAlumno !== id));
+  const cargarAlumnos = async () => {
+    const res = await alumnoService.listar();
+    setAlumnos(res.data);
   };
+
+  const eliminarAlumno = async (id) => {
+    if (!confirm("¿Seguro que deseas desactivar este alumno?")) return;
+    await alumnoService.eliminar(id);
+    cargarAlumnos();
+  };
+
+  useEffect(() => {
+    cargarAlumnos();
+  }, []);
 
   return (
     <div>
-      <h1>Alumnos</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Lista de Alumnos</h1>
 
-      <Link to="crear" className="btn btn-primary mb-3">
-        + Crear Alumno
-      </Link>
+        <Link
+          to="/admin/alumnos/crear"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+        >
+          + Nuevo Alumno
+        </Link>
+      </div>
 
-      <table className="table table-striped">
-        <thead>
+      <table className="w-full bg-white rounded-xl shadow">
+        <thead className="bg-gray-200">
           <tr>
-            <th>Matrícula</th>
-            <th>Nombre</th>
-            <th>Correo</th>
-            <th></th>
+            <th className="p-3">ID</th>
+            <th className="p-3">Nombre</th>
+            <th className="p-3">Correo</th>
+            <th className="p-3">Matrícula</th>
+            <th className="p-3">Acciones</th>
           </tr>
         </thead>
+
         <tbody>
           {alumnos.map((a) => (
-            <tr key={a.idAlumno}>
-              <td>{a.matricula}</td>
-              <td>
-                {a.nombre} {a.apellido}
-              </td>
-              <td>{a.correo}</td>
-              <td>
-                <Link to={`editar/${a.idAlumno}`} className="btn btn-warning btn-sm me-2">
+            <tr key={a.idAlumno} className="border-b">
+              <td className="p-3">{a.idAlumno}</td>
+              <td className="p-3">{a.nombre} {a.apellido}</td>
+              <td className="p-3">{a.correo}</td>
+              <td className="p-3">{a.matricula}</td>
+
+              <td className="p-3 flex gap-2">
+                <Link
+                  to={`/admin/alumnos/editar/${a.idAlumno}`}
+                  className="px-3 py-1 bg-yellow-500 text-white rounded"
+                >
                   Editar
                 </Link>
 
                 <button
-                  onClick={() => eliminar(a.idAlumno)}
-                  className="btn btn-danger btn-sm"
+                  className="px-3 py-1 bg-red-600 text-white rounded"
+                  onClick={() => eliminarAlumno(a.idAlumno)}
                 >
-                  Eliminar
+                  Desactivar
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
     </div>
   );
-  
 }

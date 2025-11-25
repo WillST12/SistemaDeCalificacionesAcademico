@@ -1,87 +1,48 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { api } from "../../../services/axiosConfig";
-
+import { useNavigate, useParams } from "react-router-dom";
+import alumnoService from "../../../services/alumnoService";
 
 export default function EditarAlumno() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [form, setForm] = useState(null);
 
   useEffect(() => {
-    api.get(`/alumnos/${id}`).then((res) => setForm(res.data));
+    alumnoService.obtener(id).then((res) => setForm(res.data));
   }, [id]);
 
   if (!form) return <p>Cargando...</p>;
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
-  const submit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    await api.put(`/alumnos/${id}`, form);
+    await alumnoService.actualizar(id, form);
     navigate("/admin/alumnos");
   };
 
   return (
     <div>
-      <h1>Editar Alumno</h1>
-      <form onSubmit={submit} className="card p-4">
-        <div className="mb-3">
-          <label>Nombre</label>
-          <input
-            name="nombre"
-            className="form-control"
-            value={form.nombre}
-            onChange={handleChange}
-          />
-        </div>
+      <h1 className="text-2xl font-bold mb-4">Editar Alumno</h1>
 
-        <div className="mb-3">
-          <label>Apellido</label>
-          <input
-            name="apellido"
-            className="form-control"
-            value={form.apellido}
-            onChange={handleChange}
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 bg-white p-6 rounded-xl shadow">
 
-        <div className="mb-3">
-          <label>Fecha Nacimiento</label>
-          <input
-            type="date"
-            name="fechaNac"
-            className="form-control"
-            value={form.fechaNac?.split("T")[0]}
-            onChange={handleChange}
-          />
-        </div>
+        <input name="nombre" value={form.nombre} onChange={handleChange} className="input" />
+        <input name="apellido" value={form.apellido} onChange={handleChange} className="input" />
+        <input name="correo" value={form.correo} onChange={handleChange} className="input" />
+        <input name="matricula" value={form.matricula} onChange={handleChange} className="input" />
+        <input
+          type="date"
+          name="fechaNac"
+          value={form.fechaNac?.substring(0, 10)}
+          onChange={handleChange}
+          className="input"
+        />
 
-        <div className="mb-3">
-          <label>Matrícula</label>
-          <input
-            name="matricula"
-            className="form-control"
-            value={form.matricula}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="mb-3">
-          <label>Correo</label>
-          <input
-            type="email"
-            name="correo"
-            className="form-control"
-            value={form.correo}
-            onChange={handleChange}
-          />
-        </div>
-
-        <button className="btn btn-primary">Actualizar</button>
+        <button className="col-span-2 bg-blue-600 text-white py-2 rounded-lg">
+          Actualizar
+        </button>
       </form>
     </div>
   );
