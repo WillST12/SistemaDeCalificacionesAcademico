@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import alumnoService from "../../../services/alumnoService";
+import BackButton from "../../../components/ui/BackButton";
 
 export default function AlumnosListado() {
   const [alumnos, setAlumnos] = useState([]);
@@ -22,6 +23,8 @@ export default function AlumnosListado() {
 
   return (
     <div>
+      <BackButton />
+
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Lista de Alumnos</h1>
 

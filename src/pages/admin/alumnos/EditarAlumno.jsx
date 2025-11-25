@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import alumnoService from "../../../services/alumnoService";
+import BackButton from "../../../components/ui/BackButton";
 
 export default function EditarAlumno() {
   const { id } = useParams();
@@ -24,14 +25,17 @@ export default function EditarAlumno() {
 
   return (
     <div>
+      <BackButton />
       <h1 className="text-2xl font-bold mb-4">Editar Alumno</h1>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 bg-white p-6 rounded-xl shadow">
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-2 gap-4 bg-white p-6 rounded-xl shadow">
 
-        <input name="nombre" value={form.nombre} onChange={handleChange} className="input" />
-        <input name="apellido" value={form.apellido} onChange={handleChange} className="input" />
-        <input name="correo" value={form.correo} onChange={handleChange} className="input" />
-        <input name="matricula" value={form.matricula} onChange={handleChange} className="input" />
+        <input name="nombre" value={form.nombre} onChange={handleChange} className="input"/>
+        <input name="apellido" value={form.apellido} onChange={handleChange} className="input"/>
+        <input name="correo" value={form.correo} onChange={handleChange} className="input"/>
+        <input name="matricula" value={form.matricula} onChange={handleChange} className="input"/>
         <input
           type="date"
           name="fechaNac"
