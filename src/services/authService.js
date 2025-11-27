@@ -1,6 +1,12 @@
 import { api } from "./axiosConfig";
 
 export const authService = {
+
+  registerAlumno: async (data) => {
+    const res = await api.post("/auth/register-alumno", data);
+    return res.data; // devuelve { idUsuario }
+  },
+
   login: async (data) => {
     const res = await api.post("/auth/login", data);
     return res.data;

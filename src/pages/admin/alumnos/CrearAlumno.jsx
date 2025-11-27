@@ -1,21 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import alumnoService from "../../../services/alumnoService";
 import { authService } from "../../../services/authService";
 import BackButton from "../../../components/ui/BackButton";
 
 export default function CrearAlumno() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     nombreUsuario: "",
     contrasena: "",
     nombre: "",
     apellido: "",
-    fechaNac: "",
-    matricula: "",
     correo: "",
+    matricula: "",
+    fechaNac: "",
   });
 
   const handleChange = (e) =>
@@ -23,49 +21,40 @@ export default function CrearAlumno() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     try {
-      // 1️⃣ Crear usuario (rol Alumno = 3)
-      const userRes = await authService.register({
+      const res = await authService.registerAlumno({
         nombreUsuario: form.nombreUsuario,
         contrasena: form.contrasena,
-        idRol: 3,
-      });
-
-      const idUsuario = userRes.data.idUsuario;
-
-      // 2️⃣ Crear Alumno vinculado al usuario
-      await alumnoService.crear({
-        idUsuario,
         nombre: form.nombre,
         apellido: form.apellido,
-        fechaNac: form.fechaNac,
-        matricula: form.matricula,
         correo: form.correo,
+        matricula: form.matricula,
+        fechaNac: form.fechaNac,
       });
 
-      alert("Alumno creado correctamente ✔");
+      alert("Alumno registrado exitosamente");
       navigate("/admin/alumnos");
+
     } catch (err) {
       console.error(err);
-      alert("Error al crear alumno");
-    } finally {
-      setLoading(false);
+      alert("Error al registrar alumno");
     }
   };
 
   return (
     <div>
       <BackButton />
+
       <h1 className="text-2xl font-bold mb-4">Registrar Alumno</h1>
 
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-2 gap-4 bg-white p-6 rounded-xl shadow"
+        className="bg-white p-6 rounded-xl shadow grid grid-cols-2 gap-4"
       >
-        {/* CREDENCIALES DE USUARIO */}
-        <h2 className="col-span-2 text-lg font-semibold text-blue-600">Cuenta de acceso</h2>
+        <h2 className="col-span-2 font-semibold text-blue-600">
+          Cuenta de acceso
+        </h2>
 
         <input
           name="nombreUsuario"
@@ -75,27 +64,54 @@ export default function CrearAlumno() {
         />
 
         <input
-          type="password"
           name="contrasena"
+          type="password"
           placeholder="Contraseña"
           className="input"
           onChange={handleChange}
         />
 
-        {/* DATOS PERSONALES */}
-        <h2 className="col-span-2 text-lg font-semibold text-blue-600 mt-4">Datos del Alumno</h2>
+        <h2 className="col-span-2 font-semibold text-blue-600 mt-4">
+          Datos del Alumno
+        </h2>
 
-        <input name="nombre" placeholder="Nombre" className="input" onChange={handleChange} />
-        <input name="apellido" placeholder="Apellido" className="input" onChange={handleChange} />
-        <input name="correo" placeholder="Correo" className="input" onChange={handleChange} />
-        <input name="matricula" placeholder="Matrícula" className="input" onChange={handleChange} />
-        <input type="date" name="fechaNac" className="input" onChange={handleChange} />
+        <input
+          name="nombre"
+          placeholder="Nombre"
+          className="input"
+          onChange={handleChange}
+        />
 
-        <button
-          disabled={loading}
-          className="col-span-2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
-        >
-          {loading ? "Guardando..." : "Registrar Alumno"}
+        <input
+          name="apellido"
+          placeholder="Apellido"
+          className="input"
+          onChange={handleChange}
+        />
+
+        <input
+          name="correo"
+          placeholder="Correo"
+          className="input"
+          onChange={handleChange}
+        />
+
+        <input
+          name="matricula"
+          placeholder="Matrícula"
+          className="input"
+          onChange={handleChange}
+        />
+
+        <input
+          type="date"
+          name="fechaNac"
+          className="input"
+          onChange={handleChange}
+        />
+
+        <button className="col-span-2 bg-green-600 text-white py-2 rounded-lg">
+          Registrar Alumno
         </button>
       </form>
     </div>
