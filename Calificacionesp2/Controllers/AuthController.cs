@@ -38,7 +38,7 @@ namespace Backend.API.Controllers
             {
                 NombreUsuario = dto.NombreUsuario,
                 ContrasenaHash = dto.Contrasena,
-                IdRol = dto.IdRol,
+                IdRol = 3,
                 Activo = true,
                 CambiarContrasena = true
             };
@@ -56,9 +56,36 @@ namespace Backend.API.Controllers
             });
         }
 
-        // -------------------------
-        // Login
-        // -------------------------
+        [HttpPost("register-alumno")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RegisterAlumno([FromBody] RegistrarUsuarioDTO dto)
+        {
+            // Validar duplicados
+            if (await _context.Usuarios.AnyAsync(u => u.NombreUsuario == dto.NombreUsuario))
+                return BadRequest("El nombre de usuario ya está en uso.");
+
+            // Crear usuario con rol Alumno (IdRol = 3)
+            var usuario = new Usuario
+            {
+                NombreUsuario = dto.NombreUsuario,
+                ContrasenaHash = dto.Contrasena,
+                IdRol = 3,
+                Activo = true,
+                CambiarContrasena = true
+            };
+
+            _context.Usuarios.Add(usuario);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Usuario creado correctamente.",
+                idUsuario = usuario.IdUsuario
+            });
+        }
+
+
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest dto)
         {

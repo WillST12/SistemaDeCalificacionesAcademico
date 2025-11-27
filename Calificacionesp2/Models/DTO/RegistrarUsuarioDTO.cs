@@ -4,6 +4,8 @@
     {
         public string NombreUsuario { get; set; }
         public string Contrasena { get; set; }
-        public int IdRol { get; set; } // 1 Admin, 2 Profesor, 3 Alumno
+        public int IdRol { get; set; } 
+
     }
 }
+

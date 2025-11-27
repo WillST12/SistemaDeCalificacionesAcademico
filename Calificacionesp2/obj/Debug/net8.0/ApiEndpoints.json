@@ -138,6 +138,22 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.AuthController",
+    "Method": "RegistrarAlumno",
+    "RelativePath": "api/Auth/register-alumno",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Backend.API.Models.DTOs.RegistrarAlumnoDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.AuthController",
     "Method": "RestablecerPassword",
     "RelativePath": "api/Auth/restablecer-password",
     "HttpMethod": "POST",
