@@ -21,7 +21,6 @@ export default function CambiarContrasena() {
 
     try {
       const result = await authService.cambiarContrasena({
-        nombreUsuario: user.nombreUsuario,
         contrasenaActual: form.contrasenaActual,
         nuevaContrasena: form.nuevaContrasena,
       });
@@ -33,9 +32,8 @@ export default function CambiarContrasena() {
 
       alert(result.message || "Contraseña actualizada.");
       navigate("/dashboard");
-
     } catch (err) {
-      alert("Error cambiando la contraseña.");
+      alert(err.response?.data || "Error cambiando la contraseña.");
     }
   };
 

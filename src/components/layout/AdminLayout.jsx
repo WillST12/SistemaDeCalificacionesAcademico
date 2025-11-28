@@ -8,7 +8,7 @@ export default function AdminLayout() {
     <div className="min-h-screen flex bg-gray-100">
 
       {/* SIDEBAR */}
-      <aside className="w-64 bg-blue-800 text-white p-6 space-y-4">
+      <aside className="w-64 bg-blue-600 text-white p-6 space-y-4">
         <h2 className="text-xl font-bold">Panel Admin</h2>
 
         <nav className="space-y-2 mt-4">

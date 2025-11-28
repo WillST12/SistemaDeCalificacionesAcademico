@@ -6,7 +6,7 @@ import Login from "../pages/login/Login";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import RequireAuth from "../components/auth/RequireAuth";
-import CambiarContrasena from "../pages/cambiar-contrasena/CambiarContrasena";
+import CambiarContrasena from "../pages/cambiar-contrasena/cambiarContrasena";
 
 // Recuperación de contraseña
 import RecuperarPassword from "../pages/password/RecuperarPassword";

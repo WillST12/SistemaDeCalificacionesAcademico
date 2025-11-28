@@ -17,7 +17,7 @@ export default function DashboardLayout() {
     <div className="min-h-screen flex bg-gray-100">
 
       {/* SIDEBAR */}
-      <aside className="w-64 bg-blue-700 text-white p-6 flex flex-col justify-between">
+      <aside className="w-64 bg-blue-600 text-white p-6 flex flex-col justify-between">
 
         {/* === PARTE SUPERIOR === */}
         <div>
