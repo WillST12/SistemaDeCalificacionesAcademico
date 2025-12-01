@@ -38,7 +38,11 @@ namespace Backend.API.Controllers
 
             _context.Profesores.Add(profesor);
             await _context.SaveChangesAsync();
-            return Ok("Profesor creado correctamente.");
+            return Ok(new
+            {
+                mensaje = "Profesor creado correctamente.",
+                profesor.IdProfesor
+            });
         }
 
         [HttpGet]

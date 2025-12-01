@@ -154,6 +154,22 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.AuthController",
+    "Method": "RegisterProfesor",
+    "RelativePath": "api/Auth/register-profesor",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Backend.API.Models.DTOs.RegistrarProfesorDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.AuthController",
     "Method": "RestablecerPassword",
     "RelativePath": "api/Auth/restablecer-password",
     "HttpMethod": "POST",

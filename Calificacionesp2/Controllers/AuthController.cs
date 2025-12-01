@@ -84,6 +84,49 @@ namespace Backend.API.Controllers
             });
         }
 
+        [HttpPost("register-profesor")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RegisterProfesor([FromBody] RegistrarProfesorDTO dto)
+        {
+            // 1. Validar duplicado de usuario
+            if (await _context.Usuarios.AnyAsync(u => u.NombreUsuario == dto.NombreUsuario))
+                return BadRequest("El usuario ya existe.");
+
+            // 2. Crear usuario con rol profesor (IdRol = 2)
+            var usuario = new Usuario
+            {
+                NombreUsuario = dto.NombreUsuario,
+                ContrasenaHash = dto.Contrasena,
+                IdRol = 2,
+                Activo = true,
+                CambiarContrasena = true
+            };
+
+            _context.Usuarios.Add(usuario);
+            await _context.SaveChangesAsync();
+
+            // 3. Crear profesor
+            var profesor = new Profesor
+            {
+                Nombre = dto.Nombre,
+                Apellido = dto.Apellido,
+                Correo = dto.Correo,
+                Especialidad = dto.Especialidad,
+                IdUsuario = usuario.IdUsuario,
+                Activo = true
+            };
+
+            _context.Profesores.Add(profesor);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Profesor registrado correctamente.",
+                idUsuario = usuario.IdUsuario,
+                idProfesor = profesor.IdProfesor
+            });
+        }
+
 
 
         [HttpPost("login")]
