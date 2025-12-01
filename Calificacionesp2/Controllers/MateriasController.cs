@@ -30,6 +30,13 @@ namespace Backend.API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CrearMateria([FromBody] MateriaDTO dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.Nombre) ||
+                string.IsNullOrWhiteSpace(dto.Codigo) ||
+                string.IsNullOrWhiteSpace(dto.Descripcion))
+            {
+                return BadRequest("Todos los campos son obligatorios.");
+            }
+
             var materia = new Materia
             {
                 Nombre = dto.Nombre,
@@ -40,23 +47,34 @@ namespace Backend.API.Controllers
 
             _context.Materias.Add(materia);
             await _context.SaveChangesAsync();
-            return Ok("Materia creada correctamente.");
+
+            return Ok(new { message = "Materia creada correctamente." });
         }
+
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditarMateria(int id, [FromBody] MateriaDTO dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.Nombre) ||
+                string.IsNullOrWhiteSpace(dto.Codigo) ||
+                string.IsNullOrWhiteSpace(dto.Descripcion))
+            {
+                return BadRequest("Todos los campos son obligatorios.");
+            }
+
             var materia = await _context.Materias.FindAsync(id);
             if (materia == null) return NotFound("Materia no encontrada.");
 
             materia.Nombre = dto.Nombre;
             materia.Codigo = dto.Codigo;
             materia.Descripcion = dto.Descripcion;
+
             await _context.SaveChangesAsync();
 
             return Ok("Materia actualizada correctamente.");
         }
+
 
         [HttpPut("desactivar/{id}")]
         [Authorize(Roles = "Admin")]
