@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../../services/authService";
-import BackButton from "../../../components/ui/BackButton";
+import alumnoService from "../../../services/alumnoService";
+import BackButton from "../../../components/ui/BackButton"; // ← FALTABA ESTO
 
 export default function CrearAlumno() {
   const navigate = useNavigate();
@@ -23,22 +24,36 @@ export default function CrearAlumno() {
     e.preventDefault();
 
     try {
+      // 👉 1. CREAR USUARIO (solo acepta nombreUsuario + contrasena)
       const res = await authService.registerAlumno({
         nombreUsuario: form.nombreUsuario,
         contrasena: form.contrasena,
+      });
+
+      const idUsuario = res.idUsuario;
+
+      // 👉 validar que el backend devolvió un idUsuario correcto
+      if (!idUsuario) {
+        alert("Error: el backend no devolvió idUsuario.");
+        return;
+      }
+
+      // 👉 2. CREAR ALUMNO (convertir fecha a ISO)
+      await alumnoService.crear({
+        idUsuario,
         nombre: form.nombre,
         apellido: form.apellido,
         correo: form.correo,
         matricula: form.matricula,
-        fechaNac: form.fechaNac,
+        fechaNac: new Date(form.fechaNac).toISOString(), // ← ARREGLADO
       });
 
       alert("Alumno registrado exitosamente");
       navigate("/admin/alumnos");
 
     } catch (err) {
-      console.error(err);
-      alert("Error al registrar alumno");
+      console.error("Error:", err);
+      alert(err.response?.data ?? "Error al registrar alumno");
     }
   };
 
