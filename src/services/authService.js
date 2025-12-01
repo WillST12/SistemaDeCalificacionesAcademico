@@ -7,6 +7,12 @@ export const authService = {
     return res.data; // devuelve { idUsuario }
   },
 
+  registerProfesor: async (data) => {
+  const res = await api.post("/auth/register-profesor", data);
+  return res.data; // devuelve { idUsuario }
+},
+
+
   login: async (data) => {
     const res = await api.post("/auth/login", data);
     return res.data;

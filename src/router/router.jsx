@@ -19,6 +19,11 @@ import AlumnosListado from "../pages/admin/alumnos/AlumnosListado";
 import CrearAlumno from "../pages/admin/alumnos/CrearAlumno";
 import EditarAlumno from "../pages/admin/alumnos/EditarAlumno";
 
+// ADMIN – Profesores
+import ProfesoresListado from "../pages/admin/profesores/ProfesoresListado";
+import EditarProfesor from "../pages/admin/profesores/EditarProfesor";
+import CrearProfesor from "../pages/admin/profesores/CrearProfesor";
+
 // PROFESOR / ALUMNO (layouts)
 import ProfesorLayout from "../components/layout/ProfesorLayout";
 import AlumnoLayout from "../components/layout/AlumnoLayout";
@@ -87,7 +92,10 @@ export const router = createBrowserRouter([
       { path: "alumnos/crear", element: <CrearAlumno /> },
       { path: "alumnos/editar/:id", element: <EditarAlumno /> },
 
-      // Aquí luego agregamos profesores, materias, clases, calificaciones…
+      { path: "profesores", element: <ProfesoresListado /> },
+      { path: "profesores/crear", element: <CrearProfesor /> },
+      { path: "profesores/editar/:id", element: <EditarProfesor /> },
+
     ],
   },
 
