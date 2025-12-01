@@ -75,6 +75,15 @@ namespace Backend.API.Controllers
             return Ok("Materia actualizada correctamente.");
         }
 
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetMateriaPorId(int id)
+        {
+            var materia = await _context.Materias.FindAsync(id);
+            if (materia == null) return NotFound("Materia no encontrada.");
+
+            return Ok(materia);
+        }
 
         [HttpPut("desactivar/{id}")]
         [Authorize(Roles = "Admin")]

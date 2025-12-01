@@ -445,6 +445,22 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.MateriasController",
+    "Method": "GetMateriaPorId",
+    "RelativePath": "api/Materias/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.MateriasController",
     "Method": "DesactivarMateria",
     "RelativePath": "api/Materias/desactivar/{id}",
     "HttpMethod": "PUT",
