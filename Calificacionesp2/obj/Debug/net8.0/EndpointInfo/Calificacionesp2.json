@@ -170,17 +170,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegistrarAlumnoDTO"
+                "$ref": "#/components/schemas/RegistrarUsuarioDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegistrarAlumnoDTO"
+                "$ref": "#/components/schemas/RegistrarUsuarioDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/RegistrarAlumnoDTO"
+                "$ref": "#/components/schemas/RegistrarUsuarioDTO"
               }
             }
           }
@@ -1167,40 +1167,6 @@
           "correo": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "RegistrarAlumnoDTO": {
-        "type": "object",
-        "properties": {
-          "nombreUsuario": {
-            "type": "string",
-            "nullable": true
-          },
-          "contrasena": {
-            "type": "string",
-            "nullable": true
-          },
-          "nombre": {
-            "type": "string",
-            "nullable": true
-          },
-          "apellido": {
-            "type": "string",
-            "nullable": true
-          },
-          "correo": {
-            "type": "string",
-            "nullable": true
-          },
-          "matricula": {
-            "type": "string",
-            "nullable": true
-          },
-          "fechaNacimiento": {
-            "type": "string",
-            "format": "date-time"
           }
         },
         "additionalProperties": false

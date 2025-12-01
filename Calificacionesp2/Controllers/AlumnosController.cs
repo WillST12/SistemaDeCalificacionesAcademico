@@ -54,10 +54,12 @@ namespace Backend.API.Controllers
         {
             var alumnos = await _context.Alumnos
                 .Include(a => a.Usuario)
+                .Where(a => a.Usuario.IdRol == 3)   // ← FILTRO REAL
                 .ToListAsync();
 
             return Ok(alumnos);
         }
+
 
         // ✅ Obtener alumno por ID (Solo Admin)
         [HttpGet("{id}")]
