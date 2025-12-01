@@ -1,14 +1,13 @@
 // src/router/router.jsx
 import { createBrowserRouter } from "react-router-dom";
 
-// RUTAS EXISTENTES
+// Rutas públicas
 import Login from "../pages/login/Login";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import RequireAuth from "../components/auth/RequireAuth";
 import CambiarContrasena from "../pages/cambiar-contrasena/cambiarContrasena";
 
-// Recuperación de contraseña
 import RecuperarPassword from "../pages/password/RecuperarPassword";
 import VerificarCodigo from "../pages/password/VerificarCodigo";
 import NuevaPassword from "../pages/password/NuevaPassword";
@@ -21,36 +20,29 @@ import EditarAlumno from "../pages/admin/alumnos/EditarAlumno";
 
 // ADMIN – Profesores
 import ProfesoresListado from "../pages/admin/profesores/ProfesoresListado";
-import EditarProfesor from "../pages/admin/profesores/EditarProfesor";
 import CrearProfesor from "../pages/admin/profesores/CrearProfesor";
+import EditarProfesor from "../pages/admin/profesores/EditarProfesor";
 
-// PROFESOR / ALUMNO (layouts)
+// ADMIN – Materias
+import MateriasListado from "../pages/admin/materias/MateriasListado";
+import CrearMateria from "../pages/admin/materias/CrearMateria";
+import EditarMateria from "../pages/admin/materias/EditarMateria";
+
+// Layouts Profesor / Alumno
 import ProfesorLayout from "../components/layout/ProfesorLayout";
 import AlumnoLayout from "../components/layout/AlumnoLayout";
 
 export const router = createBrowserRouter([
   // ============================
-  // RUTAS PÚBLICAS
+  // PÚBLICAS
   // ============================
-  {
-    path: "/",
-    element: <Login />,
-  },
-  {
-    path: "/recuperar-password",
-    element: <RecuperarPassword />,
-  },
-  {
-    path: "/verificar-codigo",
-    element: <VerificarCodigo />,
-  },
-  {
-    path: "/nueva-password",
-    element: <NuevaPassword />,
-  },
+  { path: "/", element: <Login /> },
+  { path: "/recuperar-password", element: <RecuperarPassword /> },
+  { path: "/verificar-codigo", element: <VerificarCodigo /> },
+  { path: "/nueva-password", element: <NuevaPassword /> },
 
   // ============================
-  // CAMBIAR CONTRASEÑA (POST LOGIN)
+  // CAMBIAR CONTRASEÑA
   // ============================
   {
     path: "/cambiar-contrasena",
@@ -62,7 +54,7 @@ export const router = createBrowserRouter([
   },
 
   // ============================
-  // DASHBOARD GENERAL (CUALQUIER ROL)
+  // DASHBOARD (ANY ROLE)
   // ============================
   {
     path: "/dashboard",
@@ -75,7 +67,7 @@ export const router = createBrowserRouter([
   },
 
   // ============================
-  // ADMIN (CRUD COMPLETO)
+  // ADMIN
   // ============================
   {
     path: "/admin",
@@ -87,15 +79,20 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Dashboard /> },
 
-      // CRUD ALUMNOS
+      // 🔹 CRUD ALUMNOS
       { path: "alumnos", element: <AlumnosListado /> },
       { path: "alumnos/crear", element: <CrearAlumno /> },
       { path: "alumnos/editar/:id", element: <EditarAlumno /> },
 
+      // 🔹 CRUD PROFESORES
       { path: "profesores", element: <ProfesoresListado /> },
       { path: "profesores/crear", element: <CrearProfesor /> },
       { path: "profesores/editar/:id", element: <EditarProfesor /> },
 
+      // 🔹 CRUD MATERIAS
+      { path: "materias", element: <MateriasListado /> },
+      { path: "materias/crear", element: <CrearMateria /> },
+      { path: "materias/editar/:id", element: <EditarMateria /> },
     ],
   },
 
@@ -111,7 +108,6 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Dashboard /> },
-      // módulos del profesor próximamente
     ],
   },
 
@@ -127,7 +123,6 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Dashboard /> },
-      // módulos del alumno próximamente
     ],
   },
 ]);
