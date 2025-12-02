@@ -32,6 +32,12 @@ import EditarMateria from "../pages/admin/materias/EditarMateria";
 import ProfesorLayout from "../components/layout/ProfesorLayout";
 import AlumnoLayout from "../components/layout/AlumnoLayout";
 
+// ADMIN – Clases
+import ClasesListado from "../pages/admin/clases/ClasesListado";
+import CrearClase from "../pages/admin/clases/CrearClase";
+import EditarClase from "../pages/admin/clases/EditarClase";
+import ClaseDetalle from "../pages/admin/clases/ClaseDetalle";
+
 export const router = createBrowserRouter([
   // ============================
   // PÚBLICAS
@@ -93,6 +99,12 @@ export const router = createBrowserRouter([
       { path: "materias", element: <MateriasListado /> },
       { path: "materias/crear", element: <CrearMateria /> },
       { path: "materias/editar/:id", element: <EditarMateria /> },
+      // 🔹 CRUD CLASES
+      { path: "clases", element: <ClasesListado /> },
+      { path: "clases/crear", element: <CrearClase /> },
+      { path: "clases/editar/:id", element: <EditarClase /> },
+      { path: "clases/:id", element: <ClaseDetalle /> },
+
     ],
   },
 
