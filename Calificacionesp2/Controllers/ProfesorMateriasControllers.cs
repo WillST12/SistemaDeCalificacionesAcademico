@@ -18,7 +18,6 @@ namespace Backend.API.Controllers
             _context = context;
         }
 
-        // ✅ Asignar materia a profesor
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AsignarMateria([FromBody] ProfesorMateriaDTO dto)
@@ -29,11 +28,14 @@ namespace Backend.API.Controllers
             if (profesor == null || materia == null)
                 return BadRequest("Profesor o materia inválidos.");
 
-            bool yaAsignado = await _context.ProfesorMaterias
-                .AnyAsync(pm => pm.IdProfesor == dto.IdProfesor && pm.IdMateria == dto.IdMateria);
+            var asignacionExistente = await _context.ProfesorMaterias
+                .FirstOrDefaultAsync(pm => pm.IdProfesor == dto.IdProfesor && pm.IdMateria == dto.IdMateria);
 
-            if (yaAsignado)
-                return BadRequest("El profesor ya tiene asignada esta materia.");
+            if (asignacionExistente != null)
+            {
+                // si ya existe devolvemos su id
+                return Ok(new { idProfesorMateria = asignacionExistente.IdProfesorMateria });
+            }
 
             var asignacion = new ProfesorMateria
             {
@@ -44,9 +46,30 @@ namespace Backend.API.Controllers
             _context.ProfesorMaterias.Add(asignacion);
             await _context.SaveChangesAsync();
 
-            return Ok($"Materia '{materia.Nombre}' asignada al profesor {profesor.Nombre} correctamente.");
+            return Ok(new { idProfesorMateria = asignacion.IdProfesorMateria });
         }
 
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetProfesorMaterias()
+        {
+            var list = await _context.ProfesorMaterias
+                .Include(pm => pm.Profesor)
+                .Include(pm => pm.Materia)
+                .Select(pm => new {
+                    pm.IdProfesorMateria,
+                    pm.IdProfesor,
+                    Profesor = pm.Profesor.Nombre + " " + pm.Profesor.Apellido,
+                    pm.IdMateria,
+                    Materia = pm.Materia.Nombre
+                })
+                .ToListAsync();
+            return Ok(list);
+        }
+
+        // POST: api/ProfesorMaterias
+        
         // ✅ Listar materias asignadas a un profesor
         [HttpGet("profesor/{idProfesor}")]
         [Authorize(Roles = "Admin,Profesor")]
