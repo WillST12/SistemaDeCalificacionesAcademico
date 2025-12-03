@@ -66,7 +66,7 @@ namespace Backend.API.Controllers
             return Ok(clases);
         }
 
-      
+      //ESCRIBI MAL EL COMMIT ESTO ES PARA ARREGLARLO
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetClase(int id)
