@@ -1,7 +1,6 @@
-// src/services/claseService.js
 import { api } from "./api";
 
-const claseService = {
+const ClaseService = {
   listar: () => api.get("/Clases"),
   obtener: (id) => api.get(`/Clases/${id}`),
   crear: (data) => api.post("/Clases", data),
@@ -9,4 +8,4 @@ const claseService = {
   eliminar: (id) => api.delete(`/Clases/${id}`)
 };
 
-export default claseService;
+export default ClaseService;
