@@ -329,6 +329,22 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.ClasesController",
+    "Method": "GetClase",
+    "RelativePath": "api/Clases/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.ClasesController",
     "Method": "EditarClase",
     "RelativePath": "api/Clases/{id}",
     "HttpMethod": "PUT",

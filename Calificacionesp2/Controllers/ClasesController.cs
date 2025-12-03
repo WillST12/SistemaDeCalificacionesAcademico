@@ -44,7 +44,7 @@ namespace Backend.API.Controllers
             return Ok($"Clase creada para {profesorMateria.Materia.Nombre} con el profesor {profesorMateria.Profesor.Nombre}.");
         }
 
-        // ✅ Obtener todas las clases
+        
         [HttpGet]
         [Authorize(Roles = "Admin,Profesor,Alumno")]
         public async Task<IActionResult> GetClases()
@@ -64,6 +64,30 @@ namespace Backend.API.Controllers
                 .ToListAsync();
 
             return Ok(clases);
+        }
+
+      
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetClase(int id)
+        {
+            var clase = await _context.Clases
+                .Include(c => c.ProfesorMateria)
+                .ThenInclude(pm => pm.Profesor)
+                .Include(c => c.ProfesorMateria.Materia)
+                .FirstOrDefaultAsync(c => c.IdClase == id);
+
+            if (clase == null)
+                return NotFound("Clase no encontrada.");
+
+            return Ok(new
+            {
+                clase.IdClase,
+                clase.Periodo,
+                clase.IdProfesorMateria,
+                Profesor = clase.ProfesorMateria.Profesor.Nombre + " " + clase.ProfesorMateria.Profesor.Apellido,
+                Materia = clase.ProfesorMateria.Materia.Nombre
+            });
         }
 
         // ✅ Editar clase

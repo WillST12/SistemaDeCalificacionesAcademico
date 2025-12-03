@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|c:\\users\\willn\\source\\repos\\calificacionesp2\\calificacionesp2\\controllers\\clasescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|solutionrelative:calificacionesp2\\controllers\\clasescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|c:\\users\\willn\\source\\repos\\calificacionesp2\\calificacionesp2\\controllers\\profesormateriascontrollers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|solutionrelative:calificacionesp2\\controllers\\profesormateriascontrollers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -13,10 +17,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|c:\\users\\willn\\source\\repos\\calificacionesp2\\calificacionesp2\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|solutionrelative:calificacionesp2\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|c:\\users\\willn\\source\\repos\\calificacionesp2\\calificacionesp2\\controllers\\clasescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|solutionrelative:calificacionesp2\\controllers\\clasescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|c:\\users\\willn\\source\\repos\\calificacionesp2\\calificacionesp2\\models\\alumno.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -78,7 +78,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -114,7 +114,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "ProfesorMateriasControllers.cs",
               "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\ProfesorMateriasControllers.cs",
               "RelativeDocumentMoniker": "Calificacionesp2\\Controllers\\ProfesorMateriasControllers.cs",
@@ -128,18 +128,6 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "ApplicationDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Data\\ApplicationDbContext.cs",
-              "RelativeDocumentMoniker": "Calificacionesp2\\Data\\ApplicationDbContext.cs",
-              "ToolTip": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Data\\ApplicationDbContext.cs",
-              "RelativeToolTip": "Calificacionesp2\\Data\\ApplicationDbContext.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAkwCYAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-02T14:08:40.299Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "ProfesoresController.cs",
               "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\ProfesoresController.cs",
               "RelativeDocumentMoniker": "Calificacionesp2\\Controllers\\ProfesoresController.cs",
@@ -151,15 +139,28 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "ClasesController.cs",
               "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\ClasesController.cs",
               "RelativeDocumentMoniker": "Calificacionesp2\\Controllers\\ClasesController.cs",
               "ToolTip": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\ClasesController.cs",
               "RelativeToolTip": "Calificacionesp2\\Controllers\\ClasesController.cs",
-              "ViewState": "AgIAAE8AAAAAAAAAAAAqwGkAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAADwAAAAAAAAAAAAowFYAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-02T14:07:48.209Z"
+              "WhenOpened": "2025-12-02T14:07:48.209Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "Calificacionesp2\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "Calificacionesp2\\Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAkwCYAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-02T14:08:40.299Z"
             },
             {
               "$type": "Document",
@@ -183,7 +184,8 @@
               "RelativeToolTip": "Calificacionesp2\\Models\\Profesor.cs",
               "ViewState": "AgIAAAwAAAAAAAAAAAAwwCEAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-02T14:07:20.067Z"
+              "WhenOpened": "2025-12-02T14:07:20.067Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -279,7 +281,8 @@
               "RelativeToolTip": "Calificacionesp2\\Controllers\\AuthController.cs",
               "ViewState": "AgIAADMBAAAAAAAAAAAqwE8BAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-27T15:44:53.644Z"
+              "WhenOpened": "2025-11-27T15:44:53.644Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
