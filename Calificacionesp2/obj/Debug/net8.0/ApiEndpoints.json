@@ -556,6 +556,16 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.ProfesorMateriasController",
+    "Method": "GetProfesorMaterias",
+    "RelativePath": "api/ProfesorMaterias",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.ProfesorMateriasController",
     "Method": "QuitarMateria",
     "RelativePath": "api/ProfesorMaterias",
     "HttpMethod": "DELETE",

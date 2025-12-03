@@ -953,6 +953,16 @@
           }
         }
       },
+      "get": {
+        "tags": [
+          "ProfesorMaterias"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "ProfesorMaterias"
