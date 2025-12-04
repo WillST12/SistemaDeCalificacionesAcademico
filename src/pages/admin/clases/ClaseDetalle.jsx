@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
 import ClaseService from "../../../services/ClaseService";
 import inscripcionService from "../../../services/inscripcionService";
 import alumnoService from "../../../services/alumnoService";
-
 import BackButton from "../../../components/ui/BackButton";
 
 export default function ClaseDetalle() {
