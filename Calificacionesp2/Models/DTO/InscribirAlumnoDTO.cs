@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
+//MODULO INSCRIBIR ALUMNO REALIZADO
 namespace Backend.API.Models.DTOs
 {
     public class InscribirAlumnoDTO
