@@ -1,10 +1,8 @@
-// src/services/inscripcionService.js
 import { api } from "./api";
 
-const inscripcionService = {
-  inscribir: (data) => api.post("/Inscripciones", data), // { idAlumno, idClase }
-  listarPorAlumno: (idAlumno) => api.get(`/Inscripciones/${idAlumno}`),
-  // recomendamos añadir: GET /Inscripciones/clase/{idClase} en backend para listar alumnos por clase
+const InscripcionesService = {
+  inscribirAdmin: (data) => api.post("/Inscripciones/admin", data),
+  inscripcionesPorAlumno: (idAlumno) => api.get(`/Inscripciones/${idAlumno}`)
 };
 
-export default inscripcionService;
+export default InscripcionesService;
