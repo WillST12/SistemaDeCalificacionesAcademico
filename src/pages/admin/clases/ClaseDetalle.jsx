@@ -37,7 +37,7 @@ export default function ClaseDetalle() {
     if (!idAlumno) return alert("Seleccione un alumno");
 
     try {
-      await inscripcionesService.inscribirAdmin({
+      await inscripcionService.inscribirAdmin({
         idClase: parseInt(id),
         idAlumno: parseInt(idAlumno),
       });
