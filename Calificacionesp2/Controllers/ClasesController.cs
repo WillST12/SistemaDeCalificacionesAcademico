@@ -127,5 +127,24 @@ namespace Backend.API.Controllers
 
             return Ok("Clase eliminada correctamente.");
         }
+
+        [HttpGet("{idClase}/alumnos")]
+        [Authorize(Roles = "Admin,Profesor")]
+        public async Task<IActionResult> GetAlumnosDeClase(int idClase)
+        {
+            var alumnos = await _context.ClaseAlumnos
+                .Where(ca => ca.IdClase == idClase)
+                .Include(ca => ca.Alumno)
+                .Select(ca => new {
+                    ca.Alumno.IdAlumno,
+                    ca.Alumno.Nombre,
+                    ca.Alumno.Apellido,
+                    ca.Alumno.Matricula
+                })
+                .ToListAsync();
+
+            return Ok(alumnos);
+        }
+
     }
 }

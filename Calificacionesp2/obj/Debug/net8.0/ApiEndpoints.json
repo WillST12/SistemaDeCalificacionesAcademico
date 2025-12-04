@@ -79,6 +79,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Backend.API.Controllers.AlumnosController",
+    "Method": "ReactivarAlumno",
+    "RelativePath": "api/Alumnos/reactivar/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Backend.API.Controllers.AuthController",
     "Method": "CambiarContrasena",
     "RelativePath": "api/Auth/cambiar-contrasena",
@@ -381,9 +397,25 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Backend.API.Controllers.InscripcionesController",
-    "Method": "InscribirAlumno",
-    "RelativePath": "api/Inscripciones",
+    "ContainingType": "Backend.API.Controllers.ClasesController",
+    "Method": "GetAlumnosDeClase",
+    "RelativePath": "api/Clases/{idClase}/alumnos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idClase",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.ClasesAlumnosController",
+    "Method": "AgregarAlumno",
+    "RelativePath": "api/ClasesAlumnos",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -397,8 +429,40 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Backend.API.Controllers.ClasesAlumnosController",
+    "Method": "Eliminar",
+    "RelativePath": "api/ClasesAlumnos",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Backend.API.Models.DTOs.InscribirAlumnoDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.ClasesAlumnosController",
+    "Method": "GetAlumnosPorClase",
+    "RelativePath": "api/ClasesAlumnos/{idClase}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idClase",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Backend.API.Controllers.InscripcionesController",
-    "Method": "GetInscripcionesPorAlumno",
+    "Method": "GetClasesPorAlumno",
     "RelativePath": "api/Inscripciones/{idAlumno}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -407,6 +471,22 @@
       {
         "Name": "idAlumno",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.InscripcionesController",
+    "Method": "InscribirAlumnoAdmin",
+    "RelativePath": "api/Inscripciones/admin",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Backend.API.Models.DTOs.InscribirAlumnoDTO",
         "IsRequired": true
       }
     ],

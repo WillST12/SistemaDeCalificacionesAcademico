@@ -9,7 +9,7 @@ namespace Backend.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")] 
+    [Authorize(Roles = "Admin")]
     public class AlumnosController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -19,13 +19,19 @@ namespace Backend.API.Controllers
             _context = context;
         }
 
-      
+        // ============================
+        // CREAR ALUMNO
+        // ============================
         [HttpPost]
         public async Task<IActionResult> CrearAlumno([FromBody] AlumnoDTO dto)
         {
             var usuario = await _context.Usuarios.FindAsync(dto.IdUsuario);
-            if (usuario == null || usuario.IdRol != 3)
-                return BadRequest("El IdUsuario no corresponde a un usuario con rol Alumno.");
+
+            if (usuario == null)
+                return BadRequest("El usuario no existe.");
+
+            if (usuario.IdRol != 3)
+                return BadRequest("El usuario no tiene rol de Alumno.");
 
             var alumno = new Alumno
             {
@@ -48,20 +54,24 @@ namespace Backend.API.Controllers
             });
         }
 
-        // ✅ Listar todos los alumnos (Solo Admin)
+        // ============================
+        // LISTAR ALUMNOS ACTIVOS
+        // ============================
         [HttpGet]
         public async Task<IActionResult> GetAlumnos()
         {
             var alumnos = await _context.Alumnos
                 .Include(a => a.Usuario)
-                .Where(a => a.Usuario.IdRol == 3)   // ← FILTRO REAL
+                .Where(a => a.Activo == true) // ← Filtra correctamente activos
+                .OrderBy(a => a.Nombre)
                 .ToListAsync();
 
             return Ok(alumnos);
         }
 
-
-        // ✅ Obtener alumno por ID (Solo Admin)
+        // ============================
+        // OBTENER ALUMNO POR ID
+        // ============================
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAlumnoPorId(int id)
         {
@@ -75,7 +85,9 @@ namespace Backend.API.Controllers
             return Ok(alumno);
         }
 
-        // ✅ Editar alumno (Solo Admin)
+        // ============================
+        // EDITAR ALUMNO
+        // ============================
         [HttpPut("{id}")]
         public async Task<IActionResult> EditarAlumno(int id, [FromBody] AlumnoDTO dto)
         {
@@ -93,7 +105,9 @@ namespace Backend.API.Controllers
             return Ok("Alumno actualizado correctamente.");
         }
 
-        // ✅ Marcar alumno como inactivo (Solo Admin)
+        // ============================
+        // DESACTIVAR ALUMNO
+        // ============================
         [HttpDelete("{id}")]
         public async Task<IActionResult> DesactivarAlumno(int id)
         {
@@ -105,6 +119,22 @@ namespace Backend.API.Controllers
             await _context.SaveChangesAsync();
 
             return Ok("Alumno desactivado correctamente.");
+        }
+
+        // ============================
+        // REACTIVAR ALUMNO
+        // ============================
+        [HttpPut("reactivar/{id}")]
+        public async Task<IActionResult> ReactivarAlumno(int id)
+        {
+            var alumno = await _context.Alumnos.FindAsync(id);
+            if (alumno == null)
+                return NotFound("Alumno no encontrado.");
+
+            alumno.Activo = true;
+            await _context.SaveChangesAsync();
+
+            return Ok("Alumno reactivado correctamente.");
         }
     }
 }

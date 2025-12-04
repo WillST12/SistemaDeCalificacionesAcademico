@@ -18,59 +18,44 @@ namespace Backend.API.Controllers
             _context = context;
         }
 
-        /// <summary>
-        /// Inscribir un alumno en una clase buscando por el código de materia
-        /// </summary>
-        [HttpPost]
-        [Authorize(Roles = "Alumno,Admin")]
-        public async Task<IActionResult> InscribirAlumno([FromBody] InscribirAlumnoDTO dto)
+        // ============================
+        //  INSCRIBIR ALUMNO (ADMIN)
+        // ============================
+        [HttpPost("admin")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> InscribirAlumnoAdmin([FromBody] InscribirAlumnoDTO dto)
         {
-            // Buscar la materia por su código
-            var materia = await _context.Materias
-                .FirstOrDefaultAsync(m => m.Codigo == dto.CodigoMateria);
-
-            if (materia == null)
-                return NotFound("No se encontró ninguna materia con ese código.");
-
-            // Buscar la clase asociada a esa materia
-            var clase = await _context.Clases
-                .Include(c => c.ProfesorMateria)
-                .FirstOrDefaultAsync(c => c.ProfesorMateria.IdMateria == materia.IdMateria);
-
+            var clase = await _context.Clases.FindAsync(dto.IdClase);
             if (clase == null)
-                return NotFound("No hay clases registradas para esa materia.");
+                return NotFound("Clase no encontrada.");
 
-            // Verificar el alumno
             var alumno = await _context.Alumnos.FindAsync(dto.IdAlumno);
             if (alumno == null)
-                return BadRequest("Alumno no válido.");
+                return NotFound("Alumno no encontrado.");
 
-            // Verificar si ya está inscrito
+            // ¿Ya está inscrito?
             bool existe = await _context.ClaseAlumnos
-                .AnyAsync(ca => ca.IdAlumno == dto.IdAlumno && ca.IdClase == clase.IdClase);
+                .AnyAsync(ca => ca.IdClase == dto.IdClase && ca.IdAlumno == dto.IdAlumno);
 
             if (existe)
                 return BadRequest("El alumno ya está inscrito en esta clase.");
 
-            // Crear la inscripción
-            var claseAlumno = new ClaseAlumno
+            var nuevo = new ClaseAlumno
             {
-                IdAlumno = dto.IdAlumno,
-                IdClase = clase.IdClase
+                IdClase = dto.IdClase,
+                IdAlumno = dto.IdAlumno
             };
 
-            _context.ClaseAlumnos.Add(claseAlumno);
+            _context.ClaseAlumnos.Add(nuevo);
             await _context.SaveChangesAsync();
 
-            return Ok($"Alumno inscrito correctamente en la materia '{materia.Nombre}'.");
+            return Ok("Alumno inscrito exitosamente.");
         }
 
-        /// <summary>
-        /// Obtener todas las clases en las que está inscrito un alumno
-        /// </summary>
+
         [HttpGet("{idAlumno}")]
-        [Authorize(Roles = "Alumno,Profesor,Admin")]
-        public async Task<IActionResult> GetInscripcionesPorAlumno(int idAlumno)
+        [Authorize(Roles = "Admin,Profesor,Alumno")]
+        public async Task<IActionResult> GetClasesPorAlumno(int idAlumno)
         {
             var clases = await _context.ClaseAlumnos
                 .Include(ca => ca.Clase)
@@ -82,7 +67,7 @@ namespace Backend.API.Controllers
                 {
                     ca.IdClase,
                     Materia = ca.Clase.ProfesorMateria.Materia.Nombre,
-                    CodigoMateria = ca.Clase.ProfesorMateria.Materia.Codigo,
+                    Codigo = ca.Clase.ProfesorMateria.Materia.Codigo,
                     Profesor = ca.Clase.ProfesorMateria.Profesor.Nombre + " " + ca.Clase.ProfesorMateria.Profesor.Apellido,
                     ca.Clase.Periodo
                 })

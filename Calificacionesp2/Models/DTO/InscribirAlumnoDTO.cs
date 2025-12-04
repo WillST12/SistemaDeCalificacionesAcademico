@@ -7,6 +7,6 @@ namespace Backend.API.Models.DTOs
         
         public int IdClase { get; set; }
         public int IdAlumno { get; set; }
-        public string CodigoMateria { get; set; }
+       //public string CodigoMateria { get; set; }
     }
 }

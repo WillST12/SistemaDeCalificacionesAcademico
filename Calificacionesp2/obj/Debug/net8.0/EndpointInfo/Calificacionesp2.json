@@ -130,6 +130,29 @@
         }
       }
     },
+    "/api/Alumnos/reactivar/{id}": {
+      "put": {
+        "tags": [
+          "Alumnos"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Auth/register": {
       "post": {
         "tags": [
@@ -657,7 +680,113 @@
         }
       }
     },
-    "/api/Inscripciones": {
+    "/api/Clases/{idClase}/alumnos": {
+      "get": {
+        "tags": [
+          "Clases"
+        ],
+        "parameters": [
+          {
+            "name": "idClase",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ClasesAlumnos": {
+      "post": {
+        "tags": [
+          "ClasesAlumnos"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InscribirAlumnoDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InscribirAlumnoDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InscribirAlumnoDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ClasesAlumnos"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InscribirAlumnoDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InscribirAlumnoDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InscribirAlumnoDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ClasesAlumnos/{idClase}": {
+      "get": {
+        "tags": [
+          "ClasesAlumnos"
+        ],
+        "parameters": [
+          {
+            "name": "idClase",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Inscripciones/admin": {
       "post": {
         "tags": [
           "Inscripciones"
@@ -1164,10 +1293,6 @@
           "idAlumno": {
             "type": "integer",
             "format": "int32"
-          },
-          "codigoMateria": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
