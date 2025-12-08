@@ -38,6 +38,11 @@ import CrearClase from "../pages/admin/clases/CrearClase";
 import EditarClase from "../pages/admin/clases/EditarClase";
 import ClaseDetalle from "../pages/admin/clases/ClaseDetalle";
 
+// ADMIN – Calificaciones
+import CalificacionesListado from "../pages/admin/calificaciones/CalificacionesListado";
+import CrearCalificacion from "../pages/admin/calificaciones/CrearCalificacion";
+import EditarCalificacion from "../pages/admin/calificaciones/EditarCalificacion";
+
 export const router = createBrowserRouter([
   // ============================
   // PÚBLICAS
@@ -104,6 +109,10 @@ export const router = createBrowserRouter([
       { path: "clases/crear", element: <CrearClase /> },
       { path: "clases/editar/:id", element: <EditarClase /> },
       { path: "clases/:id", element: <ClaseDetalle /> },
+      // ADMIN/Profesores CCALIFICACIONES
+      { path: "calificaciones", element: <CalificacionesListado /> },
+      { path: "calificaciones/crear", element: <CrearCalificacion /> },
+      { path: "calificaciones/editar/:id", element: <EditarCalificacion /> },
 
     ],
   },
