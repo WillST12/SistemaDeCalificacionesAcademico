@@ -234,7 +234,7 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.CalificacionesController",
-    "Method": "AsignarCalificacion",
+    "Method": "Crear",
     "RelativePath": "api/Calificaciones",
     "HttpMethod": "POST",
     "IsController": true,
@@ -250,14 +250,14 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.CalificacionesController",
-    "Method": "EditarCalificacion",
-    "RelativePath": "api/Calificaciones/{idCalificacion}",
+    "Method": "Editar",
+    "RelativePath": "api/Calificaciones/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "idCalificacion",
+        "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
       },
@@ -271,7 +271,7 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.CalificacionesController",
-    "Method": "GetCalificacionesAlumno",
+    "Method": "PorAlumno",
     "RelativePath": "api/Calificaciones/alumno/{idAlumno}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -287,7 +287,7 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.CalificacionesController",
-    "Method": "GetCalificacionesPorClase",
+    "Method": "PorClase",
     "RelativePath": "api/Calificaciones/clase/{idClase}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -303,7 +303,7 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.CalificacionesController",
-    "Method": "GetCalificacionesPorMateria",
+    "Method": "PorMateria",
     "RelativePath": "api/Calificaciones/materia/{idMateria}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -312,6 +312,27 @@
       {
         "Name": "idMateria",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.CalificacionesController",
+    "Method": "Publicar",
+    "RelativePath": "api/Calificaciones/publicar/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "publicar",
+        "Type": "System.Boolean",
         "IsRequired": true
       }
     ],
@@ -426,6 +447,16 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.ClasesAlumnosController",
+    "Method": "GetTodasInscripciones",
+    "RelativePath": "api/ClasesAlumnos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {

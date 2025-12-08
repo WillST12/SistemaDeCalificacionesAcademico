@@ -12,161 +12,142 @@ namespace Backend.API.Controllers
     public class CalificacionesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        public CalificacionesController(ApplicationDbContext context) { _context = context; }
 
-        public CalificacionesController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        // ✅ 1. Asignar calificación (solo profesor)
+        // POST: crear calificación (admin/profesor)
         [HttpPost]
-        [Authorize(Roles = "Profesor")]
-        public async Task<IActionResult> AsignarCalificacion([FromBody] CalificacionDTO dto)
+        [Authorize(Roles = "Admin,Profesor")]
+        public async Task<IActionResult> Crear([FromBody] CalificacionDTO dto)
         {
+            // validar existencia de la inscripción (ClaseAlumno)
             var claseAlumno = await _context.ClaseAlumnos
+                .Include(ca => ca.Alumno)
                 .Include(ca => ca.Clase)
+                    .ThenInclude(c => c.ProfesorMateria)
+                        .ThenInclude(pm => pm.Materia)
                 .FirstOrDefaultAsync(ca => ca.IdClaseAlumno == dto.IdClaseAlumno);
 
-            if (claseAlumno == null)
-                return BadRequest("El alumno no está inscrito en la clase especificada.");
+            if (claseAlumno == null) return BadRequest("Inscripción inválida.");
 
-            var calificacion = new Calificaciones
+            var cal = new Calificaciones
             {
                 IdClaseAlumno = dto.IdClaseAlumno,
                 Nota = dto.Nota,
-                FechaRegistro = DateTime.Now
+                FechaRegistro = DateTime.UtcNow,
+                Publicado = dto.Publicado
             };
 
-            _context.Calificaciones.Add(calificacion);
+            _context.Calificaciones.Add(cal);
             await _context.SaveChangesAsync();
 
-            return Ok("✅ Calificación registrada correctamente.");
+            return Ok(new { message = "Calificación registrada.", idCalificacion = cal.IdCalificacion });
         }
 
-        // ✅ 2. Obtener calificaciones por alumno
-        [HttpGet("alumno/{idAlumno}")]
-        [Authorize(Roles = "Alumno,Profesor,Admin")]
-        public async Task<IActionResult> GetCalificacionesAlumno(int idAlumno)
+        // PUT: editar nota
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Profesor")]
+        public async Task<IActionResult> Editar(int id, [FromBody] CalificacionDTO dto)
         {
-            var calificaciones = await _context.Calificaciones
+            var cal = await _context.Calificaciones.FindAsync(id);
+            if (cal == null) return NotFound("Calificación no encontrada.");
+
+            cal.Nota = dto.Nota;
+            // No forzamos FechaRegistro. Si quieres guardar edición: cal.FechaRegistro = DateTime.UtcNow;
+            cal.Publicado = dto.Publicado;
+
+            await _context.SaveChangesAsync();
+            return Ok("Calificación actualizada.");
+        }
+
+        // PUT: publicar / despublicar
+        [HttpPut("publicar/{id}")]
+        [Authorize(Roles = "Admin,Profesor")]
+        public async Task<IActionResult> Publicar(int id, [FromBody] bool publicar)
+        {
+            var cal = await _context.Calificaciones.FindAsync(id);
+            if (cal == null) return NotFound("Calificación no encontrada.");
+
+            cal.Publicado = publicar;
+            await _context.SaveChangesAsync();
+            return Ok(new { message = publicar ? "Publicado" : "Despublicado" });
+        }
+
+        // GET por clase (devuelve alumno nombre y demás)
+        [HttpGet("clase/{idClase}")]
+        [Authorize(Roles = "Admin,Profesor")]
+        public async Task<IActionResult> PorClase(int idClase)
+        {
+            var res = await _context.Calificaciones
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Alumno)
                 .Include(c => c.ClaseAlumno)
                     .ThenInclude(ca => ca.Clase)
                         .ThenInclude(cl => cl.ProfesorMateria)
                             .ThenInclude(pm => pm.Materia)
-                .Include(c => c.ClaseAlumno.Clase.ProfesorMateria.Profesor)
-                .Where(c => c.ClaseAlumno.IdAlumno == idAlumno)
-                .Select(c => new
-                {
+                .Where(c => c.ClaseAlumno.Clase.IdClase == idClase)
+                .Select(c => new {
                     c.IdCalificacion,
+                    AlumnoId = c.ClaseAlumno.Alumno.IdAlumno,
+                    AlumnoNombre = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
                     c.Nota,
-                    c.FechaRegistro,
+                    FechaRegistro = c.FechaRegistro,
+                    c.Publicado,
                     Materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
-                    Profesor = c.ClaseAlumno.Clase.ProfesorMateria.Profesor.Nombre + " " + c.ClaseAlumno.Clase.ProfesorMateria.Profesor.Apellido,
                     Periodo = c.ClaseAlumno.Clase.Periodo
-                })
-                .ToListAsync();
+                }).ToListAsync();
 
-            if (!calificaciones.Any())
-                return NotFound("El alumno no tiene calificaciones registradas.");
-
-            return Ok(calificaciones);
+            return Ok(res);
         }
 
-        // ✅ 3. Obtener calificaciones por clase (Admin y Profesor)
-        [HttpGet("clase/{idClase}")]
-        [Authorize(Roles = "Admin,Profesor")]
-        public async Task<IActionResult> GetCalificacionesPorClase(int idClase)
-        {
-            var calificaciones = await _context.Calificaciones
-                .Include(c => c.ClaseAlumno)
-                    .ThenInclude(ca => ca.Alumno)
-                .Include(c => c.ClaseAlumno.Clase)
-                    .ThenInclude(cl => cl.ProfesorMateria)
-                        .ThenInclude(pm => pm.Materia)
-                .Where(c => c.ClaseAlumno.IdClase == idClase)
-                .Select(c => new
-                {
-                    Alumno = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
-                    Materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
-                    Nota = c.Nota,
-                    Fecha = c.FechaRegistro,
-                    Periodo = c.ClaseAlumno.Clase.Periodo
-                })
-                .ToListAsync();
-
-            if (!calificaciones.Any())
-                return NotFound("No hay calificaciones registradas para esta clase.");
-
-            return Ok(calificaciones);
-        }
-
-        // ✅ 4. Obtener calificaciones por materia (solo Admin)
+        // GET por materia
         [HttpGet("materia/{idMateria}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetCalificacionesPorMateria(int idMateria)
+        [Authorize(Roles = "Admin,Profesor")]
+        public async Task<IActionResult> PorMateria(int idMateria)
         {
-            var calificaciones = await _context.Calificaciones
+            var res = await _context.Calificaciones
                 .Include(c => c.ClaseAlumno)
                     .ThenInclude(ca => ca.Alumno)
-                .Include(c => c.ClaseAlumno.Clase)
-                    .ThenInclude(cl => cl.ProfesorMateria)
-                        .ThenInclude(pm => pm.Materia)
-                .Where(c => c.ClaseAlumno.Clase.ProfesorMateria.IdMateria == idMateria)
-                .Select(c => new
-                {
-                    Alumno = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
-                    Materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
-                    Profesor = c.ClaseAlumno.Clase.ProfesorMateria.Profesor.Nombre + " " + c.ClaseAlumno.Clase.ProfesorMateria.Profesor.Apellido,
-                    Nota = c.Nota,
-                    Periodo = c.ClaseAlumno.Clase.Periodo
-                })
-                .ToListAsync();
-
-            if (!calificaciones.Any())
-                return NotFound("No hay calificaciones registradas para esta materia.");
-
-            return Ok(calificaciones);
-        }
-        [HttpPut("{idCalificacion}")]
-        [Authorize(Roles = "Profesor,Admin")]
-        public async Task<IActionResult> EditarCalificacion(int idCalificacion, [FromBody] CalificacionDTO dto)
-        {
-            var calificacion = await _context.Calificaciones
                 .Include(c => c.ClaseAlumno)
                     .ThenInclude(ca => ca.Clase)
                         .ThenInclude(cl => cl.ProfesorMateria)
-                .FirstOrDefaultAsync(c => c.IdCalificacion == idCalificacion);
+                .Where(c => c.ClaseAlumno.Clase.ProfesorMateria.IdMateria == idMateria)
+                .Select(c => new {
+                    c.IdCalificacion,
+                    AlumnoNombre = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
+                    c.Nota,
+                    c.FechaRegistro,
+                    c.Publicado,
+                    Materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
+                    Periodo = c.ClaseAlumno.Clase.Periodo
+                }).ToListAsync();
 
-            if (calificacion == null)
-                return NotFound("❌ La calificación no existe.");
-
-            // == VALIDAR PROFESOR ==
-            var rol = User.Claims.First(c => c.Type.EndsWith("role")).Value;
-
-            if (rol == "Profesor")
-            {
-                int idUsuario = int.Parse(User.Claims.First(c => c.Type.Contains("idUsuario")).Value);
-
-                // Buscar el profesor logueado
-                var profesor = await _context.Profesores
-                    .FirstOrDefaultAsync(p => p.IdUsuario == idUsuario);
-
-                if (profesor == null)
-                    return Unauthorized("❌ Profesor no encontrado.");
-
-                // Verificar si es su clase
-                if (calificacion.ClaseAlumno.Clase.ProfesorMateria.IdProfesor != profesor.IdProfesor)
-                    return Unauthorized("❌ No puedes editar calificaciones de clases que no impartes.");
-            }
-
-            // === EDITAR NOTA ===
-            calificacion.Nota = dto.Nota;
-            calificacion.FechaRegistro = DateTime.Now;
-
-            await _context.SaveChangesAsync();
-
-            return Ok("✅ Calificación actualizada correctamente.");
+            return Ok(res);
         }
 
+        // GET por alumno
+        [HttpGet("alumno/{idAlumno}")]
+        [Authorize(Roles = "Admin,Profesor,Alumno")]
+        public async Task<IActionResult> PorAlumno(int idAlumno)
+        {
+            var res = await _context.Calificaciones
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Alumno)
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Clase)
+                        .ThenInclude(cl => cl.ProfesorMateria)
+                            .ThenInclude(pm => pm.Materia)
+                .Where(c => c.ClaseAlumno.IdAlumno == idAlumno)
+                .Select(c => new {
+                    c.IdCalificacion,
+                    AlumnoNombre = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
+                    c.Nota,
+                    c.FechaRegistro,
+                    c.Publicado,
+                    Materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
+                    Periodo = c.ClaseAlumno.Clase.Periodo
+                }).ToListAsync();
+
+            return Ok(res);
+        }
     }
 }

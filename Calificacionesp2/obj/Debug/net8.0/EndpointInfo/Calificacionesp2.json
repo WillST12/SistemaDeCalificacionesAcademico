@@ -444,14 +444,14 @@
         }
       }
     },
-    "/api/Calificaciones/alumno/{idAlumno}": {
-      "get": {
+    "/api/Calificaciones/{id}": {
+      "put": {
         "tags": [
           "Calificaciones"
         ],
         "parameters": [
           {
-            "name": "idAlumno",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -460,6 +460,67 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalificacionDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalificacionDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalificacionDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Calificaciones/publicar/{id}": {
+      "put": {
+        "tags": [
+          "Calificaciones"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "boolean"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "boolean"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -513,14 +574,14 @@
         }
       }
     },
-    "/api/Calificaciones/{idCalificacion}": {
-      "put": {
+    "/api/Calificaciones/alumno/{idAlumno}": {
+      "get": {
         "tags": [
           "Calificaciones"
         ],
         "parameters": [
           {
-            "name": "idCalificacion",
+            "name": "idAlumno",
             "in": "path",
             "required": true,
             "schema": {
@@ -529,25 +590,6 @@
             }
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CalificacionDTO"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CalificacionDTO"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CalificacionDTO"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "OK"
@@ -727,6 +769,16 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ClasesAlumnos"
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1248,6 +1300,9 @@
           "nota": {
             "type": "number",
             "format": "double"
+          },
+          "publicado": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

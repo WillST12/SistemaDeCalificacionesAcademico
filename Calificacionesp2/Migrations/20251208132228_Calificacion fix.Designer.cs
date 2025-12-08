@@ -4,6 +4,7 @@ using Backend.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Calificacionesp2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251208132228_Calificacion fix")]
+    partial class Calificacionfix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,7 +70,7 @@ namespace Calificacionesp2.Migrations
                     b.ToTable("Alumnos");
                 });
 
-            modelBuilder.Entity("Backend.API.Models.Calificaciones", b =>
+            modelBuilder.Entity("Backend.API.Models.Calificacion", b =>
                 {
                     b.Property<int>("IdCalificacion")
                         .ValueGeneratedOnAdd()
@@ -330,7 +333,7 @@ namespace Calificacionesp2.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Backend.API.Models.Calificaciones", b =>
+            modelBuilder.Entity("Backend.API.Models.Calificacion", b =>
                 {
                     b.HasOne("Backend.API.Models.ClaseAlumno", "ClaseAlumno")
                         .WithMany("Calificaciones")

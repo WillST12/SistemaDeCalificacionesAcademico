@@ -71,8 +71,28 @@ namespace Backend.API.Controllers
 
             return Ok(alumnos);
         }
+        // GET api/ClaseAlumnos
+        [HttpGet]
+        public async Task<IActionResult> GetTodasInscripciones()
+        {
+            var list = await _context.ClaseAlumnos
+                .Include(ca => ca.Alumno)
+                .Include(ca => ca.Clase)
+                    .ThenInclude(c => c.ProfesorMateria)
+                        .ThenInclude(pm => pm.Materia)
+                .Select(ca => new {
+                    ca.IdClaseAlumno,
+                    ca.IdClase,
+                    ca.IdAlumno,
+                    AlumnoNombre = ca.Alumno.Nombre + " " + ca.Alumno.Apellido,
+                    Materia = ca.Clase.ProfesorMateria.Materia.Nombre,
+                    Periodo = ca.Clase.Periodo
+                })
+                .ToListAsync();
 
-       
+            return Ok(list);
+        }
+
         [HttpDelete]
         public async Task<IActionResult> Eliminar([FromBody] InscribirAlumnoDTO dto)
         {

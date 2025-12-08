@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Calificacionesp2")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+748be730c90a2c177c3d1160b03382a5131def61")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b38058ec8fc14d21b57240c2e94c4d43183735dc")]
 [assembly: System.Reflection.AssemblyProductAttribute("Calificacionesp2")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Calificacionesp2")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
