@@ -1,4 +1,3 @@
-// src/services/calificacionService.js
 import { api } from "./api";
 
 const calificacionService = {
@@ -7,6 +6,7 @@ const calificacionService = {
   publicar: (id, publicar) => api.put(`/Calificaciones/publicar/${id}`, publicar),
   porClase: (idClase) => api.get(`/Calificaciones/clase/${idClase}`),
   porMateria: (idMateria) => api.get(`/Calificaciones/materia/${idMateria}`),
+  porMateriaPeriodo: (idMateria, periodo) => api.get(`/Calificaciones/materia/${idMateria}/periodo/${encodeURIComponent(periodo)}`),
   porAlumno: (idAlumno) => api.get(`/Calificaciones/alumno/${idAlumno}`)
 };
 
