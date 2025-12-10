@@ -250,6 +250,22 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.CalificacionesController",
+    "Method": "GetById",
+    "RelativePath": "api/Calificaciones/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.CalificacionesController",
     "Method": "Editar",
     "RelativePath": "api/Calificaciones/{id}",
     "HttpMethod": "PUT",
