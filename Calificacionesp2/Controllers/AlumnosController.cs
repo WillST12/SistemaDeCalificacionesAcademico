@@ -62,7 +62,7 @@ namespace Backend.API.Controllers
         {
             var alumnos = await _context.Alumnos
                 .Include(a => a.Usuario)
-                .Where(a => a.Activo == true) // ← Filtra correctamente activos
+                .Where(a => a.Activo == true)
                 .OrderBy(a => a.Nombre)
                 .ToListAsync();
 
@@ -119,6 +119,20 @@ namespace Backend.API.Controllers
             await _context.SaveChangesAsync();
 
             return Ok("Alumno desactivado correctamente.");
+        }
+
+        // ============================
+        // LISTAR ALUMNOS DESACTIVADOS
+        // ============================
+        [HttpGet("desactivados")]
+        public async Task<IActionResult> GetDesactivados()
+        {
+            var list = await _context.Alumnos
+                .Where(a => !a.Activo)
+                .OrderBy(a => a.Nombre)
+                .ToListAsync();
+
+            return Ok(list);
         }
 
         // ============================

@@ -130,6 +130,18 @@
         }
       }
     },
+    "/api/Alumnos/desactivados": {
+      "get": {
+        "tags": [
+          "Alumnos"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Alumnos/reactivar/{id}": {
       "put": {
         "tags": [

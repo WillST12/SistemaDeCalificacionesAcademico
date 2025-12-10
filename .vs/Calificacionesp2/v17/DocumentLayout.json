@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|c:\\users\\willn\\source\\repos\\calificacionesp2\\calificacionesp2\\controllers\\alumnoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|solutionrelative:calificacionesp2\\controllers\\alumnoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|c:\\users\\willn\\source\\repos\\calificacionesp2\\calificacionesp2\\controllers\\calificacionescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|solutionrelative:calificacionesp2\\controllers\\calificacionescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -33,10 +37,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|c:\\users\\willn\\source\\repos\\calificacionesp2\\calificacionesp2\\models\\dto\\materiadto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|solutionrelative:calificacionesp2\\models\\dto\\materiadto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|c:\\users\\willn\\source\\repos\\calificacionesp2\\calificacionesp2\\controllers\\alumnoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|solutionrelative:calificacionesp2\\controllers\\alumnoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{BB12D105-1526-479F-9455-16054BF0A7C4}|Calificacionesp2\\Calificacionesp2.csproj|c:\\users\\willn\\source\\repos\\calificacionesp2\\calificacionesp2\\controllers\\profesormateriascontrollers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -98,7 +98,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -135,18 +135,6 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "ClasesAlumnosController.cs",
-              "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\ClasesAlumnosController.cs",
-              "RelativeDocumentMoniker": "Calificacionesp2\\Controllers\\ClasesAlumnosController.cs",
-              "ToolTip": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\ClasesAlumnosController.cs",
-              "RelativeToolTip": "Calificacionesp2\\Controllers\\ClasesAlumnosController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-10T13:09:30.167Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
               "Title": "CalificacionesController.cs",
               "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\CalificacionesController.cs",
               "RelativeDocumentMoniker": "Calificacionesp2\\Controllers\\CalificacionesController.cs",
@@ -159,7 +147,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "CalificacionDTO.cs",
               "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Models\\DTO\\CalificacionDTO.cs",
               "RelativeDocumentMoniker": "Calificacionesp2\\Models\\DTO\\CalificacionDTO.cs",
@@ -171,7 +159,32 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
+              "Title": "AlumnosController.cs",
+              "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\AlumnosController.cs",
+              "RelativeDocumentMoniker": "Calificacionesp2\\Controllers\\AlumnosController.cs",
+              "ToolTip": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\AlumnosController.cs",
+              "RelativeToolTip": "Calificacionesp2\\Controllers\\AlumnosController.cs",
+              "ViewState": "AgIAAI0AAAAAAAAAAAAYwJoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-28T13:41:39.224Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ClasesAlumnosController.cs",
+              "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\ClasesAlumnosController.cs",
+              "RelativeDocumentMoniker": "Calificacionesp2\\Controllers\\ClasesAlumnosController.cs",
+              "ToolTip": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\ClasesAlumnosController.cs",
+              "RelativeToolTip": "Calificacionesp2\\Controllers\\ClasesAlumnosController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T13:09:30.167Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "Calificacionesp2\\Data\\ApplicationDbContext.cs",
@@ -183,7 +196,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Calificaciones.cs",
               "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Models\\Calificaciones.cs",
               "RelativeDocumentMoniker": "Calificacionesp2\\Models\\Calificaciones.cs",
@@ -195,7 +208,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "ClaseAlumno.cs",
               "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Models\\ClaseAlumno.cs",
               "RelativeDocumentMoniker": "Calificacionesp2\\Models\\ClaseAlumno.cs",
@@ -207,7 +220,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "InscribirAlumnoDTO.cs",
               "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Models\\DTO\\InscribirAlumnoDTO.cs",
               "RelativeDocumentMoniker": "Calificacionesp2\\Models\\DTO\\InscribirAlumnoDTO.cs",
@@ -219,7 +232,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "MateriaDTO.cs",
               "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Models\\DTO\\MateriaDTO.cs",
               "RelativeDocumentMoniker": "Calificacionesp2\\Models\\DTO\\MateriaDTO.cs",
@@ -228,18 +241,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-04T14:15:57.159Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "AlumnosController.cs",
-              "DocumentMoniker": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\AlumnosController.cs",
-              "RelativeDocumentMoniker": "Calificacionesp2\\Controllers\\AlumnosController.cs",
-              "ToolTip": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\AlumnosController.cs",
-              "RelativeToolTip": "Calificacionesp2\\Controllers\\AlumnosController.cs",
-              "ViewState": "AgIAAHAAAAAAAAAAAAAqwIwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-28T13:41:39.224Z"
             },
             {
               "$type": "Document",
