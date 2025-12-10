@@ -41,24 +41,23 @@ namespace Backend.API.Controllers
             return Ok(new { message = "Calificación registrada correctamente" });
         }
         // GET: obtener una calificación por ID
+        // GET api/Calificaciones/{id}
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Profesor")]
         public async Task<IActionResult> GetById(int id)
         {
             var c = await _context.Calificaciones
-                .Include(x => x.ClaseAlumno)
-                    .ThenInclude(ca => ca.Alumno)
-                .Include(x => x.ClaseAlumno)
-                    .ThenInclude(ca => ca.Clase)
-                        .ThenInclude(cl => cl.ProfesorMateria)
-                            .ThenInclude(pm => pm.Materia)
+                .Include(ca => ca.ClaseAlumno)
+                    .ThenInclude(a => a.Alumno)
+                .Include(ca => ca.ClaseAlumno)
+                    .ThenInclude(cl => cl.Clase)
+                        .ThenInclude(pm => pm.ProfesorMateria)
+                            .ThenInclude(m => m.Materia)
                 .Where(x => x.IdCalificacion == id)
                 .Select(x => new {
                     idCalificacion = x.IdCalificacion,
-                    idClaseAlumno = x.IdClaseAlumno,
                     nota = x.Nota,
                     publicado = x.Publicado,
-                    fechaRegistro = x.FechaRegistro,
                     alumno = x.ClaseAlumno.Alumno.Nombre + " " + x.ClaseAlumno.Alumno.Apellido,
                     materia = x.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
                     periodo = x.ClaseAlumno.Clase.Periodo
@@ -69,6 +68,7 @@ namespace Backend.API.Controllers
 
             return Ok(c);
         }
+
 
         // PUT: editar nota
         [HttpPut("{id}")]
