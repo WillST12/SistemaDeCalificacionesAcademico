@@ -43,6 +43,9 @@ import CalificacionesListado from "../pages/admin/calificaciones/CalificacionesL
 import CrearCalificacion from "../pages/admin/calificaciones/CrearCalificacion";
 import EditarCalificacion from "../pages/admin/calificaciones/EditarCalificacion";
 
+import AlumnosDesactivados from "../pages/admin/alumnos/AlumnosDesactivados";
+
+
 export const router = createBrowserRouter([
   // ============================
   // PÚBLICAS
@@ -94,6 +97,7 @@ export const router = createBrowserRouter([
       { path: "alumnos", element: <AlumnosListado /> },
       { path: "alumnos/crear", element: <CrearAlumno /> },
       { path: "alumnos/editar/:id", element: <EditarAlumno /> },
+      { path: "alumnos/desactivados", element: <AlumnosDesactivados /> },
 
       // 🔹 CRUD PROFESORES
       { path: "profesores", element: <ProfesoresListado /> },
@@ -114,6 +118,7 @@ export const router = createBrowserRouter([
       { path: "calificaciones/crear", element: <CrearCalificacion /> },
       { path: "calificaciones/editar/:id", element: <EditarCalificacion /> },
 
+      
     ],
   },
 

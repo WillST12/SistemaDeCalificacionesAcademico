@@ -1,3 +1,4 @@
+// src/pages/admin/alumnos/AlumnosListado.jsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import alumnoService from "../../../services/alumnoService";
@@ -7,14 +8,22 @@ export default function AlumnosListado() {
   const [alumnos, setAlumnos] = useState([]);
 
   const cargarAlumnos = async () => {
-    const res = await alumnoService.listar();
-    setAlumnos(res.data);
+    try {
+      const res = await alumnoService.listar();
+      setAlumnos(res.data);
+    } catch {
+      alert("Error cargando alumnos");
+    }
   };
 
   const eliminarAlumno = async (id) => {
     if (!confirm("¿Seguro que deseas desactivar este alumno?")) return;
-    await alumnoService.eliminar(id);
-    cargarAlumnos();
+    try {
+      await alumnoService.eliminar(id);
+      cargarAlumnos();
+    } catch {
+      alert("Error desactivando alumno");
+    }
   };
 
   useEffect(() => {
@@ -28,12 +37,21 @@ export default function AlumnosListado() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Lista de Alumnos</h1>
 
-        <Link
-          to="/admin/alumnos/crear"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-        >
-          + Nuevo Alumno
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            to="/admin/alumnos/desactivados"
+            className="bg-gray-500 text-white px-4 py-2 rounded-lg"
+          >
+            Ver desactivados
+          </Link>
+
+          <Link
+            to="/admin/alumnos/crear"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+          >
+            + Nuevo Alumno
+          </Link>
+        </div>
       </div>
 
       <table className="w-full bg-white rounded-xl shadow">
@@ -51,7 +69,9 @@ export default function AlumnosListado() {
           {alumnos.map((a) => (
             <tr key={a.idAlumno} className="border-b">
               <td className="p-3">{a.idAlumno}</td>
-              <td className="p-3">{a.nombre} {a.apellido}</td>
+              <td className="p-3">
+                {a.nombre} {a.apellido}
+              </td>
               <td className="p-3">{a.correo}</td>
               <td className="p-3">{a.matricula}</td>
 
@@ -74,7 +94,6 @@ export default function AlumnosListado() {
           ))}
         </tbody>
       </table>
-
     </div>
   );
 }
