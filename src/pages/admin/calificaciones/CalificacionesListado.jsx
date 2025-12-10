@@ -131,7 +131,7 @@ export default function CalificacionesListado() {
               value={filtroValor}
               onChange={(e) => setFiltroValor(e.target.value)}
             >
-              <option value="">--Selecciona clase--</option>
+              <option value="">--Selecciona clase + Periodo--</option>
               {clases.map((c) => (
                 <option key={c.idClase} value={c.idClase}>
                   {c.materia} — {c.periodo}

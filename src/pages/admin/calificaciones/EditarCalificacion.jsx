@@ -1,3 +1,4 @@
+// src/pages/admin/calificaciones/EditarCalificacion.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import calificacionService from "../../../services/calificacionService";
@@ -16,7 +17,7 @@ export default function EditarCalificacion() {
   });
 
   useEffect(() => {
-    calificacionService.getById(id)
+    calificacionService.GetById(id)
       .then((res) => {
         setForm({
           nota: res.data.nota,
@@ -50,23 +51,34 @@ export default function EditarCalificacion() {
   return (
     <div>
       <BackButton />
+
       <h1 className="text-2xl font-bold mb-4">Editar Calificación</h1>
 
-      <div className="bg-white p-4 mb-4 rounded">
+      {/* ----------- info superior ------------ */}
+      <div className="bg-white p-4 mb-4 rounded shadow-sm border">
         <p><b>Alumno:</b> {form.alumno}</p>
         <p><b>Materia:</b> {form.materia}</p>
         <p><b>Periodo:</b> {form.periodo}</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-4 rounded space-y-4">
-        <input
-          type="number"
-          className="input w-32"
-          value={form.nota}
-          onChange={(e) => setForm({ ...form, nota: e.target.value })}
-        />
+      {/* ----------- formulario editar ----------- */}
+      <form 
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded shadow-sm border space-y-6 max-w-md"
+      >
+        <div>
+          <label className="block mb-1 font-semibold">Nueva Nota</label>
+          <input
+            type="number"
+            step="0.01"
+            placeholder="Ej: 87.50"
+            className="input w-full"
+            value={form.nota}
+            onChange={(e) => setForm({ ...form, nota: e.target.value })}
+          />
+        </div>
 
-        <label className="flex gap-2 items-center">
+        <label className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={form.publicado}
@@ -75,8 +87,10 @@ export default function EditarCalificacion() {
           Publicado
         </label>
 
-        <button className="bg-blue-600 text-white px-4 py-2 rounded">
-          Guardar
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+        >
+          Guardar Cambios
         </button>
       </form>
     </div>
