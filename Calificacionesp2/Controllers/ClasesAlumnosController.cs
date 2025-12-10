@@ -19,9 +19,7 @@ namespace Backend.API.Controllers
             _context = context;
         }
 
-        // -----------------------------------------
-        // ✅ Agregar alumno a una clase
-        // -----------------------------------------
+        // POST api/ClasesAlumnos
         [HttpPost]
         public async Task<IActionResult> AgregarAlumno([FromBody] InscribirAlumnoDTO dto)
         {
@@ -51,17 +49,19 @@ namespace Backend.API.Controllers
             return Ok("Alumno inscrito correctamente.");
         }
 
-        // -----------------------------------------
-        // ✅ Listar alumnos de una clase
-        // -----------------------------------------
+        // GET api/ClasesAlumnos/{idClase} -> lista alumnos de una clase
         [HttpGet("{idClase}")]
+        [AllowAnonymous] // si quieres restringir déjalo con Authorize
         public async Task<IActionResult> GetAlumnosPorClase(int idClase)
         {
             var alumnos = await _context.ClaseAlumnos
                 .Where(ca => ca.IdClase == idClase)
                 .Include(ca => ca.Alumno)
                 .Select(ca => new {
-                    ca.Alumno.IdAlumno,
+                    ca.IdClaseAlumno,
+                    ca.IdClase,
+                    ca.IdAlumno,
+                    AlumnoNombre = ca.Alumno.Nombre + " " + ca.Alumno.Apellido,
                     Nombre = ca.Alumno.Nombre,
                     Apellido = ca.Alumno.Apellido,
                     Matricula = ca.Alumno.Matricula,
@@ -71,8 +71,9 @@ namespace Backend.API.Controllers
 
             return Ok(alumnos);
         }
-        // GET api/ClaseAlumnos
-        [HttpGet]
+
+        // GET api/ClasesAlumnos/inscripciones -> todas las inscripciones con info materia/periodo (Admin)
+        [HttpGet("inscripciones")]
         public async Task<IActionResult> GetTodasInscripciones()
         {
             var list = await _context.ClaseAlumnos
@@ -86,6 +87,7 @@ namespace Backend.API.Controllers
                     ca.IdAlumno,
                     AlumnoNombre = ca.Alumno.Nombre + " " + ca.Alumno.Apellido,
                     Materia = ca.Clase.ProfesorMateria.Materia.Nombre,
+                    CodigoMateria = ca.Clase.ProfesorMateria.Materia.Codigo,
                     Periodo = ca.Clase.Periodo
                 })
                 .ToListAsync();
@@ -93,6 +95,7 @@ namespace Backend.API.Controllers
             return Ok(list);
         }
 
+        // DELETE api/ClasesAlumnos (body: InscribirAlumnoDTO)
         [HttpDelete]
         public async Task<IActionResult> Eliminar([FromBody] InscribirAlumnoDTO dto)
         {

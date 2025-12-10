@@ -574,6 +574,37 @@
         }
       }
     },
+    "/api/Calificaciones/materia/{idMateria}/periodo/{periodo}": {
+      "get": {
+        "tags": [
+          "Calificaciones"
+        ],
+        "parameters": [
+          {
+            "name": "idMateria",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "periodo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Calificaciones/alumno/{idAlumno}": {
       "get": {
         "tags": [
@@ -775,16 +806,6 @@
           }
         }
       },
-      "get": {
-        "tags": [
-          "ClasesAlumnos"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
       "delete": {
         "tags": [
           "ClasesAlumnos"
@@ -830,6 +851,18 @@
               "format": "int32"
             }
           }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ClasesAlumnos/inscripciones": {
+      "get": {
+        "tags": [
+          "ClasesAlumnos"
         ],
         "responses": {
           "200": {

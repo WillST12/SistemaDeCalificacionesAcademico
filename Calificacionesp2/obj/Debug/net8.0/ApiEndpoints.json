@@ -319,6 +319,27 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.CalificacionesController",
+    "Method": "PorMateriaPeriodo",
+    "RelativePath": "api/Calificaciones/materia/{idMateria}/periodo/{periodo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idMateria",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "periodo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.CalificacionesController",
     "Method": "Publicar",
     "RelativePath": "api/Calificaciones/publicar/{id}",
     "HttpMethod": "PUT",
@@ -451,16 +472,6 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.ClasesAlumnosController",
-    "Method": "GetTodasInscripciones",
-    "RelativePath": "api/ClasesAlumnos",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Backend.API.Controllers.ClasesAlumnosController",
     "Method": "Eliminar",
     "RelativePath": "api/ClasesAlumnos",
     "HttpMethod": "DELETE",
@@ -489,6 +500,16 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.ClasesAlumnosController",
+    "Method": "GetTodasInscripciones",
+    "RelativePath": "api/ClasesAlumnos/inscripciones",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
