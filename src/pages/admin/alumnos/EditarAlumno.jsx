@@ -31,11 +31,25 @@ export default function EditarAlumno() {
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-2 gap-4 bg-white p-6 rounded-xl shadow">
-
+         <h2 className="col-span-2 font-semibold text-blue-600">
+          Nombre Del Alumno
+        </h2>   
         <input name="nombre" value={form.nombre} onChange={handleChange} className="input"/>
+        <h2 className="col-span-2 font-semibold text-blue-600">
+          Apellidos
+        </h2>
         <input name="apellido" value={form.apellido} onChange={handleChange} className="input"/>
+        <h2 className="col-span-2 font-semibold text-blue-600">
+          Correo Electronico
+        </h2>
         <input name="correo" value={form.correo} onChange={handleChange} className="input"/>
+        <h2 className="col-span-2 font-semibold text-blue-600">
+          Matricula
+        </h2>
         <input name="matricula" value={form.matricula} onChange={handleChange} className="input"/>
+        <h2 className="col-span-2 font-semibold text-blue-600">
+          Fecha de Nacimiento
+        </h2>
         <input
           type="date"
           name="fechaNac"
