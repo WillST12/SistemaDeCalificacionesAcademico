@@ -13,93 +13,89 @@ export default function EditarMateria() {
     descripcion: "",
   });
 
-  const [loading, setLoading] = useState(true);
+  const cargarMateria = async () => {
+    try {
+      const res = await materiaService.obtener(id);
+      setForm({
+        nombre: res.data.nombre,
+        codigo: res.data.codigo,
+        descripcion: res.data.descripcion ?? "",
+      });
+    } catch {
+      alert("Error cargando materia");
+      navigate("/admin/materias");
+    }
+  };
+
+  useEffect(() => {
+    cargarMateria();
+  }, []);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  // ================================
-  // Cargar datos existentes
-  // ================================
-  useEffect(() => {
-    const cargarMateria = async () => {
-      try {
-        const res = await materiaService.obtener(id);
-        setForm({
-          nombre: res.data.nombre,
-          codigo: res.data.codigo,
-          descripcion: res.data.descripcion || "",
-        });
-        setLoading(false);
-      } catch (error) {
-        alert("Error al cargar la materia");
-        navigate("/admin/materias");
-      }
-    };
-
-    cargarMateria();
-  }, [id, navigate]);
-
-  // ================================
-  // Guardar cambios
-  // ================================
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // VALIDACIONES
-    if (!form.nombre.trim() || !form.codigo.trim()) {
-      alert("El nombre y el código son obligatorios.");
-      return;
-    }
-
     try {
       await materiaService.actualizar(id, form);
-      alert("Materia actualizada correctamente");
+      alert("Materia actualizada");
       navigate("/admin/materias");
     } catch (err) {
+      alert("Error actualizando materia");
       console.error(err);
-      alert("Error al actualizar materia");
     }
   };
 
-  if (loading) return <p>Cargando...</p>;
-
   return (
-    <div>
+    <div className="max-w-2xl mx-auto p-6">
       <BackButton />
+      <h1 className="text-3xl font-bold mb-6">Editar Materia</h1>
+      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8">
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-medium mb-2">
+            Nombre
+          </label>
+          <input
+            type="text"
+            name="nombre"
+            value={form.nombre}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+          />
+        </div>
+        
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-medium mb-2">
+            Código
+          </label>
+          <input
+            type="text"
+            name="codigo"
+            value={form.codigo}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+          />
+        </div>
 
-      <h1 className="text-2xl font-bold mb-4">Editar Materia</h1>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-medium mb-2">
+            Descripción
+          </label>
+          <textarea
+            name="descripcion"
+            value={form.descripcion}
+            onChange={handleChange}
+            rows="4"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+          />
+        </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-xl shadow grid grid-cols-2 gap-4"
-      >
-        <input
-          name="nombre"
-          placeholder="Nombre de la materia"
-          className="input"
-          value={form.nombre}
-          onChange={handleChange}
-        />
-
-        <input
-          name="codigo"
-          placeholder="Código"
-          className="input"
-          value={form.codigo}
-          onChange={handleChange}
-        />
-
-        <textarea
-          name="descripcion"
-          placeholder="Descripción (opcional)"
-          className="input col-span-2"
-          rows="4"
-          value={form.descripcion}
-          onChange={handleChange}
-        ></textarea>
-
-        <button className="col-span-2 bg-blue-600 text-white py-2 rounded-lg">
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+        >
           Guardar Cambios
         </button>
       </form>
