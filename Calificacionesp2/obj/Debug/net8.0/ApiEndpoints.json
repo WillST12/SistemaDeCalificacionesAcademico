@@ -677,6 +677,22 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.ProfesoresController",
+    "Method": "GetProfesorPorId",
+    "RelativePath": "api/Profesores/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.ProfesoresController",
     "Method": "EditarProfesor",
     "RelativePath": "api/Profesores/{id}",
     "HttpMethod": "PUT",

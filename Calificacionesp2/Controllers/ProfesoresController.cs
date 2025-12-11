@@ -55,6 +55,24 @@ namespace Backend.API.Controllers
             return Ok(profesores);
         }
 
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetProfesorPorId(int id)
+        {
+            var profesor = await _context.Profesores
+                .Include(p => p.Usuario)
+                .FirstOrDefaultAsync(p => p.IdProfesor == id);
+            if (profesor == null)
+                return NotFound("Profesor no encontrado.");
+            return Ok(new
+            {
+                nombre = profesor.Nombre,
+                apellido = profesor.Apellido,
+                correo = profesor.Correo,
+                especialidad = profesor.Especialidad // Agregar este campo
+            });
+        }
+
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditarProfesor(int id, [FromBody] ProfesorDTO dto)
@@ -66,11 +84,10 @@ namespace Backend.API.Controllers
             profesor.Nombre = dto.Nombre;
             profesor.Apellido = dto.Apellido;
             profesor.Correo = dto.Correo;
-            profesor.Especialidad = dto.Especialidad;
+            profesor.Especialidad = dto.Especialidad; // Agregar esta línea
 
             _context.Profesores.Update(profesor);
             await _context.SaveChangesAsync();
-
             return Ok("Profesor actualizado correctamente.");
         }
 
