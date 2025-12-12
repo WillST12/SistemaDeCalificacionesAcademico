@@ -5,7 +5,11 @@ import { authService } from "../../services/authService";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function Login() {
-  const [form, setForm] = useState({ nombreUsuario: "", contrasena: "" });
+  const [form, setForm] = useState({
+    identificador: "", // usuario (admin) o correo (alumno/profesor)
+    contrasena: ""
+  });
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -16,19 +20,26 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const data = await authService.login(form);
+      const data = await authService.login({
+        identificador: form.identificador,
+        contrasena: form.contrasena
+      });
 
       login({
         token: data.token,
         rol: data.rol,
         debeCambiarContrasena: data.debeCambiarContrasena,
-        nombreUsuario: form.nombreUsuario,
+        identificador: form.identificador
       });
 
-      navigate(data.debeCambiarContrasena ? "/cambiar-contrasena" : "/dashboard");
+      navigate(
+        data.debeCambiarContrasena
+          ? "/cambiar-contrasena"
+          : "/dashboard"
+      );
 
     } catch (error) {
-      alert("Credenciales incorrectas. Verifica tu usuario o contraseña.");
+      alert("Credenciales incorrectas. Verifica tus datos.");
     }
   };
 
@@ -37,35 +48,46 @@ export default function Login() {
       <div className="bg-white shadow-lg rounded-2xl p-10 w-full max-w-md border border-blue-100">
         
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Calificaciones LogicOne
+          Sistema LogicOne
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
 
+          {/* IDENTIFICADOR */}
           <div>
-            <label className="text-gray-600 font-medium">Usuario</label>
+            <label className="text-gray-600 font-medium">
+              Usuario o Correo
+            </label>
             <input
-              name="nombreUsuario"
-              value={form.nombreUsuario}
+              name="identificador"
+              value={form.identificador}
               onChange={handleChange}
-              placeholder="Ingresa tu usuario"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="usuario_admin o correo@dominio.com"
+              className="w-full p-3 border border-gray-300 rounded-lg 
+                         focus:ring-2 focus:ring-blue-500"
+              required
             />
           </div>
 
+          {/* CONTRASEÑA */}
           <div>
-            <label className="text-gray-600 font-medium">Contraseña</label>
+            <label className="text-gray-600 font-medium">
+              Contraseña
+            </label>
             <input
               name="contrasena"
               type="password"
               value={form.contrasena}
               onChange={handleChange}
               placeholder="••••••••"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-lg 
+                         focus:ring-2 focus:ring-blue-500"
+              required
             />
           </div>
 
-          <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold">
+          <button className="w-full bg-blue-600 text-white py-3 rounded-lg 
+                             hover:bg-blue-700 transition font-semibold">
             Iniciar Sesión
           </button>
 
