@@ -140,7 +140,7 @@
               "RelativeDocumentMoniker": "Calificacionesp2\\Controllers\\ProfesoresController.cs",
               "ToolTip": "C:\\Users\\willn\\source\\repos\\Calificacionesp2\\Calificacionesp2\\Controllers\\ProfesoresController.cs",
               "RelativeToolTip": "Calificacionesp2\\Controllers\\ProfesoresController.cs",
-              "ViewState": "AgIAADEAAAAAAAAAAAAYwFsAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAAAFsAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-01T13:40:41.212Z",
               "EditorCaption": ""
@@ -155,8 +155,7 @@
               "RelativeToolTip": "Calificacionesp2\\Models\\DTO\\RegistrarProfesorDTO.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-01T14:07:25.123Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-01T14:07:25.123Z"
             },
             {
               "$type": "Document",
@@ -168,8 +167,7 @@
               "RelativeToolTip": "Calificacionesp2\\Controllers\\MateriasController.cs",
               "ViewState": "AgIAAEIAAAAAAAAAAAAuwFYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-01T14:36:20.506Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-01T14:36:20.506Z"
             },
             {
               "$type": "Document",
@@ -181,8 +179,7 @@
               "RelativeToolTip": "Calificacionesp2\\Models\\Profesor.cs",
               "ViewState": "AgIAAAgAAAAAAAAAAAAiwBkAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-02T14:07:20.067Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-02T14:07:20.067Z"
             },
             {
               "$type": "Document",
@@ -194,8 +191,7 @@
               "RelativeToolTip": "Calificacionesp2\\Models\\DTO\\ProfesorDTO.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-01T13:41:53.721Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-01T13:41:53.721Z"
             },
             {
               "$type": "Document",
@@ -207,8 +203,7 @@
               "RelativeToolTip": "Calificacionesp2\\Controllers\\AlumnosController.cs",
               "ViewState": "AgIAAI4AAAAAAAAAAAAQwJoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-28T13:41:39.224Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-28T13:41:39.224Z"
             },
             {
               "$type": "Document",
