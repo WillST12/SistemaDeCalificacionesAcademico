@@ -539,6 +539,48 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Backend.API.Controllers.DashboardController",
+    "Method": "AdminDashboard",
+    "RelativePath": "api/Dashboard/admin",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.DashboardController",
+    "Method": "AlumnoDashboard",
+    "RelativePath": "api/Dashboard/alumno/{idUsuario}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idUsuario",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.DashboardController",
+    "Method": "ProfesorDashboard",
+    "RelativePath": "api/Dashboard/profesor/{idUsuario}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idUsuario",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Backend.API.Controllers.InscripcionesController",
     "Method": "GetClasesPorAlumno",
     "RelativePath": "api/Inscripciones/{idAlumno}",
