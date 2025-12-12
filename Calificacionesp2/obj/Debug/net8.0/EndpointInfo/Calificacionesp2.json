@@ -1442,7 +1442,7 @@
       "LoginRequest": {
         "type": "object",
         "properties": {
-          "nombreUsuario": {
+          "identificador": {
             "type": "string",
             "nullable": true
           },

@@ -132,22 +132,75 @@ namespace Backend.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest dto)
         {
-            // Buscar usuario por NombreUsuario
-            var usuario = await _context.Usuarios
-                .Include(u => u.Rol)
-                .FirstOrDefaultAsync(u => u.NombreUsuario == dto.NombreUsuario && u.Activo == true);
+            if (string.IsNullOrWhiteSpace(dto.Identificador) || string.IsNullOrWhiteSpace(dto.Contrasena))
+                return BadRequest("Debe enviar identificador y contraseña.");
 
-            if (usuario == null)
+            string ident = dto.Identificador.Trim();
+
+            // ------------------------------------------------------------
+            // 1) Intentar login como ADMIN por NombreUsuario
+            // ------------------------------------------------------------
+            var adminUser = await _context.Usuarios
+                .Include(u => u.Rol)
+                .FirstOrDefaultAsync(u =>
+                    u.Activo == true &&
+                    u.Rol.Nombre == "Admin" &&
+                    u.NombreUsuario == ident
+                );
+
+            Usuario? usuarioFinal = null;
+
+            if (adminUser != null)
+            {
+                usuarioFinal = adminUser;
+            }
+            else
+            {
+                // ------------------------------------------------------------
+                // 2) Intentar login como ALUMNO por Correo (tabla Alumnos)
+                // ------------------------------------------------------------
+                var alumno = await _context.Alumnos
+                    .Include(a => a.Usuario)
+                        .ThenInclude(u => u.Rol)
+                    .FirstOrDefaultAsync(a =>
+                        a.Activo == true &&
+                        a.Correo == ident
+                    );
+
+                if (alumno != null)
+                {
+                    usuarioFinal = alumno.Usuario;
+                }
+                else
+                {
+                    // ------------------------------------------------------------
+                    // 3) Intentar login como PROFESOR por Correo (tabla Profesores)
+                    // ------------------------------------------------------------
+                    var profesor = await _context.Profesores
+                        .Include(p => p.Usuario)
+                            .ThenInclude(u => u.Rol)
+                        .FirstOrDefaultAsync(p =>
+                            p.Activo == true &&
+                            p.Correo == ident
+                        );
+
+                    if (profesor != null)
+                        usuarioFinal = profesor.Usuario;
+                }
+            }
+
+            if (usuarioFinal == null || usuarioFinal.Activo != true)
                 return Unauthorized("Credenciales inválidas.");
 
-            if (usuario.ContrasenaHash != dto.Contrasena)
+            // ✅ Validar contraseña
+            if (usuarioFinal.ContrasenaHash != dto.Contrasena)
                 return Unauthorized("Contraseña incorrecta.");
 
             var claims = new[]
             {
-                new Claim("idUsuario", usuario.IdUsuario.ToString()),
-                new Claim(ClaimTypes.Role, usuario.Rol.Nombre)
-            };
+        new Claim("idUsuario", usuarioFinal.IdUsuario.ToString()),
+        new Claim(ClaimTypes.Role, usuarioFinal.Rol.Nombre)
+    };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -163,10 +216,11 @@ namespace Backend.API.Controllers
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
-                rol = usuario.Rol.Nombre,
-                debeCambiarContrasena = usuario.CambiarContrasena
+                rol = usuarioFinal.Rol.Nombre,
+                debeCambiarContrasena = usuarioFinal.CambiarContrasena
             });
         }
+
 
         // -------------------------
         // Solicitar recuperación (por correo de Alumno/Profesor -> vincula a Usuario)
