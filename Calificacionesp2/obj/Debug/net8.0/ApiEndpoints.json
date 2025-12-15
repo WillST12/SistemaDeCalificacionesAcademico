@@ -540,7 +540,7 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.DashboardController",
-    "Method": "AdminDashboard",
+    "Method": "Admin",
     "RelativePath": "api/Dashboard/admin",
     "HttpMethod": "GET",
     "IsController": true,
@@ -550,7 +550,7 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.DashboardController",
-    "Method": "AlumnoDashboard",
+    "Method": "DashboardAlumno",
     "RelativePath": "api/Dashboard/alumno/{idUsuario}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -566,7 +566,7 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.DashboardController",
-    "Method": "ProfesorDashboard",
+    "Method": "DashboardProfesor",
     "RelativePath": "api/Dashboard/profesor/{idUsuario}",
     "HttpMethod": "GET",
     "IsController": true,

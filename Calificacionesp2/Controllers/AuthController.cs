@@ -217,6 +217,7 @@ namespace Backend.API.Controllers
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 rol = usuarioFinal.Rol.Nombre,
+                idUsuario = usuarioFinal.IdUsuario,
                 debeCambiarContrasena = usuarioFinal.CambiarContrasena
             });
         }

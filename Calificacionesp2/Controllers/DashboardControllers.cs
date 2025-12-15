@@ -1,5 +1,4 @@
-﻿// Controllers/DashboardController.cs
-using Backend.API.Data;
+﻿using Backend.API.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,12 +17,12 @@ namespace Backend.API.Controllers
             _context = context;
         }
 
-        // =============================
-        // ADMIN DASHBOARD
-        // =============================
+        // =========================
+        // 🔹 DASHBOARD ADMIN 
+        // =========================
         [HttpGet("admin")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AdminDashboard()
+        public async Task<IActionResult> Admin()
         {
             return Ok(new
             {
@@ -35,55 +34,66 @@ namespace Backend.API.Controllers
             });
         }
 
-        // =============================
-        // PROFESOR DASHBOARD
-        // =============================
+        // =========================
+        // 🔹 DASHBOARD PROFESOR
+        // =========================
         [HttpGet("profesor/{idUsuario}")]
         [Authorize(Roles = "Profesor")]
-        public async Task<IActionResult> ProfesorDashboard(int idUsuario)
+        public async Task<IActionResult> DashboardProfesor(int idUsuario)
         {
             var profesor = await _context.Profesores
                 .FirstOrDefaultAsync(p => p.IdUsuario == idUsuario);
 
-            if (profesor == null)
-                return NotFound();
+            if (profesor == null) return BadRequest();
 
             var clases = await _context.Clases
-                .Include(c => c.ProfesorMateria)
                 .Where(c => c.ProfesorMateria.IdProfesor == profesor.IdProfesor)
                 .ToListAsync();
+
+            var totalAlumnos = await _context.ClaseAlumnos
+                .CountAsync(ca => clases.Select(c => c.IdClase).Contains(ca.IdClase));
+
+            var calificaciones = await _context.Calificaciones
+                .CountAsync(c => clases.Select(ca => ca.IdClase)
+                .Contains(c.ClaseAlumno.IdClase));
 
             return Ok(new
             {
                 totalClases = clases.Count,
-                totalAlumnos = await _context.ClaseAlumnos
-                    .CountAsync(ca => clases.Select(c => c.IdClase).Contains(ca.IdClase)),
-                calificacionesRegistradas = await _context.Calificaciones
-                    .CountAsync(c => clases.Select(cl => cl.IdClase)
-                    .Contains(c.ClaseAlumno.IdClase))
+                totalAlumnos,
+                calificacionesRegistradas = calificaciones
             });
         }
 
-        // =============================
-        // ALUMNO DASHBOARD
-        // =============================
+
+        // =========================
+        // 🔹 DASHBOARD ALUMNO
+        // =========================
         [HttpGet("alumno/{idUsuario}")]
         [Authorize(Roles = "Alumno")]
-        public async Task<IActionResult> AlumnoDashboard(int idUsuario)
+        public async Task<IActionResult> DashboardAlumno(int idUsuario)
         {
             var alumno = await _context.Alumnos
                 .FirstOrDefaultAsync(a => a.IdUsuario == idUsuario);
 
-            if (alumno == null)
-                return NotFound();
+            if (alumno == null) return BadRequest();
+
+            var clases = await _context.ClaseAlumnos
+                .Where(ca => ca.IdAlumno == alumno.IdAlumno)
+                .ToListAsync();
+
+            var calificacionesPublicadas = await _context.Calificaciones
+                .CountAsync(c =>
+                    c.ClaseAlumno.IdAlumno == alumno.IdAlumno &&
+                    c.Publicado == true
+                );
 
             return Ok(new
             {
-                clasesInscritas = await _context.ClaseAlumnos
-                    .CountAsync(ca => ca.IdAlumno == alumno.IdAlumno),
-                calificacionesPublicadas = await _context.Calificaciones
-                    .CountAsync(c => c.ClaseAlumno.IdAlumno == alumno.IdAlumno && c.Publicado)
+                clasesInscritas = clases.Count,
+                calificacionesPublicadas
             });
         }
+
     }
 }
