@@ -72,7 +72,7 @@ export default function ClasesListado() {
                     to={`/admin/clases/${id}`}
                     className="px-3 py-1 bg-green-600 text-white rounded"
                   >
-                    Ver Alumnos
+                    Inscribir Alumnos
                   </Link>
 
                   {/* EDITAR */}

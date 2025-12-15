@@ -28,6 +28,7 @@ export default function Login() {
       login({
         token: data.token,
         rol: data.rol,
+        idUsuario: data.idUsuario,
         debeCambiarContrasena: data.debeCambiarContrasena,
         identificador: form.identificador
       });
