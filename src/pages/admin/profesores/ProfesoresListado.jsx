@@ -2,9 +2,15 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import profesorService from "../../../services/profesorService";
 import BackButton from "../../../components/ui/BackButton";
+import ConfirmModal from "../../../components/ui/ConfirmModal";
 
 export default function ProfesoresListado() {
   const [profesores, setProfesores] = useState([]);
+  const [modal, setModal] = useState({
+    open: false,
+    profesor: null,
+    action: null
+  });
 
   const cargarProfesores = async () => {
     try {
@@ -19,23 +25,26 @@ export default function ProfesoresListado() {
     cargarProfesores();
   }, []);
 
-  const desactivarProfesor = async (id) => {
-    if (!confirm("¿Seguro que deseas desactivar este profesor?")) return;
-    try {
-      await profesorService.desactivar(id);
-      cargarProfesores();
-    } catch {
-      alert("Error desactivando profesor");
-    }
+  const abrirModal = (profesor, action) => {
+    setModal({ open: true, profesor, action });
   };
 
-  const reactivarProfesor = async (id) => {
-    if (!confirm("¿Reactivar este profesor?")) return;
+  const cerrarModal = () => {
+    setModal({ open: false, profesor: null, action: null });
+  };
+
+  const confirmarAccion = async () => {
     try {
-      await profesorService.reactivar(id);
+      if (modal.action === "desactivar") {
+        await profesorService.desactivar(modal.profesor.idProfesor);
+      } else {
+        await profesorService.reactivar(modal.profesor.idProfesor);
+      }
+
+      cerrarModal();
       cargarProfesores();
     } catch {
-      alert("Error reactivando profesor");
+      alert("Error actualizando profesor");
     }
   };
 
@@ -74,20 +83,16 @@ export default function ProfesoresListado() {
               <td className="p-3">{p.correo}</td>
               <td className="p-3">{p.especialidad}</td>
 
-              {/* ACTIVO */}
               <td className="p-3">
-                <span
-                  className={`px-2 py-1 rounded text-sm font-semibold ${
-                    p.activo
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
+                <span className={`px-2 py-1 rounded text-sm font-semibold ${
+                  p.activo
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
+                }`}>
                   {p.activo ? "Sí" : "No"}
                 </span>
               </td>
 
-              {/* ACCIONES */}
               <td className="p-3 flex gap-2">
                 <Link
                   to={`/admin/profesores/editar/${p.idProfesor}`}
@@ -99,14 +104,14 @@ export default function ProfesoresListado() {
                 {p.activo ? (
                   <button
                     className="px-3 py-1 bg-red-600 text-white rounded"
-                    onClick={() => desactivarProfesor(p.idProfesor)}
+                    onClick={() => abrirModal(p, "desactivar")}
                   >
                     Desactivar
                   </button>
                 ) : (
                   <button
                     className="px-3 py-1 bg-green-600 text-white rounded"
-                    onClick={() => reactivarProfesor(p.idProfesor)}
+                    onClick={() => abrirModal(p, "reactivar")}
                   >
                     Reactivar
                   </button>
@@ -116,6 +121,27 @@ export default function ProfesoresListado() {
           ))}
         </tbody>
       </table>
+
+      {/* MODAL */}
+      <ConfirmModal
+        open={modal.open}
+        title={
+          modal.action === "desactivar"
+            ? "Desactivar Profesor"
+            : "Reactivar Profesor"
+        }
+        message={
+          modal.action === "desactivar"
+            ? `¿Seguro que deseas desactivar a ${modal.profesor?.nombre}?`
+            : `¿Deseas reactivar a ${modal.profesor?.nombre}?`
+        }
+        confirmText={
+          modal.action === "desactivar" ? "Desactivar" : "Reactivar"
+        }
+        danger={modal.action === "desactivar"}
+        onCancel={cerrarModal}
+        onConfirm={confirmarAccion}
+      />
     </div>
   );
 }

@@ -1,11 +1,15 @@
-// src/pages/admin/alumnos/AlumnosListado.jsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import alumnoService from "../../../services/alumnoService";
 import BackButton from "../../../components/ui/BackButton";
+import ConfirmModal from "../../../components/ui/ConfirmModal";
 
 export default function AlumnosListado() {
   const [alumnos, setAlumnos] = useState([]);
+  const [modal, setModal] = useState({
+    open: false,
+    alumno: null
+  });
 
   const cargarAlumnos = async () => {
     try {
@@ -16,30 +20,32 @@ export default function AlumnosListado() {
     }
   };
 
-  const toggleActivo = async (alumno) => {
-    const confirmar = confirm(
-      alumno.activo
-        ? "¿Deseas desactivar este alumno?"
-        : "¿Deseas reactivar este alumno?"
-    );
-
-    if (!confirmar) return;
-
-    try {
-      if (alumno.activo) {
-        await alumnoService.desactivar(alumno.idAlumno);
-      } else {
-        await alumnoService.reactivar(alumno.idAlumno);
-      }
-      cargarAlumnos();
-    } catch {
-      alert("Error actualizando estado del alumno");
-    }
-  };
-
   useEffect(() => {
     cargarAlumnos();
   }, []);
+
+  const abrirModal = (alumno) => {
+    setModal({ open: true, alumno });
+  };
+
+  const cerrarModal = () => {
+    setModal({ open: false, alumno: null });
+  };
+
+  const confirmarAccion = async () => {
+    try {
+      if (modal.alumno.activo) {
+        await alumnoService.desactivar(modal.alumno.idAlumno);
+      } else {
+        await alumnoService.reactivar(modal.alumno.idAlumno);
+      }
+
+      cerrarModal();
+      cargarAlumnos();
+    } catch {
+      alert("Error actualizando alumno");
+    }
+  };
 
   return (
     <div>
@@ -77,11 +83,11 @@ export default function AlumnosListado() {
               <td className="p-3">{a.matricula}</td>
 
               <td className="p-3">
-                {a.activo ? (
-                  <span className="text-green-600 font-semibold">Sí</span>
-                ) : (
-                  <span className="text-red-600 font-semibold">No</span>
-                )}
+                <span className={`font-semibold ${
+                  a.activo ? "text-green-600" : "text-red-600"
+                }`}>
+                  {a.activo ? "Sí" : "No"}
+                </span>
               </td>
 
               <td className="p-3 flex gap-2">
@@ -93,7 +99,7 @@ export default function AlumnosListado() {
                 </Link>
 
                 <button
-                  onClick={() => toggleActivo(a)}
+                  onClick={() => abrirModal(a)}
                   className={`px-3 py-1 rounded text-white ${
                     a.activo ? "bg-red-600" : "bg-green-600"
                   }`}
@@ -103,16 +109,23 @@ export default function AlumnosListado() {
               </td>
             </tr>
           ))}
-
-          {alumnos.length === 0 && (
-            <tr>
-              <td colSpan={6} className="text-center py-4 text-gray-500">
-                No hay alumnos registrados
-              </td>
-            </tr>
-          )}
         </tbody>
       </table>
+
+      {/* MODAL */}
+      <ConfirmModal
+        open={modal.open}
+        title={modal.alumno?.activo ? "Desactivar Alumno" : "Reactivar Alumno"}
+        message={
+          modal.alumno?.activo
+            ? `¿Seguro que deseas desactivar a ${modal.alumno?.nombre}?`
+            : `¿Deseas reactivar a ${modal.alumno?.nombre}?`
+        }
+        confirmText={modal.alumno?.activo ? "Desactivar" : "Reactivar"}
+        danger={modal.alumno?.activo}
+        onCancel={cerrarModal}
+        onConfirm={confirmarAccion}
+      />
     </div>
   );
 }

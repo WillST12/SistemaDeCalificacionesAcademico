@@ -6,7 +6,7 @@ const alumnoService = {
   obtener: (id) => api.get(`/Alumnos/${id}`),
   crear: (data) => api.post("/Alumnos", data),
   actualizar: (id, data) => api.put(`/Alumnos/${id}`, data),
-  desactivar: (id) => api.delete(`/Alumnos/${id}`),
+  desactivar: (id) => api.put(`/Alumnos/desactivar/${id}`),
   reactivar: (id) => api.put(`/Alumnos/reactivar/${id}`),
 };
 
