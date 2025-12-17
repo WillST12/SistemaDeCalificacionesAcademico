@@ -16,13 +16,24 @@ export default function AlumnosListado() {
     }
   };
 
-  const eliminarAlumno = async (id) => {
-    if (!confirm("¿Seguro que deseas desactivar este alumno?")) return;
+  const toggleActivo = async (alumno) => {
+    const confirmar = confirm(
+      alumno.activo
+        ? "¿Deseas desactivar este alumno?"
+        : "¿Deseas reactivar este alumno?"
+    );
+
+    if (!confirmar) return;
+
     try {
-      await alumnoService.eliminar(id);
+      if (alumno.activo) {
+        await alumnoService.desactivar(alumno.idAlumno);
+      } else {
+        await alumnoService.reactivar(alumno.idAlumno);
+      }
       cargarAlumnos();
     } catch {
-      alert("Error desactivando alumno");
+      alert("Error actualizando estado del alumno");
     }
   };
 
@@ -37,21 +48,12 @@ export default function AlumnosListado() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Lista de Alumnos</h1>
 
-        <div className="flex gap-2">
-          <Link
-            to="/admin/alumnos/desactivados"
-            className="bg-gray-500 text-white px-4 py-2 rounded-lg"
-          >
-            Ver desactivados
-          </Link>
-
-          <Link
-            to="/admin/alumnos/crear"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-          >
-            + Nuevo Alumno
-          </Link>
-        </div>
+        <Link
+          to="/admin/alumnos/crear"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+        >
+          + Nuevo Alumno
+        </Link>
       </div>
 
       <table className="w-full bg-white rounded-xl shadow">
@@ -61,6 +63,7 @@ export default function AlumnosListado() {
             <th className="p-3">Nombre</th>
             <th className="p-3">Correo</th>
             <th className="p-3">Matrícula</th>
+            <th className="p-3">Activo</th>
             <th className="p-3">Acciones</th>
           </tr>
         </thead>
@@ -69,11 +72,17 @@ export default function AlumnosListado() {
           {alumnos.map((a) => (
             <tr key={a.idAlumno} className="border-b">
               <td className="p-3">{a.idAlumno}</td>
-              <td className="p-3">
-                {a.nombre} {a.apellido}
-              </td>
+              <td className="p-3">{a.nombre} {a.apellido}</td>
               <td className="p-3">{a.correo}</td>
               <td className="p-3">{a.matricula}</td>
+
+              <td className="p-3">
+                {a.activo ? (
+                  <span className="text-green-600 font-semibold">Sí</span>
+                ) : (
+                  <span className="text-red-600 font-semibold">No</span>
+                )}
+              </td>
 
               <td className="p-3 flex gap-2">
                 <Link
@@ -84,14 +93,24 @@ export default function AlumnosListado() {
                 </Link>
 
                 <button
-                  className="px-3 py-1 bg-red-600 text-white rounded"
-                  onClick={() => eliminarAlumno(a.idAlumno)}
+                  onClick={() => toggleActivo(a)}
+                  className={`px-3 py-1 rounded text-white ${
+                    a.activo ? "bg-red-600" : "bg-green-600"
+                  }`}
                 >
-                  Desactivar
+                  {a.activo ? "Desactivar" : "Reactivar"}
                 </button>
               </td>
             </tr>
           ))}
+
+          {alumnos.length === 0 && (
+            <tr>
+              <td colSpan={6} className="text-center py-4 text-gray-500">
+                No hay alumnos registrados
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

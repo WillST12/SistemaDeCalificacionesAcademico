@@ -43,7 +43,7 @@ import CalificacionesListado from "../pages/admin/calificaciones/CalificacionesL
 import CrearCalificacion from "../pages/admin/calificaciones/CrearCalificacion";
 import EditarCalificacion from "../pages/admin/calificaciones/EditarCalificacion";
 
-import AlumnosDesactivados from "../pages/admin/alumnos/AlumnosDesactivados";
+//import AlumnosDesactivados from "../pages/admin/alumnos/AlumnosDesactivados";
 
 
 export const router = createBrowserRouter([
@@ -97,7 +97,6 @@ export const router = createBrowserRouter([
       { path: "alumnos", element: <AlumnosListado /> },
       { path: "alumnos/crear", element: <CrearAlumno /> },
       { path: "alumnos/editar/:id", element: <EditarAlumno /> },
-      { path: "alumnos/desactivados", element: <AlumnosDesactivados /> },
 
       // 🔹 CRUD PROFESORES
       { path: "profesores", element: <ProfesoresListado /> },
