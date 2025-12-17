@@ -19,9 +19,6 @@ namespace Backend.API.Controllers
             _context = context;
         }
 
-        // ============================
-        // CREAR ALUMNO
-        // ============================
         [HttpPost]
         public async Task<IActionResult> CrearAlumno([FromBody] AlumnoDTO dto)
         {
@@ -47,31 +44,20 @@ namespace Backend.API.Controllers
             _context.Alumnos.Add(alumno);
             await _context.SaveChangesAsync();
 
-            return Ok(new
-            {
-                mensaje = "Alumno creado correctamente.",
-                alumno.IdAlumno
-            });
+            return Ok(new { alumno.IdAlumno });
         }
 
-        // ============================
-        // LISTAR ALUMNOS ACTIVOS
-        // ============================
         [HttpGet]
         public async Task<IActionResult> GetAlumnos()
         {
             var alumnos = await _context.Alumnos
                 .Include(a => a.Usuario)
-                .Where(a => a.Activo == true)
                 .OrderBy(a => a.Nombre)
                 .ToListAsync();
 
             return Ok(alumnos);
         }
 
-        // ============================
-        // OBTENER ALUMNO POR ID
-        // ============================
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAlumnoPorId(int id)
         {
@@ -85,9 +71,6 @@ namespace Backend.API.Controllers
             return Ok(alumno);
         }
 
-        // ============================
-        // EDITAR ALUMNO
-        // ============================
         [HttpPut("{id}")]
         public async Task<IActionResult> EditarAlumno(int id, [FromBody] AlumnoDTO dto)
         {
@@ -102,53 +85,31 @@ namespace Backend.API.Controllers
             alumno.Correo = dto.Correo;
 
             await _context.SaveChangesAsync();
-            return Ok("Alumno actualizado correctamente.");
+            return Ok();
         }
 
-        // ============================
-        // DESACTIVAR ALUMNO
-        // ============================
         [HttpDelete("{id}")]
         public async Task<IActionResult> DesactivarAlumno(int id)
         {
             var alumno = await _context.Alumnos.FindAsync(id);
             if (alumno == null)
-                return NotFound("Alumno no encontrado.");
+                return NotFound();
 
             alumno.Activo = false;
             await _context.SaveChangesAsync();
-
-            return Ok("Alumno desactivado correctamente.");
+            return Ok();
         }
 
-        // ============================
-        // LISTAR ALUMNOS DESACTIVADOS
-        // ============================
-        [HttpGet("desactivados")]
-        public async Task<IActionResult> GetDesactivados()
-        {
-            var list = await _context.Alumnos
-                .Where(a => !a.Activo)
-                .OrderBy(a => a.Nombre)
-                .ToListAsync();
-
-            return Ok(list);
-        }
-
-        // ============================
-        // REACTIVAR ALUMNO
-        // ============================
         [HttpPut("reactivar/{id}")]
         public async Task<IActionResult> ReactivarAlumno(int id)
         {
             var alumno = await _context.Alumnos.FindAsync(id);
             if (alumno == null)
-                return NotFound("Alumno no encontrado.");
+                return NotFound();
 
             alumno.Activo = true;
             await _context.SaveChangesAsync();
-
-            return Ok("Alumno reactivado correctamente.");
+            return Ok();
         }
     }
 }

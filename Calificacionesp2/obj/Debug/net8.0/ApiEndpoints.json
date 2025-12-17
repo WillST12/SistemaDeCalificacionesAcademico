@@ -80,16 +80,6 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.AlumnosController",
-    "Method": "GetDesactivados",
-    "RelativePath": "api/Alumnos/desactivados",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Backend.API.Controllers.AlumnosController",
     "Method": "ReactivarAlumno",
     "RelativePath": "api/Alumnos/reactivar/{id}",
     "HttpMethod": "PUT",
