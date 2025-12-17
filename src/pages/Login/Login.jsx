@@ -63,7 +63,7 @@ export default function Login() {
               name="identificador"
               value={form.identificador}
               onChange={handleChange}
-              placeholder="usuario_admin o correo@dominio.com"
+              placeholder="admin o correo@dominio.com"
               className="w-full p-3 border border-gray-300 rounded-lg 
                          focus:ring-2 focus:ring-blue-500"
               required

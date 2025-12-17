@@ -7,19 +7,37 @@ export default function ProfesoresListado() {
   const [profesores, setProfesores] = useState([]);
 
   const cargarProfesores = async () => {
-    const res = await profesorService.listar();
-    setProfesores(res.data);
-  };
-
-  const desactivarProfesor = async (id) => {
-    if (!confirm("¿Seguro que deseas desactivar este profesor?")) return;
-    await profesorService.desactivar(id);
-    cargarProfesores();
+    try {
+      const res = await profesorService.listar();
+      setProfesores(res.data);
+    } catch {
+      alert("Error cargando profesores");
+    }
   };
 
   useEffect(() => {
     cargarProfesores();
   }, []);
+
+  const desactivarProfesor = async (id) => {
+    if (!confirm("¿Seguro que deseas desactivar este profesor?")) return;
+    try {
+      await profesorService.desactivar(id);
+      cargarProfesores();
+    } catch {
+      alert("Error desactivando profesor");
+    }
+  };
+
+  const reactivarProfesor = async (id) => {
+    if (!confirm("¿Reactivar este profesor?")) return;
+    try {
+      await profesorService.reactivar(id);
+      cargarProfesores();
+    } catch {
+      alert("Error reactivando profesor");
+    }
+  };
 
   return (
     <div>
@@ -42,6 +60,8 @@ export default function ProfesoresListado() {
             <th className="p-3">ID</th>
             <th className="p-3">Nombre</th>
             <th className="p-3">Correo</th>
+            <th className="p-3">Especialidad</th>
+            <th className="p-3">Activo</th>
             <th className="p-3">Acciones</th>
           </tr>
         </thead>
@@ -52,7 +72,22 @@ export default function ProfesoresListado() {
               <td className="p-3">{p.idProfesor}</td>
               <td className="p-3">{p.nombre} {p.apellido}</td>
               <td className="p-3">{p.correo}</td>
+              <td className="p-3">{p.especialidad}</td>
 
+              {/* ACTIVO */}
+              <td className="p-3">
+                <span
+                  className={`px-2 py-1 rounded text-sm font-semibold ${
+                    p.activo
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {p.activo ? "Sí" : "No"}
+                </span>
+              </td>
+
+              {/* ACCIONES */}
               <td className="p-3 flex gap-2">
                 <Link
                   to={`/admin/profesores/editar/${p.idProfesor}`}
@@ -61,18 +96,26 @@ export default function ProfesoresListado() {
                   Editar
                 </Link>
 
-                <button
-                  className="px-3 py-1 bg-red-600 text-white rounded"
-                  onClick={() => desactivarProfesor(p.idProfesor)}
-                >
-                  Desactivar
-                </button>
+                {p.activo ? (
+                  <button
+                    className="px-3 py-1 bg-red-600 text-white rounded"
+                    onClick={() => desactivarProfesor(p.idProfesor)}
+                  >
+                    Desactivar
+                  </button>
+                ) : (
+                  <button
+                    className="px-3 py-1 bg-green-600 text-white rounded"
+                    onClick={() => reactivarProfesor(p.idProfesor)}
+                  >
+                    Reactivar
+                  </button>
+                )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
     </div>
   );
 }

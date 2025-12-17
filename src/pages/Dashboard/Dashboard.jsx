@@ -54,6 +54,7 @@ export default function Dashboard() {
             <Card title="Clases asignadas" value={data.totalClases} />
             <Card title="Alumnos" value={data.totalAlumnos} />
             <Card title="Calificaciones registradas" value={data.calificacionesRegistradas} />
+            <Card title="Indice Promedio" value={data.indicePromedio} />
           </>
         )}
 
