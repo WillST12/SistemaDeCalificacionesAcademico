@@ -50,7 +50,11 @@ export default function EditarMateria() {
     <div className="max-w-2xl mx-auto p-6">
       <BackButton />
       <h1 className="text-3xl font-bold mb-6">Editar Materia</h1>
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8">
+
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8"
+      >
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-medium mb-2">
             Nombre
@@ -64,7 +68,7 @@ export default function EditarMateria() {
             className="w-full border border-gray-300 rounded-lg px-4 py-2"
           />
         </div>
-        
+
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-medium mb-2">
             Código

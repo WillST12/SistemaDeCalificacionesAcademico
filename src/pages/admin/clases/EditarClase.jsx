@@ -19,9 +19,6 @@ export default function EditarClase() {
     idProfesor: ""
   });
 
-  // ------------------------------------
-  // 🔹 CARGAR DATOS INICIALES
-  // ------------------------------------
   useEffect(() => {
     cargarTodo();
   }, []);
@@ -49,15 +46,12 @@ export default function EditarClase() {
           clase.ProfesorMateria?.IdProfesor
       });
 
-    } catch (err) {
+    } catch {
       alert("Error cargando datos");
       navigate("/admin/clases");
     }
   };
 
-  // ------------------------------------
-  // 🔹 GUARDAR CAMBIOS
-  // ------------------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -66,7 +60,6 @@ export default function EditarClase() {
     }
 
     try {
-      // 1️⃣ Crear / obtener ProfesorMateria
       const pmRes = await profesorMateriaService.asignar({
         idProfesor: Number(form.idProfesor),
         idMateria: Number(form.idMateria)
@@ -77,7 +70,6 @@ export default function EditarClase() {
         pmRes.data.IdProfesorMateria ??
         pmRes.data;
 
-      // 2️⃣ Actualizar Clase
       await ClaseService.actualizar(id, {
         idProfesorMateria,
         periodo: form.periodo,
@@ -94,58 +86,79 @@ export default function EditarClase() {
   };
 
   return (
-    <div>
+    <div className="max-w-2xl mx-auto p-6">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-4">Editar Clase</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow space-y-4">
+      <h1 className="text-3xl font-bold mb-6">
+        Editar Clase
+      </h1>
 
-        {/* MATERIA */}
-        <div>
-          <label className="block font-semibold mb-1">Materia</label>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8"
+      >
+        {/* Materia */}
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-medium mb-2">
+            Materia
+          </label>
           <select
-            className="input w-full"
             value={form.idMateria}
             onChange={(e) => setForm({ ...form, idMateria: e.target.value })}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2"
           >
             <option value="">-- Selecciona materia --</option>
             {materias.map(m => (
-              <option key={m.idMateria ?? m.IdMateria} value={m.idMateria ?? m.IdMateria}>
+              <option
+                key={m.idMateria ?? m.IdMateria}
+                value={m.idMateria ?? m.IdMateria}
+              >
                 {m.nombre ?? m.Nombre}
               </option>
             ))}
           </select>
         </div>
 
-        {/* PROFESOR */}
-        <div>
-          <label className="block font-semibold mb-1">Profesor</label>
+        {/* Profesor */}
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-medium mb-2">
+            Profesor
+          </label>
           <select
-            className="input w-full"
             value={form.idProfesor}
             onChange={(e) => setForm({ ...form, idProfesor: e.target.value })}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2"
           >
             <option value="">-- Selecciona profesor --</option>
             {profesores.map(p => (
-              <option key={p.idProfesor ?? p.IdProfesor} value={p.idProfesor ?? p.IdProfesor}>
+              <option
+                key={p.idProfesor ?? p.IdProfesor}
+                value={p.idProfesor ?? p.IdProfesor}
+              >
                 {p.nombre ?? p.Nombre} {p.apellido ?? p.Apellido}
               </option>
             ))}
           </select>
         </div>
 
-        {/* PERIODO */}
-        <div>
-          <label className="block font-semibold mb-1">Periodo</label>
+        {/* Periodo */}
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-medium mb-2">
+            Periodo
+          </label>
           <input
-            className="input w-full"
+            type="text"
             placeholder="Ej: Sep 2025 - Ene 2026"
             value={form.periodo}
             onChange={(e) => setForm({ ...form, periodo: e.target.value })}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2"
           />
         </div>
 
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+        >
           Guardar Cambios
         </button>
       </form>
