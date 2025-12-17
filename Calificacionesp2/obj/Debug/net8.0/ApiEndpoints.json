@@ -65,8 +65,8 @@
   {
     "ContainingType": "Backend.API.Controllers.AlumnosController",
     "Method": "DesactivarAlumno",
-    "RelativePath": "api/Alumnos/{id}",
-    "HttpMethod": "DELETE",
+    "RelativePath": "api/Alumnos/desactivar/{id}",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [

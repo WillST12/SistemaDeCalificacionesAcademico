@@ -107,8 +107,10 @@
             "description": "OK"
           }
         }
-      },
-      "delete": {
+      }
+    },
+    "/api/Alumnos/desactivar/{id}": {
+      "put": {
         "tags": [
           "Alumnos"
         ],

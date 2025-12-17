@@ -88,16 +88,16 @@ namespace Backend.API.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpPut("desactivar/{id}")]
         public async Task<IActionResult> DesactivarAlumno(int id)
         {
             var alumno = await _context.Alumnos.FindAsync(id);
             if (alumno == null)
-                return NotFound();
+                return NotFound("Alumno no encontrado.");
 
             alumno.Activo = false;
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok("Alumno desactivado Correctamente");
         }
 
         [HttpPut("reactivar/{id}")]
