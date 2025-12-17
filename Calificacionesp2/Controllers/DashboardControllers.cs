@@ -34,36 +34,57 @@ namespace Backend.API.Controllers
             });
         }
 
-        // =========================
-        // 🔹 DASHBOARD PROFESOR
-        // =========================
+   
         [HttpGet("profesor/{idUsuario}")]
         [Authorize(Roles = "Profesor")]
         public async Task<IActionResult> DashboardProfesor(int idUsuario)
         {
             var profesor = await _context.Profesores
-                .FirstOrDefaultAsync(p => p.IdUsuario == idUsuario);
+                .FirstOrDefaultAsync(p => p.IdUsuario == idUsuario && p.Activo);
 
-            if (profesor == null) return BadRequest();
+            if (profesor == null)
+                return BadRequest("Profesor no válido o inactivo");
 
-            var clases = await _context.Clases
-                .Where(c => c.ProfesorMateria.IdProfesor == profesor.IdProfesor)
+            // 🔹 Clases del profesor
+            var clasesIds = await _context.Clases
+                .Where(c => c.Activo && c.ProfesorMateria.IdProfesor == profesor.IdProfesor)
+                .Select(c => c.IdClase)
                 .ToListAsync();
 
+            // 🔹 Total de alumnos (sin duplicar)
             var totalAlumnos = await _context.ClaseAlumnos
-                .CountAsync(ca => clases.Select(c => c.IdClase).Contains(ca.IdClase));
+                .Where(ca => clasesIds.Contains(ca.IdClase))
+                .Select(ca => ca.IdAlumno)
+                .Distinct()
+                .CountAsync();
 
+            // 🔹 Calificaciones del profesor
             var calificaciones = await _context.Calificaciones
-                .CountAsync(c => clases.Select(ca => ca.IdClase)
-                .Contains(c.ClaseAlumno.IdClase));
+                .Where(c => clasesIds.Contains(c.ClaseAlumno.IdClase))
+                .ToListAsync();
+
+            var totalCalificaciones = calificaciones.Count;
+
+            // 🔹 Índice promedio
+            decimal indicePromedio = 0;
+
+            if (totalCalificaciones > 0)
+            {
+                indicePromedio = Math.Round(
+                    calificaciones.Average(c => c.Nota),
+                    2
+                );
+            }
 
             return Ok(new
             {
-                totalClases = clases.Count,
+                totalClases = clasesIds.Count,
                 totalAlumnos,
-                calificacionesRegistradas = calificaciones
+                calificacionesRegistradas = totalCalificaciones,
+                indicePromedio
             });
         }
+
 
 
         // =========================

@@ -96,13 +96,42 @@ namespace Backend.API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DesactivarProfesor(int id)
         {
-            var profesor = await _context.Profesores.FindAsync(id);
-            if (profesor == null) return NotFound("Profesor no encontrado.");
+            var profesor = await _context.Profesores
+                .FirstOrDefaultAsync(p => p.IdProfesor == id);
 
+            if (profesor == null)
+                return NotFound("Profesor no encontrado.");
+      
             profesor.Activo = false;
+  
+            var clases = await _context.Clases
+                .Where(c => c.ProfesorMateria.IdProfesor == id)
+                .ToListAsync();
+
+            foreach (var clase in clases)
+            {
+                clase.Activo = false;
+            }
+
             await _context.SaveChangesAsync();
-            return Ok("Profesor desactivado correctamente.");
+            return Ok("Profesor y sus clases fueron desactivados.");
         }
+
+        [HttpPut("reactivar/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ReactivarProfesor(int id)
+        {
+            var profesor = await _context.Profesores.FindAsync(id);
+            if (profesor == null)
+                return NotFound("Profesor no encontrado.");
+
+            profesor.Activo = true;
+            await _context.SaveChangesAsync();
+
+            return Ok("Profesor reactivado correctamente.");
+        }
+
+
     }
 }
 
