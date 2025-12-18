@@ -43,8 +43,14 @@ export default function ProfesoresListado() {
 
       cerrarModal();
       cargarProfesores();
-    } catch {
-      alert("Error actualizando profesor");
+    } catch (error) {
+      cerrarModal();
+
+      if (error.response?.status === 400) {
+        alert(error.response.data);
+      } else {
+        alert("Error actualizando profesor");
+      }
     }
   };
 
@@ -122,22 +128,15 @@ export default function ProfesoresListado() {
         </tbody>
       </table>
 
-      {/* MODAL */}
       <ConfirmModal
         open={modal.open}
-        title={
-          modal.action === "desactivar"
-            ? "Desactivar Profesor"
-            : "Reactivar Profesor"
-        }
+        title={modal.action === "desactivar" ? "Desactivar Profesor" : "Reactivar Profesor"}
         message={
           modal.action === "desactivar"
             ? `¿Seguro que deseas desactivar a ${modal.profesor?.nombre}?`
             : `¿Deseas reactivar a ${modal.profesor?.nombre}?`
         }
-        confirmText={
-          modal.action === "desactivar" ? "Desactivar" : "Reactivar"
-        }
+        confirmText={modal.action === "desactivar" ? "Desactivar" : "Reactivar"}
         danger={modal.action === "desactivar"}
         onCancel={cerrarModal}
         onConfirm={confirmarAccion}
