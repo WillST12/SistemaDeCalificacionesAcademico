@@ -9,6 +9,7 @@ namespace Backend.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class ProfesoresController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -18,8 +19,10 @@ namespace Backend.API.Controllers
             _context = context;
         }
 
+        // ============================
+        // CREAR PROFESOR
+        // ============================
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CrearProfesor([FromBody] ProfesorDTO dto)
         {
             var usuario = await _context.Usuarios.FindAsync(dto.IdUsuario);
@@ -38,43 +41,51 @@ namespace Backend.API.Controllers
 
             _context.Profesores.Add(profesor);
             await _context.SaveChangesAsync();
+
             return Ok(new
             {
-                mensaje = "Profesor creado correctamente.",
+                mensaje = "Profesor creado correctamente",
                 profesor.IdProfesor
             });
         }
 
+        // ============================
+        // LISTAR PROFESORES
+        // ============================
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetProfesores()
         {
             var profesores = await _context.Profesores
                 .Include(p => p.Usuario)
+                .OrderBy(p => p.Nombre)
                 .ToListAsync();
+
             return Ok(profesores);
         }
 
+        // ============================
+        // OBTENER PROFESOR
+        // ============================
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetProfesorPorId(int id)
         {
-            var profesor = await _context.Profesores
-                .Include(p => p.Usuario)
-                .FirstOrDefaultAsync(p => p.IdProfesor == id);
+            var profesor = await _context.Profesores.FindAsync(id);
             if (profesor == null)
                 return NotFound("Profesor no encontrado.");
+
             return Ok(new
             {
-                nombre = profesor.Nombre,
-                apellido = profesor.Apellido,
-                correo = profesor.Correo,
-                especialidad = profesor.Especialidad // Agregar este campo
+                profesor.Nombre,
+                profesor.Apellido,
+                profesor.Correo,
+                profesor.Especialidad
             });
         }
 
+        // ============================
+        // EDITAR PROFESOR
+        // ============================
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditarProfesor(int id, [FromBody] ProfesorDTO dto)
         {
             var profesor = await _context.Profesores.FindAsync(id);
@@ -84,41 +95,59 @@ namespace Backend.API.Controllers
             profesor.Nombre = dto.Nombre;
             profesor.Apellido = dto.Apellido;
             profesor.Correo = dto.Correo;
-            profesor.Especialidad = dto.Especialidad; // Agregar esta línea
+            profesor.Especialidad = dto.Especialidad;
 
-            _context.Profesores.Update(profesor);
             await _context.SaveChangesAsync();
             return Ok("Profesor actualizado correctamente.");
         }
 
-
+        // ============================
+        // DESACTIVAR PROFESOR (LÓGICA FINAL)
+        // ============================
         [HttpPut("desactivar/{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DesactivarProfesor(int id)
         {
-            var profesor = await _context.Profesores
-                .FirstOrDefaultAsync(p => p.IdProfesor == id);
-
+            var profesor = await _context.Profesores.FindAsync(id);
             if (profesor == null)
                 return NotFound("Profesor no encontrado.");
-      
-            profesor.Activo = false;
-  
+
+            // 🔍 Clases del profesor
             var clases = await _context.Clases
-                .Where(c => c.ProfesorMateria.IdProfesor == id)
+                .Include(c => c.ProfesorMateria)
+                .Include(c => c.ClaseAlumnos)
+                .Where(c =>
+                    c.Activo &&
+                    c.ProfesorMateria != null &&
+                    c.ProfesorMateria.IdProfesor == id
+                )
                 .ToListAsync();
 
-            foreach (var clase in clases)
+            // ❌ Si alguna clase tiene alumnos → NO desactivar
+            if (clases.Any(c => c.ClaseAlumnos.Any()))
             {
-                clase.Activo = false;
+                return BadRequest(
+                    "No puedes desactivar este profesor porque tiene clases con alumnos inscritos. Reasigna las clases primero."
+                );
             }
 
+            // 🗑 Eliminar clases SIN alumnos
+            if (clases.Any())
+            {
+                _context.Clases.RemoveRange(clases);
+                await _context.SaveChangesAsync();
+            }
+
+            // 🔴 Desactivar profesor
+            profesor.Activo = false;
             await _context.SaveChangesAsync();
-            return Ok("Profesor y sus clases fueron desactivados.");
+
+            return Ok("Profesor desactivado correctamente.");
         }
 
+        // ============================
+        // REACTIVAR PROFESOR
+        // ============================
         [HttpPut("reactivar/{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ReactivarProfesor(int id)
         {
             var profesor = await _context.Profesores.FindAsync(id);
@@ -130,8 +159,5 @@ namespace Backend.API.Controllers
 
             return Ok("Profesor reactivado correctamente.");
         }
-
-
     }
 }
-
