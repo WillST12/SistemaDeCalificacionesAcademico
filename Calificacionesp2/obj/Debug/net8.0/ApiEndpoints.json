@@ -80,6 +80,22 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.AlumnosController",
+    "Method": "GetAlumnoPorUsuario",
+    "RelativePath": "api/Alumnos/por-usuario/{idUsuario}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idUsuario",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.AlumnosController",
     "Method": "ReactivarAlumno",
     "RelativePath": "api/Alumnos/reactivar/{id}",
     "HttpMethod": "PUT",
@@ -287,7 +303,7 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.CalificacionesController",
-    "Method": "PorAlumno",
+    "Method": "GetCalificacionesDelAlumno",
     "RelativePath": "api/Calificaciones/alumno/{idAlumno}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -512,6 +528,22 @@
     "Parameters": [
       {
         "Name": "idClase",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.ClasesAlumnosController",
+    "Method": "GetClasesDelAlumno",
+    "RelativePath": "api/ClasesAlumnos/alumno/{idAlumno}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idAlumno",
         "Type": "System.Int32",
         "IsRequired": true
       }

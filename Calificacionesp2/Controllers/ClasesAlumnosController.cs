@@ -9,7 +9,7 @@ namespace Backend.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
+    [Authorize] // ✅ IMPORTANTE: NO Admin aquí
     public class ClasesAlumnosController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -19,8 +19,9 @@ namespace Backend.API.Controllers
             _context = context;
         }
 
-        // POST api/ClasesAlumnos
+        // POST api/ClasesAlumnos (ADMIN)
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AgregarAlumno([FromBody] InscribirAlumnoDTO dto)
         {
             var clase = await _context.Clases.FindAsync(dto.IdClase);
@@ -49,15 +50,45 @@ namespace Backend.API.Controllers
             return Ok("Alumno inscrito correctamente.");
         }
 
-        // GET api/ClasesAlumnos/{idClase} -> lista alumnos de una clase
+        // ✅ GET api/ClasesAlumnos/alumno/{idAlumno}
+        // Alumno ve SOLO sus clases
+        [HttpGet("alumno/{idAlumno}")]
+        [Authorize(Roles = "Alumno")]
+        public async Task<IActionResult> GetClasesDelAlumno(int idAlumno)
+        {
+            var clases = await _context.ClaseAlumnos
+                .Where(ca => ca.IdAlumno == idAlumno)
+                .Include(ca => ca.Clase)
+                    .ThenInclude(c => c.ProfesorMateria)
+                        .ThenInclude(pm => pm.Materia)
+                .Include(ca => ca.Clase)
+                    .ThenInclude(c => c.ProfesorMateria)
+                        .ThenInclude(pm => pm.Profesor)
+                .Select(ca => new
+                {
+                    ca.IdClaseAlumno,
+                    IdClase = ca.Clase.IdClase,
+                    Materia = ca.Clase.ProfesorMateria.Materia.Nombre,
+                    CodigoMateria = ca.Clase.ProfesorMateria.Materia.Codigo,
+                    Profesor = ca.Clase.ProfesorMateria.Profesor.Nombre + " " +
+                               ca.Clase.ProfesorMateria.Profesor.Apellido,
+                    Periodo = ca.Clase.Periodo
+                })
+                .ToListAsync();
+
+            return Ok(clases);
+        }
+
+        // GET api/ClasesAlumnos/{idClase} (ADMIN, PROFESOR)
         [HttpGet("{idClase}")]
-        [AllowAnonymous] // si quieres restringir déjalo con Authorize
+        [Authorize(Roles = "Admin,Profesor")]
         public async Task<IActionResult> GetAlumnosPorClase(int idClase)
         {
             var alumnos = await _context.ClaseAlumnos
                 .Where(ca => ca.IdClase == idClase)
                 .Include(ca => ca.Alumno)
-                .Select(ca => new {
+                .Select(ca => new
+                {
                     ca.IdClaseAlumno,
                     ca.IdClase,
                     ca.IdAlumno,
@@ -72,8 +103,9 @@ namespace Backend.API.Controllers
             return Ok(alumnos);
         }
 
-        // GET api/ClasesAlumnos/inscripciones -> todas las inscripciones con info materia/periodo (Admin)
+        // GET api/ClasesAlumnos/inscripciones (ADMIN)
         [HttpGet("inscripciones")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetTodasInscripciones()
         {
             var list = await _context.ClaseAlumnos
@@ -81,7 +113,8 @@ namespace Backend.API.Controllers
                 .Include(ca => ca.Clase)
                     .ThenInclude(c => c.ProfesorMateria)
                         .ThenInclude(pm => pm.Materia)
-                .Select(ca => new {
+                .Select(ca => new
+                {
                     ca.IdClaseAlumno,
                     ca.IdClase,
                     ca.IdAlumno,
@@ -95,8 +128,9 @@ namespace Backend.API.Controllers
             return Ok(list);
         }
 
-        // DELETE api/ClasesAlumnos (body: InscribirAlumnoDTO)
+        // DELETE api/ClasesAlumnos (ADMIN)
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Eliminar([FromBody] InscribirAlumnoDTO dto)
         {
             var registro = await _context.ClaseAlumnos
