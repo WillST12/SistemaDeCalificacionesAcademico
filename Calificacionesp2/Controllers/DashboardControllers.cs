@@ -90,6 +90,9 @@ namespace Backend.API.Controllers
         // =========================
         // 🔹 DASHBOARD ALUMNO
         // =========================
+        // =========================
+        // 🔹 DASHBOARD ALUMNO
+        // =========================
         [HttpGet("alumno/{idUsuario}")]
         [Authorize(Roles = "Alumno")]
         public async Task<IActionResult> DashboardAlumno(int idUsuario)
@@ -97,24 +100,45 @@ namespace Backend.API.Controllers
             var alumno = await _context.Alumnos
                 .FirstOrDefaultAsync(a => a.IdUsuario == idUsuario);
 
-            if (alumno == null) return BadRequest();
+            if (alumno == null) return BadRequest("Alumno no encontrado.");
 
-            var clases = await _context.ClaseAlumnos
-                .Where(ca => ca.IdAlumno == alumno.IdAlumno)
-                .ToListAsync();
+            var clasesInscritas = await _context.ClaseAlumnos
+                .CountAsync(ca => ca.IdAlumno == alumno.IdAlumno);
 
+            // Calificaciones publicadas
             var calificacionesPublicadas = await _context.Calificaciones
                 .CountAsync(c =>
                     c.ClaseAlumno.IdAlumno == alumno.IdAlumno &&
                     c.Publicado == true
                 );
 
+            // Índice promedio (promedio de las notas publicadas)
+            var notasPublicadas = await _context.Calificaciones
+                .Where(c =>
+                    c.ClaseAlumno.IdAlumno == alumno.IdAlumno &&
+                    c.Publicado == true
+                )
+                .Select(c => c.Nota)
+                .ToListAsync();
+
+            decimal indicePromedio = 0;
+
+            if (notasPublicadas.Count > 0)
+            {
+                // Si tus notas ya están 0-100, esto está perfecto.
+                // Si estuvieran 0-10, aquí podrías multiplicar por 10.
+                indicePromedio = (decimal)notasPublicadas.Average();
+                indicePromedio = Math.Round(indicePromedio, 2);
+            }
+
             return Ok(new
             {
-                clasesInscritas = clases.Count,
-                calificacionesPublicadas
+                clasesInscritas,
+                calificacionesPublicadas,
+                indicePromedio
             });
         }
+
 
     }
 }
