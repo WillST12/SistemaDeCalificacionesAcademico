@@ -303,7 +303,7 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.CalificacionesController",
-    "Method": "GetCalificacionesDelAlumno",
+    "Method": "PorAlumno",
     "RelativePath": "api/Calificaciones/alumno/{idAlumno}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -319,52 +319,15 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.CalificacionesController",
-    "Method": "PorClase",
-    "RelativePath": "api/Calificaciones/clase/{idClase}",
+    "Method": "MisCalificaciones",
+    "RelativePath": "api/Calificaciones/mis-calificaciones/{idAlumno}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "idClase",
+        "Name": "idAlumno",
         "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Backend.API.Controllers.CalificacionesController",
-    "Method": "PorMateria",
-    "RelativePath": "api/Calificaciones/materia/{idMateria}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "idMateria",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Backend.API.Controllers.CalificacionesController",
-    "Method": "PorMateriaPeriodo",
-    "RelativePath": "api/Calificaciones/materia/{idMateria}/periodo/{periodo}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "idMateria",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "periodo",
-        "Type": "System.String",
         "IsRequired": true
       }
     ],

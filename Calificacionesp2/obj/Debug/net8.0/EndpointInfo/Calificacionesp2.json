@@ -574,84 +574,30 @@
         }
       }
     },
-    "/api/Calificaciones/clase/{idClase}": {
-      "get": {
-        "tags": [
-          "Calificaciones"
-        ],
-        "parameters": [
-          {
-            "name": "idClase",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Calificaciones/materia/{idMateria}": {
-      "get": {
-        "tags": [
-          "Calificaciones"
-        ],
-        "parameters": [
-          {
-            "name": "idMateria",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Calificaciones/materia/{idMateria}/periodo/{periodo}": {
-      "get": {
-        "tags": [
-          "Calificaciones"
-        ],
-        "parameters": [
-          {
-            "name": "idMateria",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "periodo",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Calificaciones/alumno/{idAlumno}": {
+      "get": {
+        "tags": [
+          "Calificaciones"
+        ],
+        "parameters": [
+          {
+            "name": "idAlumno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Calificaciones/mis-calificaciones/{idAlumno}": {
       "get": {
         "tags": [
           "Calificaciones"

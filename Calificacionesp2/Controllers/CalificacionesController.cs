@@ -40,8 +40,8 @@ namespace Backend.API.Controllers
 
             return Ok(new { message = "Calificación registrada correctamente" });
         }
+
         // GET: obtener una calificación por ID
-        // GET api/Calificaciones/{id}
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Profesor")]
         public async Task<IActionResult> GetById(int id)
@@ -54,7 +54,8 @@ namespace Backend.API.Controllers
                         .ThenInclude(pm => pm.ProfesorMateria)
                             .ThenInclude(m => m.Materia)
                 .Where(x => x.IdCalificacion == id)
-                .Select(x => new {
+                .Select(x => new
+                {
                     idCalificacion = x.IdCalificacion,
                     nota = x.Nota,
                     publicado = x.Publicado,
@@ -65,10 +66,8 @@ namespace Backend.API.Controllers
                 .FirstOrDefaultAsync();
 
             if (c == null) return NotFound();
-
             return Ok(c);
         }
-
 
         // PUT: editar nota
         [HttpPut("{id}")]
@@ -85,99 +84,22 @@ namespace Backend.API.Controllers
             return Ok("Calificación actualizada.");
         }
 
-        // PUT api/Calificaciones/publicar/{id}  body: bool
+        // PUT publicar
         [HttpPut("publicar/{id}")]
         [Authorize(Roles = "Admin,Profesor")]
         public async Task<IActionResult> Publicar(int id, [FromBody] bool publicar)
         {
             var cal = await _context.Calificaciones.FindAsync(id);
-            if (cal == null)
-                return NotFound("No existe la calificación");
+            if (cal == null) return NotFound("No existe la calificación");
 
             cal.Publicado = publicar;
             await _context.SaveChangesAsync();
             return Ok();
         }
 
-        // GET por clase
-        [HttpGet("clase/{idClase}")]
-        [Authorize(Roles = "Admin,Profesor")]
-        public async Task<IActionResult> PorClase(int idClase)
-        {
-            var res = await _context.Calificaciones
-                .Include(c => c.ClaseAlumno)
-                    .ThenInclude(ca => ca.Alumno)
-                .Include(c => c.ClaseAlumno)
-                    .ThenInclude(ca => ca.Clase)
-                        .ThenInclude(cl => cl.ProfesorMateria)
-                            .ThenInclude(pm => pm.Materia)
-                .Where(c => c.ClaseAlumno.Clase.IdClase == idClase)
-                .Select(c => new {
-                    idCalificacion = c.IdCalificacion,
-                    alumnoId = c.ClaseAlumno.Alumno.IdAlumno,
-                    alumnoNombre = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
-                    nota = c.Nota,
-                    fechaRegistro = c.FechaRegistro,
-                    publicado = c.Publicado,
-                    materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
-                    periodo = c.ClaseAlumno.Clase.Periodo
-                }).ToListAsync();
-
-            return Ok(res);
-        }
-
-        // GET por materia
-        [HttpGet("materia/{idMateria}")]
-        [Authorize(Roles = "Admin,Profesor")]
-        public async Task<IActionResult> PorMateria(int idMateria)
-        {
-            var res = await _context.Calificaciones
-                .Include(c => c.ClaseAlumno)
-                    .ThenInclude(ca => ca.Alumno)
-                .Include(c => c.ClaseAlumno)
-                    .ThenInclude(ca => ca.Clase)
-                        .ThenInclude(cl => cl.ProfesorMateria)
-                .Where(c => c.ClaseAlumno.Clase.ProfesorMateria.IdMateria == idMateria)
-                .Select(c => new {
-                    idCalificacion = c.IdCalificacion,
-                    alumnoNombre = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
-                    nota = c.Nota,
-                    fechaRegistro = c.FechaRegistro,
-                    publicado = c.Publicado,
-                    materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
-                    periodo = c.ClaseAlumno.Clase.Periodo
-                }).ToListAsync();
-
-            return Ok(res);
-        }
-
-        // GET por materia + periodo
-        [HttpGet("materia/{idMateria}/periodo/{periodo}")]
-        [Authorize(Roles = "Admin,Profesor")]
-        public async Task<IActionResult> PorMateriaPeriodo(int idMateria, string periodo)
-        {
-            var res = await _context.Calificaciones
-                .Include(c => c.ClaseAlumno)
-                    .ThenInclude(ca => ca.Alumno)
-                .Include(c => c.ClaseAlumno)
-                    .ThenInclude(ca => ca.Clase)
-                        .ThenInclude(cl => cl.ProfesorMateria)
-                .Where(c => c.ClaseAlumno.Clase.ProfesorMateria.IdMateria == idMateria
-                            && c.ClaseAlumno.Clase.Periodo == periodo)
-                .Select(c => new {
-                    idCalificacion = c.IdCalificacion,
-                    alumnoNombre = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
-                    nota = c.Nota,
-                    fechaRegistro = c.FechaRegistro,
-                    publicado = c.Publicado,
-                    materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
-                    periodo = c.ClaseAlumno.Clase.Periodo
-                }).ToListAsync();
-
-            return Ok(res);
-        }
-
-        // GET por alumno
+        // GET por alumno (Admin/Profesor/Alumno)
+        // Admin/Profesor: ven todo
+        // Alumno: debería usar "mis-calificaciones/{idAlumno}" (solo publicadas)
         [HttpGet("alumno/{idAlumno}")]
         [Authorize(Roles = "Admin,Profesor,Alumno")]
         public async Task<IActionResult> PorAlumno(int idAlumno)
@@ -190,7 +112,8 @@ namespace Backend.API.Controllers
                         .ThenInclude(cl => cl.ProfesorMateria)
                             .ThenInclude(pm => pm.Materia)
                 .Where(c => c.ClaseAlumno.IdAlumno == idAlumno)
-                .Select(c => new {
+                .Select(c => new
+                {
                     idCalificacion = c.IdCalificacion,
                     alumnoNombre = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
                     nota = c.Nota,
@@ -203,5 +126,31 @@ namespace Backend.API.Controllers
             return Ok(res);
         }
 
+        // ✅ Alumno: SOLO SUS CALIFICACIONES PUBLICADAS
+        // GET api/Calificaciones/mis-calificaciones/{idAlumno}
+        [HttpGet("mis-calificaciones/{idAlumno}")]
+        [Authorize(Roles = "Alumno")]
+        public async Task<IActionResult> MisCalificaciones(int idAlumno)
+        {
+            var res = await _context.Calificaciones
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Clase)
+                        .ThenInclude(cl => cl.ProfesorMateria)
+                            .ThenInclude(pm => pm.Materia)
+                .Where(c =>
+                    c.ClaseAlumno.IdAlumno == idAlumno &&
+                    c.Publicado == true
+                )
+                .Select(c => new
+                {
+                    idCalificacion = c.IdCalificacion,
+                    nota = c.Nota,
+                    materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
+                    periodo = c.ClaseAlumno.Clase.Periodo
+                })
+                .ToListAsync();
+
+            return Ok(res);
+        }
     }
 }
