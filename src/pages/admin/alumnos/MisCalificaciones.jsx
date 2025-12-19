@@ -1,21 +1,28 @@
 import { useEffect, useState } from "react";
-import calificacionService from "../../services/calificacionService";
-import { useAuth } from "../../hooks/useAuth";
-
+import alumnoService from "../../../services/alumnoService";
+import calificacionService from "../../../services/calificacionService";
 export default function MisCalificaciones() {
-  const { user } = useAuth();
-  const [calificaciones, setCalificaciones] = useState([]);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
     const cargar = async () => {
-      if (!user?.idAlumno) return;
+      // 1) user desde localStorage (tu app lo usa así)
+      const saved = localStorage.getItem("user");
+      const user = saved ? JSON.parse(saved) : null;
 
-      const res = await calificacionService.misCalificaciones(user.idAlumno);
-      setCalificaciones(res.data);
+      if (!user?.idUsuario) return;
+
+      // 2) convertir idUsuario -> idAlumno
+      const resAlumno = await alumnoService.porUsuario(user.idUsuario);
+      const idAlumno = resAlumno.data.idAlumno;
+
+      // 3) buscar calificaciones publicadas del alumno
+      const res = await calificacionService.misCalificaciones(idAlumno);
+      setItems(res.data);
     };
 
     cargar();
-  }, [user]);
+  }, []);
 
   return (
     <div>
@@ -31,15 +38,15 @@ export default function MisCalificaciones() {
         </thead>
 
         <tbody>
-          {calificaciones.map((c) => (
+          {items.map((c) => (
             <tr key={c.idCalificacion} className="border-b">
               <td className="p-3">{c.materia}</td>
               <td className="p-3">{c.periodo}</td>
-              <td className="p-3 font-bold">{c.nota}</td>
+              <td className="p-3 font-semibold">{c.nota}</td>
             </tr>
           ))}
 
-          {calificaciones.length === 0 && (
+          {items.length === 0 && (
             <tr>
               <td colSpan={3} className="text-center p-4 text-gray-500">
                 No hay calificaciones publicadas

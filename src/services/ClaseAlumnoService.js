@@ -1,4 +1,3 @@
-// src/services/ClaseAlumnoService.js
 import { api } from "./api";
 
 const alumnoClasesService = {

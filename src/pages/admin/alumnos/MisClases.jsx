@@ -1,37 +1,30 @@
 import { useEffect, useState } from "react";
-import alumnoClasesService from "../../../services/ClaseAlumnoService";
+
 import alumnoService from "../../../services/alumnoService";
-import { useAuth } from "../../../hooks/useAuth";
+
+import alumnoClasesService from "../../../services/ClaseAlumnoService";
 
 export default function MisClases() {
-  const { user } = useAuth();
   const [clases, setClases] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const cargar = async () => {
-      try {
-        // ✅ Sacar idUsuario del user (ajusta si tu objeto usa otro nombre)
-        const idUsuario = user?.idUsuario ?? user?.IdUsuario ?? user?.id;
-        if (!idUsuario) throw new Error("No existe idUsuario en user.");
+      const saved = localStorage.getItem("user");
+      const user = saved ? JSON.parse(saved) : null;
 
-        // 1) Obtener idAlumno real desde backend
-        const alumnoRes = await alumnoService.porUsuario(idUsuario);
-        const idAlumno = alumnoRes.data.idAlumno;
+      if (!user?.idUsuario) return;
 
-        // 2) Traer clases
-        const res = await alumnoClasesService.misClases(idAlumno);
-        setClases(res.data);
-      } catch (e) {
-        console.error(e);
-        setClases([]);
-      } finally {
-        setLoading(false);
-      }
+      // convertir idUsuario -> idAlumno
+      const resAlumno = await alumnoService.porUsuario(user.idUsuario);
+      const idAlumno = resAlumno.data.idAlumno;
+
+      // traer clases del alumno
+      const res = await alumnoClasesService.misClases(idAlumno);
+      setClases(res.data);
     };
 
     cargar();
-  }, [user]);
+  }, []);
 
   return (
     <div>
@@ -48,25 +41,16 @@ export default function MisClases() {
         </thead>
 
         <tbody>
-          {!loading &&
-            clases.map((c) => (
-              <tr key={c.idClaseAlumno} className="border-b">
-                <td className="p-3">{c.materia}</td>
-                <td className="p-3">{c.codigoMateria}</td>
-                <td className="p-3">{c.profesor}</td>
-                <td className="p-3">{c.periodo}</td>
-              </tr>
-            ))}
-
-          {loading && (
-            <tr>
-              <td colSpan={4} className="text-center p-4 text-gray-500">
-                Cargando...
-              </td>
+          {clases.map((c) => (
+            <tr key={c.idClaseAlumno} className="border-b">
+              <td className="p-3">{c.materia}</td>
+              <td className="p-3">{c.codigoMateria}</td>
+              <td className="p-3">{c.profesor}</td>
+              <td className="p-3">{c.periodo}</td>
             </tr>
-          )}
+          ))}
 
-          {!loading && clases.length === 0 && (
+          {clases.length === 0 && (
             <tr>
               <td colSpan={4} className="text-center p-4 text-gray-500">
                 No estás inscrito en ninguna clase

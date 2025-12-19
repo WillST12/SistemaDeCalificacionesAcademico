@@ -1,4 +1,4 @@
-import { api } from "./api";
+/*import { api } from "./api";
 
 const calificacionService = {
   crear: (data) => api.post("/Calificaciones", data),
@@ -12,6 +12,20 @@ const calificacionService = {
 
   misCalificaciones: (idAlumno) => api.get(`/Calificaciones/misCalificaciones/${idAlumno}`),
   GetById: (id) => api.get(`/Calificaciones/${id}`)
+};
+
+export default calificacionService;
+*/
+
+import { api } from "./api";
+
+const calificacionService = {
+  // Alumno: ver SOLO publicadas (endpoint nuevo)
+  misCalificaciones: (idAlumno) =>
+    api.get(`/Calificaciones/mis-calificaciones/${idAlumno}`),
+
+  // (Opcional) Admin/Profesor:
+  porAlumno: (idAlumno) => api.get(`/Calificaciones/alumno/${idAlumno}`),
 };
 
 export default calificacionService;
