@@ -69,6 +69,7 @@ export default function AlumnosListado() {
             <th className="p-3">Nombre</th>
             <th className="p-3">Correo</th>
             <th className="p-3">Matrícula</th>
+            <th className="p-3">Índice</th>
             <th className="p-3">Activo</th>
             <th className="p-3">Acciones</th>
           </tr>
@@ -81,6 +82,19 @@ export default function AlumnosListado() {
               <td className="p-3">{a.nombre} {a.apellido}</td>
               <td className="p-3">{a.correo}</td>
               <td className="p-3">{a.matricula}</td>
+
+              {/* ÍNDICE */}
+              <td className="p-3">
+                <span className={`font-semibold ${
+                  a.indice >= 70
+                    ? "text-green-600"
+                    : a.indice >= 50
+                    ? "text-yellow-600"
+                    : "text-red-600"
+                }`}>
+                  {a.indice.toFixed(1)}
+                </span>
+              </td>
 
               <td className="p-3">
                 <span className={`font-semibold ${
@@ -112,7 +126,6 @@ export default function AlumnosListado() {
         </tbody>
       </table>
 
-      {/* MODAL */}
       <ConfirmModal
         open={modal.open}
         title={modal.alumno?.activo ? "Desactivar Alumno" : "Reactivar Alumno"}

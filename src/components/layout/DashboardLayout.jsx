@@ -74,7 +74,7 @@ export default function DashboardLayout() {
             </div>
           )}
 
-          {/* ALUMNO */}
+          {/* ALUMNO Vamos a esto prox... */}
           {rol === "Alumno" && (
             <div className="mt-4">
               <h3 className="font-semibold opacity-80">Alumno</h3>

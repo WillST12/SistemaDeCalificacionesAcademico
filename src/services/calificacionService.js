@@ -10,7 +10,7 @@ const calificacionService = {
     api.get(`/Calificaciones/materia/${idMateria}/periodo/${encodeURIComponent(periodo)}`),
   porAlumno: (idAlumno) => api.get(`/Calificaciones/alumno/${idAlumno}`),
 
-  // 🔥 este era el nombre correcto
+  misCalificaciones: (idAlumno) => api.get(`/Calificaciones/misCalificaciones/${idAlumno}`),
   GetById: (id) => api.get(`/Calificaciones/${id}`)
 };
 
