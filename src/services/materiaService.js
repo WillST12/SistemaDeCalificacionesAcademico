@@ -1,3 +1,4 @@
+// src/services/materiaService.js
 import { api } from "./api";
 
 const materiaService = {
@@ -5,7 +6,8 @@ const materiaService = {
   obtener: (id) => api.get(`/Materias/${id}`),
   crear: (data) => api.post("/Materias", data),
   actualizar: (id, data) => api.put(`/Materias/${id}`, data),
-  eliminar: (id) => api.delete(`/Materias/${id}`)
+  desactivar: (id) => api.put(`/Materias/desactivar/${id}`),
+  reactivar: (id) => api.put(`/Materias/reactivar/${id}`),
 };
 
 export default materiaService;

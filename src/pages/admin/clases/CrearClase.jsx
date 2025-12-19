@@ -70,8 +70,11 @@ export default function CrearClase() {
           <div className="text-sm text-gray-600">Materia</div>
           <select name="idMateria" value={form.idMateria} onChange={handleChange} className="input w-full">
             <option value="">-- Selecciona --</option>
-            {materias.map(m => (
-              <option key={m.idMateria ?? m.id} value={m.idMateria ?? m.id}>{m.nombre ?? m.Nombre}</option>
+            {materias.filter(m => m.activo)
+            .map(m => (
+              <option key={m.idMateria} value={m.idMateria }>
+                {m.nombre}
+              </option>
             ))}
           </select>
         </label>
