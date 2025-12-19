@@ -31,6 +31,10 @@ namespace Backend.API.Controllers
             if (profesorMateria == null)
                 return BadRequest("La relación Profesor-Materia no existe.");
 
+            // 🔴 VALIDACIÓN CLAVE
+            if (!profesorMateria.Materia.Activo)
+                return BadRequest("No puedes crear clases con una materia desactivada.");
+
             var clase = new Clase
             {
                 IdProfesorMateria = dto.IdProfesorMateria,

@@ -19,6 +19,9 @@ namespace Backend.API.Controllers
             _context = context;
         }
 
+        // =========================
+        // CREAR ALUMNO
+        // =========================
         [HttpPost]
         public async Task<IActionResult> CrearAlumno([FromBody] AlumnoDTO dto)
         {
@@ -47,6 +50,9 @@ namespace Backend.API.Controllers
             return Ok(new { alumno.IdAlumno });
         }
 
+        // =========================
+        // LISTAR ALUMNOS (ACTIVOS + INACTIVOS)
+        // =========================
         [HttpGet]
         public async Task<IActionResult> GetAlumnos()
         {
@@ -58,6 +64,9 @@ namespace Backend.API.Controllers
             return Ok(alumnos);
         }
 
+        // =========================
+        // OBTENER ALUMNO POR ID
+        // =========================
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAlumnoPorId(int id)
         {
@@ -71,6 +80,9 @@ namespace Backend.API.Controllers
             return Ok(alumno);
         }
 
+        // =========================
+        // EDITAR ALUMNO
+        // =========================
         [HttpPut("{id}")]
         public async Task<IActionResult> EditarAlumno(int id, [FromBody] AlumnoDTO dto)
         {
@@ -85,9 +97,12 @@ namespace Backend.API.Controllers
             alumno.Correo = dto.Correo;
 
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok("Alumno actualizado correctamente.");
         }
 
+        // =========================
+        // DESACTIVAR ALUMNO (LÓGICA CLAVE)
+        // =========================
         [HttpPut("desactivar/{id}")]
         public async Task<IActionResult> DesactivarAlumno(int id)
         {
@@ -95,21 +110,36 @@ namespace Backend.API.Controllers
             if (alumno == null)
                 return NotFound("Alumno no encontrado.");
 
+            // 1️⃣ Eliminar inscripciones del alumno
+            var inscripciones = await _context.ClaseAlumnos
+                .Where(ca => ca.IdAlumno == id)
+                .ToListAsync();
+
+            if (inscripciones.Any())
+            {
+                _context.ClaseAlumnos.RemoveRange(inscripciones);
+                await _context.SaveChangesAsync();
+            }
+
+            // 2️⃣ Desactivar alumno
             alumno.Activo = false;
             await _context.SaveChangesAsync();
-            return Ok("Alumno desactivado Correctamente");
+
+            return Ok("Alumno desactivado y removido de sus clases.");
         }
 
+    
         [HttpPut("reactivar/{id}")]
         public async Task<IActionResult> ReactivarAlumno(int id)
         {
             var alumno = await _context.Alumnos.FindAsync(id);
             if (alumno == null)
-                return NotFound();
+                return NotFound("Alumno no encontrado.");
 
             alumno.Activo = true;
             await _context.SaveChangesAsync();
-            return Ok();
+
+            return Ok("Alumno reactivado correctamente.");
         }
     }
 }
