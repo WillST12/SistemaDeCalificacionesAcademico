@@ -152,5 +152,35 @@ namespace Backend.API.Controllers
 
             return Ok(res);
         }
+        // GET api/Calificaciones/clase/{idClase}
+        [HttpGet("clase/{idClase}")]
+        [Authorize(Roles = "Admin,Profesor")]
+        public async Task<IActionResult> PorClase(int idClase)
+        {
+            var res = await _context.Calificaciones
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Alumno)
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Clase)
+                        .ThenInclude(cl => cl.ProfesorMateria)
+                            .ThenInclude(pm => pm.Materia)
+                .Where(c => c.ClaseAlumno.Clase.IdClase == idClase)
+                .Select(c => new
+                {
+                    idCalificacion = c.IdCalificacion,
+                    alumnoId = c.ClaseAlumno.IdAlumno,
+                    alumnoNombre = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
+                    idClaseAlumno = c.IdClaseAlumno,
+                    nota = c.Nota,
+                    publicado = c.Publicado,
+                    fechaRegistro = c.FechaRegistro,
+                    materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
+                    periodo = c.ClaseAlumno.Clase.Periodo
+                })
+                .ToListAsync();
+
+            return Ok(res);
+        }
+
     }
 }
