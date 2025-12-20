@@ -20,7 +20,11 @@ export default calificacionService;
 import { api } from "./api";
 
 const calificacionService = {
-  // Alumno: ver SOLO publicadas (endpoint nuevo)
+  crear: (data) => api.post("/Calificaciones", data),
+  actualizar: (id, data) => api.put(`/Calificaciones/${id}`, data),
+  porClase: (idClase) => api.get(`/Calificaciones/clase/${idClase}`),
+  obtener: (id) => api.get(`/Calificaciones/${id}`),
+ 
   misCalificaciones: (idAlumno) =>
     api.get(`/Calificaciones/mis-calificaciones/${idAlumno}`),
 
