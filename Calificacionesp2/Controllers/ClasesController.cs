@@ -151,29 +151,34 @@ namespace Backend.API.Controllers
         }
 
         // GET api/Clases/profesor/{idProfesor}
-        [HttpGet("profesor/{idProfesor}")]
+        [HttpGet("profesor/usuario/{idUsuario}")]
         [Authorize(Roles = "Profesor")]
-        public async Task<IActionResult> GetClasesProfesor(int idProfesor)
+        public async Task<IActionResult> GetClasesProfesorPorUsuario(int idUsuario)
         {
+            var profesor = await _context.Profesores
+                .FirstOrDefaultAsync(p => p.IdUsuario == idUsuario && p.Activo);
+
+            if (profesor == null)
+                return BadRequest("Profesor no encontrado para este usuario.");
+
             var clases = await _context.Clases
                 .Include(c => c.ProfesorMateria)
                     .ThenInclude(pm => pm.Materia)
                 .Where(c =>
                     c.Activo &&
-                    c.ProfesorMateria != null &&
-                    c.ProfesorMateria.IdProfesor == idProfesor
+                    c.ProfesorMateria.IdProfesor == profesor.IdProfesor
                 )
                 .Select(c => new
                 {
                     c.IdClase,
                     c.Periodo,
-                    Materia = c.ProfesorMateria.Materia.Nombre,
-                    CodigoMateria = c.ProfesorMateria.Materia.Codigo
+                    materia = c.ProfesorMateria.Materia.Nombre
                 })
                 .ToListAsync();
 
             return Ok(clases);
         }
+
 
     }
 }

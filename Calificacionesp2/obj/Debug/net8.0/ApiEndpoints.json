@@ -467,14 +467,14 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.ClasesController",
-    "Method": "GetClasesProfesor",
-    "RelativePath": "api/Clases/profesor/{idProfesor}",
+    "Method": "GetClasesProfesorPorUsuario",
+    "RelativePath": "api/Clases/profesor/usuario/{idUsuario}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "idProfesor",
+        "Name": "idUsuario",
         "Type": "System.Int32",
         "IsRequired": true
       }

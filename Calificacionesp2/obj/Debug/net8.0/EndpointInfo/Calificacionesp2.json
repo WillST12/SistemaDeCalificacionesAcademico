@@ -791,14 +791,14 @@
         }
       }
     },
-    "/api/Clases/profesor/{idProfesor}": {
+    "/api/Clases/profesor/usuario/{idUsuario}": {
       "get": {
         "tags": [
           "Clases"
         ],
         "parameters": [
           {
-            "name": "idProfesor",
+            "name": "idUsuario",
             "in": "path",
             "required": true,
             "schema": {
