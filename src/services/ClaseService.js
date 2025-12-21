@@ -11,7 +11,7 @@ const ClaseService = {
 
   // ✅ PROFESOR POR USUARIO
   porUsuarioProfesor: (idUsuario) =>
-    api.get(`/Clases/profesor/usuario/${idUsuario}`)
+    api.get(`/Clases/profesor/usuario/${idUsuario}`),
 };
 
 export default ClaseService;
