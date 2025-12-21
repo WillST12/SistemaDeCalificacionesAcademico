@@ -773,6 +773,38 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.ProfesoresController",
+    "Method": "GetClasesProfesor",
+    "RelativePath": "api/Profesores/{idProfesor}/clases",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idProfesor",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.ProfesoresController",
+    "Method": "GetMateriasProfesor",
+    "RelativePath": "api/Profesores/{idProfesor}/materias",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idProfesor",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.ProfesoresController",
     "Method": "DesactivarProfesor",
     "RelativePath": "api/Profesores/desactivar/{id}",
     "HttpMethod": "PUT",
@@ -781,6 +813,22 @@
     "Parameters": [
       {
         "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.ProfesoresController",
+    "Method": "GetProfesorPorUsuario",
+    "RelativePath": "api/Profesores/por-usuario/{idUsuario}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idUsuario",
         "Type": "System.Int32",
         "IsRequired": true
       }

@@ -1321,6 +1321,75 @@
         }
       }
     },
+    "/api/Profesores/por-usuario/{idUsuario}": {
+      "get": {
+        "tags": [
+          "Profesores"
+        ],
+        "parameters": [
+          {
+            "name": "idUsuario",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Profesores/{idProfesor}/materias": {
+      "get": {
+        "tags": [
+          "Profesores"
+        ],
+        "parameters": [
+          {
+            "name": "idProfesor",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Profesores/{idProfesor}/clases": {
+      "get": {
+        "tags": [
+          "Profesores"
+        ],
+        "parameters": [
+          {
+            "name": "idProfesor",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/ProfesorMaterias": {
       "post": {
         "tags": [

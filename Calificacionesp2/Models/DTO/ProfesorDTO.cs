@@ -7,5 +7,6 @@
         public string Apellido { get; set; }
         public string Correo { get; set; }
         public string Especialidad { get; set; }
+
     }
 }
