@@ -7,6 +7,10 @@ export default function MisClasesProfesor() {
   const { user } = useAuth(); // user.idUsuario
   const [clases, setClases] = useState([]);
   const [cantidades, setCantidades] = useState({});
+  
+  // 👇 NUEVO: estado para controlar qué clase está abierta
+  const [claseAbierta, setClaseAbierta] = useState(null);
+  const [alumnos, setAlumnos] = useState([]);
 
   useEffect(() => {
     if (!user?.idUsuario) return;
@@ -32,6 +36,24 @@ export default function MisClasesProfesor() {
     cargar();
   }, [user]);
 
+  // 👇 NUEVO: función para ver/ocultar alumnos
+  const verAlumnos = async (idClase) => {
+    if (claseAbierta === idClase) {
+      // cerrar si ya está abierta
+      setClaseAbierta(null);
+      setAlumnos([]);
+      return;
+    }
+
+    try {
+      const res = await ClaseService.alumnos(idClase);
+      setAlumnos(res.data);
+      setClaseAbierta(idClase);
+    } catch (error) {
+      console.error("Error cargando alumnos", error);
+    }
+  };
+
   return (
     <div>
       <BackButton />
@@ -48,15 +70,40 @@ export default function MisClasesProfesor() {
 
         <tbody>
           {clases.map((c) => (
-            <tr key={c.idClase} className="border-b">
-              <td className="p-3">{c.materia}</td>
-              <td className="p-3">{c.periodo}</td>
-              <td className="p-3 text-center">
-                <button className="bg-blue-600 text-white px-3 py-1 rounded">
-                  Ver ({cantidades[c.idClase] ?? 0})
-                </button>
-              </td>
-            </tr>
+            <>
+              <tr key={c.idClase} className="border-b">
+                <td className="p-3">{c.materia}</td>
+                <td className="p-3">{c.periodo}</td>
+                <td className="p-3 text-center">
+                  <button 
+                    onClick={() => verAlumnos(c.idClase)}
+                    className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
+                  >
+                    Ver ({cantidades[c.idClase] ?? 0})
+                  </button>
+                </td>
+              </tr>
+
+              {/* 👇 FILA EXPANDIDA: muestra alumnos cuando está abierta */}
+              {claseAbierta === c.idClase && (
+                <tr className="bg-gray-50">
+                  <td colSpan={3} className="p-4">
+                    <h3 className="font-semibold mb-2">Alumnos inscritos</h3>
+                    {alumnos.length === 0 ? (
+                      <p className="text-gray-500">No hay alumnos inscritos</p>
+                    ) : (
+                      <ul className="list-disc pl-6">
+                        {alumnos.map((a) => (
+                          <li key={a.idAlumno}>
+                            {a.nombre} {a.apellido} — {a.matricula}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </td>
+                </tr>
+              )}
+            </>
           ))}
 
           {clases.length === 0 && (
