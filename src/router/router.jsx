@@ -56,7 +56,7 @@ import ProfesorLayout from "../components/layout/ProfesorLayout";
 //import ProfesorMaterias from "../pages/profesor/materias/MisMateriasProfesor";
 //import ProfesorCalificaciones from "../pages/profesor/calificaciones/CalificacionesProfesor";
 import MisClasesProfesor from "../pages/admin/profesores/MisClasesProfesor";
-import MisMateriasProfesor from "../pages/admin/profesores/MisMateriasProfesor";
+//import MisMateriasProfesor from "../pages/admin/profesores/MisMateriasProfesor";
 import CalificacionesProfesor from "../pages/admin/profesores/CalificacionesProfesor";
 
 // ============================
@@ -151,7 +151,6 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Dashboard /> },
-      { path: "materias", element: <MisMateriasProfesor /> },
       { path: "clases", element: <MisClasesProfesor /> },
       { path: "calificaciones", element: <CalificacionesProfesor   /> },
     ],

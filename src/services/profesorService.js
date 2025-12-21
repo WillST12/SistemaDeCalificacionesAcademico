@@ -9,7 +9,8 @@ const profesorService = {
   desactivar: (id) => api.put(`/Profesores/desactivar/${id}`),
   reactivar: (id) => api.put(`/Profesores/reactivar/${id}`),
   materias: (idProfesor) => api.get(`/Profesores/${idProfesor}/Materias`),
-  clases: (idProfesor) => api.get(`/Profesores/${idProfesor}/Clases`)
+  clases: (idProfesor) => api.get(`/Profesores/${idProfesor}/Clases`),
+  porUsuario: (idUsuario) => api.get(`/Profesores/por-usuario/${idUsuario}`)
 };
 
 export default profesorService;

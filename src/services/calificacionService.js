@@ -28,7 +28,7 @@ const calificacionService = {
   misCalificaciones: (idAlumno) =>
     api.get(`/Calificaciones/mis-calificaciones/${idAlumno}`),
 
-  // (Opcional) Admin/Profesor:
+  porProfesor: (idProfesor) => api.get(`/Calificaciones/profesor/${idProfesor}`),
   porAlumno: (idAlumno) => api.get(`/Calificaciones/alumno/${idAlumno}`),
 };
 

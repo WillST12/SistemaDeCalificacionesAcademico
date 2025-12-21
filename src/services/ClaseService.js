@@ -11,7 +11,8 @@ const ClaseService = {
   alumnos: (idClase) => api.get(`/ClasesAlumnos/${idClase}`),
 
   // Devuelve todas las inscripciones (para select al crear calificación) -> GET /api/ClasesAlumnos/inscripciones
-  inscripciones: () => api.get("/ClasesAlumnos/inscripciones")
+  inscripciones: () => api.get("/ClasesAlumnos/inscripciones"),
+  porProfesor: (idProfesor) => api.get(`/Clases/profesor/${idProfesor}`)
 };
 
 export default ClaseService;

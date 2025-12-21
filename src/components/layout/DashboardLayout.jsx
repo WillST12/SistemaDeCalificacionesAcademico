@@ -60,10 +60,6 @@ export default function DashboardLayout() {
             <div className="mt-4">
               <h3 className="font-semibold opacity-80">Profesor</h3>
 
-              <Link to="/profesor/materias" className="block hover:underline mt-2">
-                Mis Materias
-              </Link>
-
               <Link to="/profesor/clases" className="block hover:underline">
                 Mis Clases
               </Link>

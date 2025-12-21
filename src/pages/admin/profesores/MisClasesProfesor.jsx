@@ -4,34 +4,58 @@ import { useAuth } from "../../../hooks/useAuth";
 import BackButton from "../../../components/ui/BackButton";
 
 export default function MisClasesProfesor() {
-  const { user } = useAuth();
+  const { user } = useAuth(); // user.idUsuario
   const [clases, setClases] = useState([]);
 
   useEffect(() => {
-    ClaseService.porProfesor(user.idProfesor)
-      .then((r) => setClases(r.data))
-      .catch(() => {});
-  }, []);
+    const cargar = async () => {
+      try {
+        const res = await ClaseService.listar();
+
+        // 🔹 Filtrar SOLO las clases del profesor logueado
+        const misClases = res.data.filter(
+          (c) => c.idProfesor === user.idProfesor
+        );
+
+        setClases(misClases);
+      } catch (error) {
+        console.error("Error cargando clases del profesor", error);
+      }
+    };
+
+    cargar();
+  }, [user]);
 
   return (
     <div>
       <BackButton />
-      <h1 className="text-2xl font-bold mb-4">Mis Clases</h1>
+      <h1 className="text-2xl font-bold mb-6">Mis Clases</h1>
 
-      <table className="w-full bg-white rounded shadow">
-        <thead>
+      <table className="w-full bg-white rounded-xl shadow">
+        <thead className="bg-gray-200">
           <tr>
-            <th>Materia</th>
-            <th>Periodo</th>
+            <th className="p-3">Periodo</th>
+            <th className="p-3">Materia</th>
+            <th className="p-3">Código</th>
           </tr>
         </thead>
+
         <tbody>
           {clases.map((c) => (
-            <tr key={c.idClase}>
-              <td>{c.materia}</td>
-              <td>{c.periodo}</td>
+            <tr key={c.idClase} className="border-b">
+              <td className="p-3">{c.periodo}</td>
+              <td className="p-3">{c.materia}</td>
+              <td className="p-3">{c.codigoMateria}</td>
             </tr>
           ))}
+
+          {clases.length === 0 && (
+            <tr>
+              <td colSpan={3} className="p-4 text-center text-gray-500">
+                No tienes clases asignadas
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
