@@ -791,6 +791,29 @@
         }
       }
     },
+    "/api/Clases/profesor/{idProfesor}": {
+      "get": {
+        "tags": [
+          "Clases"
+        ],
+        "parameters": [
+          {
+            "name": "idProfesor",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/ClasesAlumnos": {
       "post": {
         "tags": [

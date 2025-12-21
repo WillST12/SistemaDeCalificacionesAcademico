@@ -150,5 +150,30 @@ namespace Backend.API.Controllers
             return Ok(alumnos);
         }
 
+        // GET api/Clases/profesor/{idProfesor}
+        [HttpGet("profesor/{idProfesor}")]
+        [Authorize(Roles = "Profesor")]
+        public async Task<IActionResult> GetClasesProfesor(int idProfesor)
+        {
+            var clases = await _context.Clases
+                .Include(c => c.ProfesorMateria)
+                    .ThenInclude(pm => pm.Materia)
+                .Where(c =>
+                    c.Activo &&
+                    c.ProfesorMateria != null &&
+                    c.ProfesorMateria.IdProfesor == idProfesor
+                )
+                .Select(c => new
+                {
+                    c.IdClase,
+                    c.Periodo,
+                    Materia = c.ProfesorMateria.Materia.Nombre,
+                    CodigoMateria = c.ProfesorMateria.Materia.Codigo
+                })
+                .ToListAsync();
+
+            return Ok(clases);
+        }
+
     }
 }

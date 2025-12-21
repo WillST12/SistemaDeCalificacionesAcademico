@@ -466,6 +466,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Backend.API.Controllers.ClasesController",
+    "Method": "GetClasesProfesor",
+    "RelativePath": "api/Clases/profesor/{idProfesor}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idProfesor",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Backend.API.Controllers.ClasesAlumnosController",
     "Method": "AgregarAlumno",
     "RelativePath": "api/ClasesAlumnos",
