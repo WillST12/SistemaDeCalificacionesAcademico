@@ -43,7 +43,7 @@ import CrearClase from "../pages/admin/clases/CrearClase";
 import EditarClase from "../pages/admin/clases/EditarClase";
 import ClaseDetalle from "../pages/admin/clases/ClaseDetalle";
 
-// Calificaciones
+// Calificaciones (ADMIN)
 import CalificacionesListado from "../pages/admin/calificaciones/CalificacionesListado";
 import CrearCalificacion from "../pages/admin/calificaciones/CrearCalificacion";
 import EditarCalificacion from "../pages/admin/calificaciones/EditarCalificacion";
@@ -52,13 +52,20 @@ import EditarCalificacion from "../pages/admin/calificaciones/EditarCalificacion
 // PROFESOR
 // ============================
 import ProfesorLayout from "../components/layout/ProfesorLayout";
+//import ProfesorClases from "../pages/profesor/clases/MisClasesProfesor";
+//import ProfesorMaterias from "../pages/profesor/materias/MisMateriasProfesor";
+//import ProfesorCalificaciones from "../pages/profesor/calificaciones/CalificacionesProfesor";
+import MisClasesProfesor from "../pages/admin/profesores/MisClasesProfesor";
+import MisMateriasProfesor from "../pages/admin/profesores/MisMateriasProfesor";
+import CalificacionesProfesor from "../pages/admin/profesores/CalificacionesProfesor";
 
 // ============================
 // ALUMNO
 // ============================
 import AlumnoLayout from "../components/layout/AlumnoLayout";
-import MisCalificaciones from "../pages/admin/alumnos/MisCalificaciones";
 import MisClases from "../pages/admin/alumnos/MisClases";
+import MisCalificaciones from "../pages/admin/alumnos/MisCalificaciones";
+
 // ============================
 // ROUTER
 // ============================
@@ -133,7 +140,7 @@ export const router = createBrowserRouter([
   },
 
   // ============================
-  // PROFESOR
+  // PROFESOR ✅ (YA FUNCIONA CON SIDEBAR)
   // ============================
   {
     path: "/profesor",
@@ -142,11 +149,16 @@ export const router = createBrowserRouter([
         <ProfesorLayout />
       </RequireAuth>
     ),
-    children: [{ index: true, element: <Dashboard /> }],
+    children: [
+      { index: true, element: <Dashboard /> },
+      { path: "materias", element: <MisMateriasProfesor /> },
+      { path: "clases", element: <MisClasesProfesor /> },
+      { path: "calificaciones", element: <CalificacionesProfesor   /> },
+    ],
   },
 
   // ============================
-  // ALUMNO ✅ (CORRECTO)
+  // ALUMNO
   // ============================
   {
     path: "/alumno",
