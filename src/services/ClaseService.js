@@ -7,12 +7,12 @@ const ClaseService = {
   actualizar: (id, data) => api.put(`/Clases/${id}`, data),
   eliminar: (id) => api.delete(`/Clases/${id}`),
 
-  // Devuelve los alumnos inscritos en una clase -> GET /api/ClasesAlumnos/{idClase}
-  alumnos: (idClase) => api.get(`/ClasesAlumnos/${idClase}`),
+  alumnos: (idClase) => api.get(`/Clases/${idClase}/alumnos`),
 
-  // Devuelve todas las inscripciones (para select al crear calificación) -> GET /api/ClasesAlumnos/inscripciones
-  inscripciones: () => api.get("/ClasesAlumnos/inscripciones"),
-  porProfesor: (idProfesor) => api.get(`/Clases/profesor/${idProfesor}`)
+  // ✅ PROFESOR POR USUARIO
+  porUsuarioProfesor: (idUsuario) =>
+    api.get(`/Clases/profesor/usuario/${idUsuario}`)
 };
 
 export default ClaseService;
+
