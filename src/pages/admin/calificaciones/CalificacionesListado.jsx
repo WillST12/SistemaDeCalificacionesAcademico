@@ -9,33 +9,43 @@ export default function CalificacionesListado() {
 
   const [activeTab, setActiveTab] = useState("listado");
   const [califs, setCalifs] = useState([]);
-
   const [clases, setClases] = useState([]);
   const [filtroValor, setFiltroValor] = useState("");
 
-  // Para asignación
   const [claseSeleccionada, setClaseSeleccionada] = useState("");
   const [alumnosClase, setAlumnosClase] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Cargar clases
+  // ===============================
+  // Cargar clases (ADMIN)
+  // ===============================
   useEffect(() => {
+    setLoading(true);
     ClaseService.listar()
       .then((r) => setClases(r.data))
-      .catch(() => {});
+      .finally(() => setLoading(false));
   }, []);
 
-  // Buscar calificaciones por clase
+  // ===============================
+  // Buscar calificaciones
+  // ===============================
   const buscar = async () => {
     if (!filtroValor) return alert("Selecciona una clase");
+
+    setLoading(true);
     try {
       const res = await calificacionService.porClase(filtroValor);
       setCalifs(res.data);
     } catch {
       alert("Error consultando calificaciones");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Cargar alumnos de la clase + calificaciones existentes
+  // ===============================
+  // Cargar alumnos + calificaciones
+  // ===============================
   const cargarAlumnosClase = async (idClase) => {
     setClaseSeleccionada(idClase);
 
@@ -44,6 +54,7 @@ export default function CalificacionesListado() {
       return;
     }
 
+    setLoading(true);
     try {
       const alumnos = await ClaseService.alumnos(idClase);
       const califsClase = await calificacionService.porClase(idClase);
@@ -57,213 +68,289 @@ export default function CalificacionesListado() {
           ...a,
           nota: cal ? cal.nota : "",
           publicado: cal ? cal.publicado : false,
-          idCalificacion: cal ? cal.idCalificacion : null
+          idCalificacion: cal ? cal.idCalificacion : null,
         };
       });
 
       setAlumnosClase(alumnosConEstado);
-    } catch {
-      setAlumnosClase([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Guardar o editar
+  // ===============================
+  // Guardar / editar
+  // ===============================
   const guardarCalificacion = async (alumno) => {
     if (!alumno.nota) return alert("Ingresa una nota");
 
+    setLoading(true);
     try {
       if (alumno.idCalificacion) {
         await calificacionService.actualizar(alumno.idCalificacion, {
           nota: parseFloat(alumno.nota),
-          publicado: alumno.publicado
+          publicado: alumno.publicado,
         });
       } else {
         await calificacionService.crear({
           idClaseAlumno: alumno.idClaseAlumno,
           nota: parseFloat(alumno.nota),
-          publicado: alumno.publicado
+          publicado: alumno.publicado,
         });
       }
 
-      alert("Guardado");
+      alert("✓ Calificación guardada exitosamente");
       cargarAlumnosClase(claseSeleccionada);
-      buscar();
+      if (filtroValor) buscar();
     } catch {
-      alert("Error guardando");
+      alert("Error guardando la calificación");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
-      <BackButton />
-      <h1 className="text-2xl font-bold mb-4">Calificaciones</h1>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <BackButton />
 
-      <div className="flex gap-4 mb-6">
-        <button
-          onClick={() => setActiveTab("listado")}
-          className={`px-4 py-2 rounded ${
-            activeTab === "listado"
-              ? "bg-blue-700 text-white"
-              : "bg-gray-200"
-          }`}
-        >
-          Calificaciones Registradas
-        </button>
-
-        <button
-          onClick={() => setActiveTab("asignar")}
-          className={`px-4 py-2 rounded ${
-            activeTab === "asignar"
-              ? "bg-blue-700 text-white"
-              : "bg-gray-200"
-          }`}
-        >
-          Asignar Calificación
-        </button>
-      </div>
-
-      {/* TAB LISTADO */}
-      {activeTab === "listado" && (
-        <div>
-          <div className="bg-white p-4 mb-4 rounded flex gap-4">
-            <select
-              className="input"
-              value={filtroValor}
-              onChange={(e) => setFiltroValor(e.target.value)}
-            >
-              <option value="">--Selecciona clase + Periodo--</option>
-              {clases.map((c) => (
-                <option key={c.idClase} value={c.idClase}>
-                  {c.materia} — {c.periodo}
-                </option>
-              ))}
-            </select>
-
-            <button
-              className="bg-blue-600 text-white px-4 py-2 rounded"
-              onClick={buscar}
-            >
-              Buscar
-            </button>
-          </div>
-
-          {/* Tabla */}
-          <div className="bg-white p-4 rounded">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th>Id</th>
-                  <th>Alumno</th>
-                  <th>Materia</th>
-                  <th>Periodo</th>
-                  <th>Nota</th>
-                  <th>Fecha</th>
-                  <th>Publicado</th>
-                  <th></th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {califs.map((c) => (
-                  <tr key={c.idCalificacion}>
-                    <td>{c.idCalificacion}</td>
-                    <td>{c.alumnoNombre}</td>
-                    <td>{c.materia}</td>
-                    <td>{c.periodo}</td>
-                    <td>{c.nota}</td>
-                    <td>{new Date(c.fechaRegistro).toLocaleDateString()}</td>
-                    <td>{c.publicado ? "Sí" : "No"}</td>
-                    <td>
-                      <button
-                        className="bg-yellow-500 text-white px-2 py-1 rounded"
-                        onClick={() =>
-                          navigate(`/admin/calificaciones/editar/${c.idCalificacion}`)
-                        }
-                      >
-                        Editar
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        {/* ================= HEADER ================= */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Gestión de Calificaciones
+          </h1>
+          <p className="text-gray-600">
+            Administración general de calificaciones del sistema
+          </p>
         </div>
-      )}
 
-      {/* TAB ASIGNAR */}
-      {activeTab === "asignar" && (
-        <div className="bg-white p-4 rounded">
-          <h2 className="text-xl font-bold mb-3">Asignar Calificación</h2>
-
-          <select
-            className="input mb-4"
-            value={claseSeleccionada}
-            onChange={(e) => cargarAlumnosClase(e.target.value)}
+        {/* ================= TABS ================= */}
+        <div className="bg-white rounded-lg shadow-sm mb-6 p-1 inline-flex gap-1">
+          <button
+            onClick={() => setActiveTab("listado")}
+            className={`px-6 py-3 rounded-md font-medium transition-all ${
+              activeTab === "listado"
+                ? "bg-blue-600 text-white shadow-sm"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
           >
-            <option value="">--Selecciona Clase--</option>
-            {clases.map((c) => (
-              <option key={c.idClase} value={c.idClase}>
-                {c.materia} — {c.periodo}
-              </option>
-            ))}
-          </select>
+            📋 Calificaciones Registradas
+          </button>
 
-          <table className="w-full">
-            <thead>
-              <tr>
-                <th>Alumno</th>
-                <th>Nota</th>
-                <th>Publicado</th>
-                <th></th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {alumnosClase.map((a, index) => (
-                <tr key={a.idClaseAlumno}>
-                  <td>{a.alumnoNombre}</td>
-
-                  <td>
-                    <input
-                      type="number"
-                      placeholder="Nota"
-                      className="input w-24"
-                      value={a.nota}
-                      onChange={(e) => {
-                        const copia = [...alumnosClase];
-                        copia[index].nota = e.target.value;
-                        setAlumnosClase(copia);
-                      }}
-                    />
-                  </td>
-
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={a.publicado}
-                      onChange={(e) => {
-                        const copia = [...alumnosClase];
-                        copia[index].publicado = e.target.checked;
-                        setAlumnosClase(copia);
-                      }}
-                    />
-                  </td>
-
-                  <td>
-                    <button
-                      onClick={() => guardarCalificacion(a)}
-                      className="bg-green-600 text-white px-3 py-1 rounded"
-                    >
-                      Guardar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <button
+            onClick={() => setActiveTab("asignar")}
+            className={`px-6 py-3 rounded-md font-medium transition-all ${
+              activeTab === "asignar"
+                ? "bg-blue-600 text-white shadow-sm"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
+          >
+            ✏️ Asignar Calificación
+          </button>
         </div>
-      )}
+
+        {/* ================= LOADING ================= */}
+        {loading && (
+          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 shadow-xl">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600 font-medium">Cargando...</p>
+            </div>
+          </div>
+        )}
+
+        {/* ================= TAB LISTADO ================= */}
+        {activeTab === "listado" && (
+          <div className="space-y-6">
+            {/* Filtros */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Filtrar Calificaciones
+              </h2>
+
+              <div className="flex gap-4">
+                <select
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={filtroValor}
+                  onChange={(e) => setFiltroValor(e.target.value)}
+                >
+                  <option value="">-- Selecciona una clase --</option>
+                  {clases.map((c) => (
+                    <option key={c.idClase} value={c.idClase}>
+                      {c.materia} — {c.periodo}
+                    </option>
+                  ))}
+                </select>
+
+                <button
+                  onClick={buscar}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm"
+                >
+                  🔍 Buscar
+                </button>
+              </div>
+            </div>
+
+            {/* Tabla */}
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              {califs.length === 0 ? (
+                <div className="p-12 text-center">
+                  <div className="text-6xl mb-4">📚</div>
+                  <p className="text-gray-500 text-lg">
+                    No hay calificaciones registradas
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">ID</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Alumno</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Materia</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Periodo</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Nota</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Estado</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+                      </tr>
+                    </thead>
+
+                    <tbody className="divide-y">
+                      {califs.map((c) => (
+                        <tr key={c.idCalificacion} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 text-sm text-gray-500">
+                            #{c.idCalificacion}
+                          </td>
+                          <td className="px-6 py-4 font-medium text-gray-900">
+                            {c.alumnoNombre}
+                          </td>
+                          <td className="px-6 py-4 text-gray-600">{c.materia}</td>
+                          <td className="px-6 py-4 text-gray-600">{c.periodo}</td>
+                          <td className="px-6 py-4">
+                            <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-semibold">
+                              {c.nota}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span
+                              className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                c.publicado
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-yellow-100 text-yellow-800"
+                              }`}
+                            >
+                              {c.publicado ? "✓ Publicado" : "⏳ Borrador"}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <button
+                              onClick={() =>
+                                navigate(
+                                  `/admin/calificaciones/editar/${c.idCalificacion}`
+                                )
+                              }
+                              className="px-3 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
+                            >
+                              ✏️ Editar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ================= TAB ASIGNAR ================= */}
+        {activeTab === "asignar" && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-semibold mb-4">Seleccionar Clase</h2>
+
+              <select
+                className="w-full px-4 py-3 border rounded-lg"
+                value={claseSeleccionada}
+                onChange={(e) => cargarAlumnosClase(e.target.value)}
+              >
+                <option value="">-- Selecciona tu clase --</option>
+                {clases.map((c) => (
+                  <option key={c.idClase} value={c.idClase}>
+                    {c.materia} — {c.periodo}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              {alumnosClase.length === 0 ? (
+                <div className="p-12 text-center">
+                  <div className="text-6xl mb-4">👥</div>
+                  <p className="text-gray-500 text-lg">
+                    Selecciona una clase para ver los alumnos
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Alumno</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Nota</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Publicado</th>
+                        <th className="px-6 py-4"></th>
+                      </tr>
+                    </thead>
+
+                    <tbody className="divide-y">
+                      {alumnosClase.map((a, i) => (
+                        <tr key={a.idClaseAlumno}>
+                          <td className="px-6 py-4 font-medium">
+                            {a.nombre} {a.apellido}
+                          </td>
+                          <td className="px-6 py-4">
+                            <input
+                              type="number"
+                              className="w-28 px-3 py-2 border rounded-lg"
+                              value={a.nota}
+                              onChange={(e) => {
+                                const copia = [...alumnosClase];
+                                copia[i].nota = e.target.value;
+                                setAlumnosClase(copia);
+                              }}
+                            />
+                          </td>
+                          <td className="px-6 py-4">
+                            <input
+                              type="checkbox"
+                              checked={a.publicado}
+                              onChange={(e) => {
+                                const copia = [...alumnosClase];
+                                copia[i].publicado = e.target.checked;
+                                setAlumnosClase(copia);
+                              }}
+                            />
+                          </td>
+                          <td className="px-6 py-4">
+                            <button
+                              onClick={() => guardarCalificacion(a)}
+                              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                            >
+                              💾 Guardar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
