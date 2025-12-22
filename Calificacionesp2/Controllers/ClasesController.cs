@@ -140,6 +140,7 @@ namespace Backend.API.Controllers
                 .Where(ca => ca.IdClase == idClase)
                 .Include(ca => ca.Alumno)
                 .Select(ca => new {
+                    ca.IdClaseAlumno,
                     ca.Alumno.IdAlumno,
                     ca.Alumno.Nombre,
                     ca.Alumno.Apellido,

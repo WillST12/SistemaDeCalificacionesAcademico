@@ -552,17 +552,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "boolean"
+                "$ref": "#/components/schemas/PublicarDTO"
               }
             },
             "text/json": {
               "schema": {
-                "type": "boolean"
+                "$ref": "#/components/schemas/PublicarDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "type": "boolean"
+                "$ref": "#/components/schemas/PublicarDTO"
               }
             }
           }
@@ -1708,6 +1708,15 @@
           "idMateria": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PublicarDTO": {
+        "type": "object",
+        "properties": {
+          "publicado": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

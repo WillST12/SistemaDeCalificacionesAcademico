@@ -363,8 +363,8 @@
         "IsRequired": true
       },
       {
-        "Name": "publicar",
-        "Type": "System.Boolean",
+        "Name": "dto",
+        "Type": "Backend.API.Models.DTOs.PublicarDTO",
         "IsRequired": true
       }
     ],

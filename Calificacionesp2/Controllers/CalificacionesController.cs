@@ -84,17 +84,18 @@ namespace Backend.API.Controllers
             return Ok("Calificación actualizada.");
         }
 
-        // PUT publicar
+       
         [HttpPut("publicar/{id}")]
         [Authorize(Roles = "Admin,Profesor")]
-        public async Task<IActionResult> Publicar(int id, [FromBody] bool publicar)
+        public async Task<IActionResult> Publicar(int id, [FromBody] PublicarDTO dto)
         {
             var cal = await _context.Calificaciones.FindAsync(id);
             if (cal == null) return NotFound("No existe la calificación");
 
-            cal.Publicado = publicar;
+            cal.Publicado = dto.Publicado;
             await _context.SaveChangesAsync();
-            return Ok();
+
+            return Ok(new { message = cal.Publicado ? "Calificación publicada" : "Calificación despublicada" });
         }
 
         // GET por alumno (Admin/Profesor/Alumno)
