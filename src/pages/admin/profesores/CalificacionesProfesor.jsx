@@ -189,7 +189,7 @@ export default function CalificacionesProfesor() {
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             }`}
           >
-            ✏️ Asignar Calificación
+            ✏️ Asignar y Editar Calificación
           </button>
         </div>
 
@@ -273,9 +273,9 @@ export default function CalificacionesProfesor() {
                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                           Estado
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        {/*<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                           Acciones
-                        </th>
+                        </th>*/}
                       </tr>
                     </thead>
 
@@ -322,14 +322,14 @@ export default function CalificacionesProfesor() {
                               {c.publicado ? "✓ Publicado" : "⏳ Borrador"}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          {/*<td className="px-6 py-4 whitespace-nowrap text-sm">
                             <button
                               className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-600 transition-colors"
                               onClick={() => editarCalificacion(c)}
                             >
                               ✏️ Editar
                             </button>
-                          </td>
+                          </td>*/}
                         </tr>
                       ))}
                     </tbody>

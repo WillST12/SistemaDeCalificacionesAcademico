@@ -145,7 +145,7 @@ export default function CalificacionesListado() {
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             }`}
           >
-            ✏️ Asignar Calificación
+            ✏️ Asignar y Editar Calificación
           </button>
         </div>
 
@@ -211,7 +211,7 @@ export default function CalificacionesListado() {
                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Periodo</th>
                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Nota</th>
                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Estado</th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+                        {/*<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Acciones</th>*/}
                       </tr>
                     </thead>
 
@@ -242,7 +242,7 @@ export default function CalificacionesListado() {
                               {c.publicado ? "✓ Publicado" : "⏳ Borrador"}
                             </span>
                           </td>
-                          <td className="px-6 py-4">
+                         {/* <td className="px-6 py-4">
                             <button
                               onClick={() =>
                                 navigate(
@@ -253,7 +253,7 @@ export default function CalificacionesListado() {
                             >
                               ✏️ Editar
                             </button>
-                          </td>
+                          </td>*/}
                         </tr>
                       ))}
                     </tbody>
@@ -322,17 +322,24 @@ export default function CalificacionesListado() {
                               }}
                             />
                           </td>
-                          <td className="px-6 py-4">
-                            <input
-                              type="checkbox"
-                              checked={a.publicado}
-                              onChange={(e) => {
-                                const copia = [...alumnosClase];
-                                copia[i].publicado = e.target.checked;
-                                setAlumnosClase(copia);
-                              }}
-                            />
-                          </td>
+                             <td className="px-6 py-4 whitespace-nowrap">
+                              <label className="inline-flex items-center cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                                  checked={a.publicado}
+                                  onChange={(e) => {
+                                    const copia = [...alumnosClase];
+                                    copia[i].publicado = e.target.checked;
+                                    setAlumnosClase(copia);
+                                  }}
+                                />
+                                <span className="ml-2 text-sm text-gray-600">
+                                  {a.publicado ? "Sí" : "No"}
+                                </span>
+                              </label>
+                            </td>
+
                           <td className="px-6 py-4">
                             <button
                               onClick={() => guardarCalificacion(a)}
