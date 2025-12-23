@@ -211,7 +211,7 @@ export default function CalificacionesListado() {
                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Periodo</th>
                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Nota</th>
                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Estado</th>
-                        {/*<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Acciones</th>*/}
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Fecha</th>
                       </tr>
                     </thead>
 
@@ -231,6 +231,13 @@ export default function CalificacionesListado() {
                               {c.nota}
                             </span>
                           </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(c.fechaRegistro).toLocaleDateString('es-ES', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric'
+                            })}
+                          </td>
                           <td className="px-6 py-4">
                             <span
                               className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -242,18 +249,7 @@ export default function CalificacionesListado() {
                               {c.publicado ? "✓ Publicado" : "⏳ Borrador"}
                             </span>
                           </td>
-                         {/* <td className="px-6 py-4">
-                            <button
-                              onClick={() =>
-                                navigate(
-                                  `/admin/calificaciones/editar/${c.idCalificacion}`
-                                )
-                              }
-                              className="px-3 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
-                            >
-                              ✏️ Editar
-                            </button>
-                          </td>*/}
+                         
                         </tr>
                       ))}
                     </tbody>

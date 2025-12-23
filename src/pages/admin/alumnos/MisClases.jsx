@@ -31,7 +31,7 @@ export default function MisClases() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">
-          📚 Mis Clases
+          📚  Mis Clases
         </h1>
         <span className="text-sm text-gray-500">
           Total: {clases.length}
