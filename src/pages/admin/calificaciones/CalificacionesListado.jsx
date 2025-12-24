@@ -212,6 +212,7 @@ export default function CalificacionesListado() {
                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Nota</th>
                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Estado</th>
                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Fecha</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Vigencia</th>
                       </tr>
                     </thead>
 
@@ -250,6 +251,17 @@ export default function CalificacionesListado() {
                             </span>
                           </td>
                          
+                          <td className="px-6 py-4">
+                            <span
+                              className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                c.vigente
+                                  ? "bg-blue-100 text-blue-800"
+                                  : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {c.vigente ? "✓ Vigente" : "📁 Histórico"}
+                            </span>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
