@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import alumnoService from "../../../services/alumnoService";
 import calificacionService from "../../../services/calificacionService";
 
 export default function MisCalificaciones() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   const notaColor = (nota) => {
     if (nota >= 90) return "bg-green-100 text-green-700";
@@ -28,20 +29,43 @@ export default function MisCalificaciones() {
         setLoading(false);
       }
     };
-
     cargar();
   }, []);
+
+  const itemsFiltrados = useMemo(() => {
+    return items.filter((c) =>
+      c.materia.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [items, search]);
+
+  const promedio = useMemo(() => {
+    if (items.length === 0) return 0;
+    return (
+      items.reduce((acc, i) => acc + i.nota, 0) / items.length
+    ).toFixed(1);
+  }, [items]);
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <h1 className="text-3xl font-bold text-gray-800">
           📝 Mis Calificaciones
         </h1>
-        <span className="text-sm text-gray-500">
-          Publicadas: {items.length}
-        </span>
+
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-500">
+            Promedio: <strong>{promedio}</strong>
+          </span>
+
+          <input
+            type="text"
+            placeholder="Buscar materia..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          />
+        </div>
       </div>
 
       {/* Card */}
@@ -58,19 +82,19 @@ export default function MisCalificaciones() {
           <tbody>
             {loading && (
               <tr>
-                <td colSpan={3} className="p-6 text-center text-gray-400">
+                <td colSpan={3} className="p-8 text-center text-gray-400">
                   Cargando calificaciones...
                 </td>
               </tr>
             )}
 
             {!loading &&
-              items.map((c) => (
+              itemsFiltrados.map((c) => (
                 <tr
                   key={c.idCalificacion}
                   className="border-t hover:bg-gray-50 transition"
                 >
-                  <td className="p-4 font-medium text-gray-800">
+                  <td className="p-4 font-semibold text-gray-800">
                     {c.materia}
                   </td>
                   <td className="p-4 text-gray-600">{c.periodo}</td>
@@ -86,9 +110,9 @@ export default function MisCalificaciones() {
                 </tr>
               ))}
 
-            {!loading && items.length === 0 && (
+            {!loading && itemsFiltrados.length === 0 && (
               <tr>
-                <td colSpan={3} className="p-6 text-center text-gray-500">
+                <td colSpan={3} className="p-8 text-center text-gray-500">
                   No hay calificaciones publicadas 📭
                 </td>
               </tr>
