@@ -35,6 +35,12 @@ namespace Backend.API.Controllers
             if (!profesorMateria.Materia.Activo)
                 return BadRequest("No puedes crear clases con una materia desactivada.");
 
+            if (!profesorMateria.Profesor.Activo) {
+
+                return BadRequest("No puedes crear clases con un profesor inactivo.");
+            
+            }
+
             var clase = new Clase
             {
                 IdProfesorMateria = dto.IdProfesorMateria,

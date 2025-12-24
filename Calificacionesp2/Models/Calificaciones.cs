@@ -20,5 +20,7 @@ namespace Backend.API.Models
         public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
 
         public bool Publicado { get; set; } = false;
+
+        public bool Vigente { get; set; } = true;
     }
 }

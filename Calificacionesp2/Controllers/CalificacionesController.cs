@@ -32,6 +32,7 @@ namespace Backend.API.Controllers
                 IdClaseAlumno = dto.IdClaseAlumno,
                 Nota = dto.Nota,
                 Publicado = dto.Publicado,
+                Vigente = true,  // ✅ Nueva calificación siempre vigente
                 FechaRegistro = DateTime.Now
             };
 
@@ -59,6 +60,7 @@ namespace Backend.API.Controllers
                     idCalificacion = x.IdCalificacion,
                     nota = x.Nota,
                     publicado = x.Publicado,
+                    vigente = x.Vigente,  // ✅ Incluir vigencia
                     alumno = x.ClaseAlumno.Alumno.Nombre + " " + x.ClaseAlumno.Alumno.Apellido,
                     materia = x.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
                     periodo = x.ClaseAlumno.Clase.Periodo
@@ -79,12 +81,13 @@ namespace Backend.API.Controllers
 
             cal.Nota = dto.Nota;
             cal.Publicado = dto.Publicado;
+            // No modificar Vigente aquí, se maneja al desactivar alumno
 
             await _context.SaveChangesAsync();
             return Ok("Calificación actualizada.");
         }
 
-       
+        // PUT: publicar/despublicar
         [HttpPut("publicar/{id}")]
         [Authorize(Roles = "Admin,Profesor")]
         public async Task<IActionResult> Publicar(int id, [FromBody] PublicarDTO dto)
@@ -98,11 +101,10 @@ namespace Backend.API.Controllers
             return Ok(new { message = cal.Publicado ? "Calificación publicada" : "Calificación despublicada" });
         }
 
-        // GET por alumno (Admin/Profesor/Alumno)
-        // Admin/Profesor: ven todo
-        // Alumno: debería usar "mis-calificaciones/{idAlumno}" (solo publicadas)
+        // GET por alumno (Admin/Profesor)
+        // Admin/Profesor: ven TODAS (vigentes e históricas)
         [HttpGet("alumno/{idAlumno}")]
-        [Authorize(Roles = "Admin,Profesor,Alumno")]
+        [Authorize(Roles = "Admin,Profesor")]
         public async Task<IActionResult> PorAlumno(int idAlumno)
         {
             var res = await _context.Calificaciones
@@ -120,6 +122,7 @@ namespace Backend.API.Controllers
                     nota = c.Nota,
                     fechaRegistro = c.FechaRegistro,
                     publicado = c.Publicado,
+                    vigente = c.Vigente,  // ✅ Incluir vigencia
                     materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
                     periodo = c.ClaseAlumno.Clase.Periodo
                 }).ToListAsync();
@@ -127,8 +130,7 @@ namespace Backend.API.Controllers
             return Ok(res);
         }
 
-        // ✅ Alumno: SOLO SUS CALIFICACIONES PUBLICADAS
-        // GET api/Calificaciones/mis-calificaciones/{idAlumno}
+        // ✅ Alumno: SOLO SUS CALIFICACIONES PUBLICADAS Y VIGENTES
         [HttpGet("mis-calificaciones/{idAlumno}")]
         [Authorize(Roles = "Alumno")]
         public async Task<IActionResult> MisCalificaciones(int idAlumno)
@@ -140,20 +142,23 @@ namespace Backend.API.Controllers
                             .ThenInclude(pm => pm.Materia)
                 .Where(c =>
                     c.ClaseAlumno.IdAlumno == idAlumno &&
-                    c.Publicado == true
+                    c.Publicado == true &&
+                    c.Vigente == true  // ✅ Solo calificaciones vigentes
                 )
                 .Select(c => new
                 {
                     idCalificacion = c.IdCalificacion,
                     nota = c.Nota,
                     materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
-                    periodo = c.ClaseAlumno.Clase.Periodo
+                    periodo = c.ClaseAlumno.Clase.Periodo,
+                    fechaRegistro = c.FechaRegistro
                 })
                 .ToListAsync();
 
             return Ok(res);
         }
-        // GET api/Calificaciones/clase/{idClase}
+
+        // GET por clase (Admin/Profesor)
         [HttpGet("clase/{idClase}")]
         [Authorize(Roles = "Admin,Profesor")]
         public async Task<IActionResult> PorClase(int idClase)
@@ -165,7 +170,10 @@ namespace Backend.API.Controllers
                     .ThenInclude(ca => ca.Clase)
                         .ThenInclude(cl => cl.ProfesorMateria)
                             .ThenInclude(pm => pm.Materia)
-                .Where(c => c.ClaseAlumno.Clase.IdClase == idClase)
+                .Where(c =>
+                    c.ClaseAlumno.Clase.IdClase == idClase &&
+                    c.Vigente == true  // ✅ Solo mostrar vigentes en la gestión de clase
+                )
                 .Select(c => new
                 {
                     idCalificacion = c.IdCalificacion,
@@ -174,6 +182,7 @@ namespace Backend.API.Controllers
                     idClaseAlumno = c.IdClaseAlumno,
                     nota = c.Nota,
                     publicado = c.Publicado,
+                    vigente = c.Vigente,  // ✅ Incluir vigencia
                     fechaRegistro = c.FechaRegistro,
                     materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
                     periodo = c.ClaseAlumno.Clase.Periodo
@@ -183,5 +192,31 @@ namespace Backend.API.Controllers
             return Ok(res);
         }
 
+        // ✅ NUEVO: Historial completo (Admin/Profesor)
+        [HttpGet("historial/{idAlumno}")]
+        [Authorize(Roles = "Admin,Profesor")]
+        public async Task<IActionResult> HistorialCompleto(int idAlumno)
+        {
+            var res = await _context.Calificaciones
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Clase)
+                        .ThenInclude(cl => cl.ProfesorMateria)
+                            .ThenInclude(pm => pm.Materia)
+                .Where(c => c.ClaseAlumno.IdAlumno == idAlumno)
+                .OrderByDescending(c => c.FechaRegistro)
+                .Select(c => new
+                {
+                    idCalificacion = c.IdCalificacion,
+                    nota = c.Nota,
+                    materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
+                    periodo = c.ClaseAlumno.Clase.Periodo,
+                    fechaRegistro = c.FechaRegistro,
+                    publicado = c.Publicado,
+                    vigente = c.Vigente  
+                })
+                .ToListAsync();
+
+            return Ok(res);
+        }
     }
 }

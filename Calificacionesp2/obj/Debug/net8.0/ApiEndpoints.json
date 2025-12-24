@@ -335,6 +335,22 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.CalificacionesController",
+    "Method": "HistorialCompleto",
+    "RelativePath": "api/Calificaciones/historial/{idAlumno}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idAlumno",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.CalificacionesController",
     "Method": "MisCalificaciones",
     "RelativePath": "api/Calificaciones/mis-calificaciones/{idAlumno}",
     "HttpMethod": "GET",

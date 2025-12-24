@@ -9,7 +9,7 @@ namespace Backend.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // ✅ IMPORTANTE: NO lo dejes como Admin a nivel de clase
+    [Authorize]
     public class AlumnosController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -70,10 +70,11 @@ namespace Backend.API.Controllers
                     a.Matricula,
                     a.Activo,
 
-                    // 🔹 ÍNDICE (0–100) en base a calificaciones PUBLICADAS
+                    // 🔹 ÍNDICE (0–100) en base a calificaciones PUBLICADAS Y VIGENTES
                     Indice = _context.Calificaciones
                         .Where(c =>
                             c.Publicado &&
+                            c.Vigente &&  // ✅ Solo calificaciones vigentes
                             c.ClaseAlumno.IdAlumno == a.IdAlumno
                         )
                         .Select(c => (double?)c.Nota)
@@ -133,7 +134,19 @@ namespace Backend.API.Controllers
             if (alumno == null)
                 return NotFound("Alumno no encontrado.");
 
-            // Eliminar inscripciones
+            // 🔍 Buscar calificaciones vigentes del alumno
+            var calificacionesVigentes = await _context.Calificaciones
+                .Include(c => c.ClaseAlumno)
+                .Where(c => c.ClaseAlumno.IdAlumno == id && c.Vigente)
+                .ToListAsync();
+
+            // 📊 Marcar calificaciones como no vigentes (histórico)
+            foreach (var calif in calificacionesVigentes)
+            {
+                calif.Vigente = false;
+            }
+
+            // 🗑️ Eliminar inscripciones a clases
             var inscripciones = await _context.ClaseAlumnos
                 .Where(ca => ca.IdAlumno == id)
                 .ToListAsync();
@@ -141,10 +154,26 @@ namespace Backend.API.Controllers
             if (inscripciones.Any())
                 _context.ClaseAlumnos.RemoveRange(inscripciones);
 
+            // 🔒 Desactivar alumno
             alumno.Activo = false;
             await _context.SaveChangesAsync();
 
-            return Ok("Alumno desactivado y removido de sus clases.");
+            // 📢 Respuesta con información del histórico
+            if (calificacionesVigentes.Any())
+            {
+                return Ok(new
+                {
+                    message = "Alumno desactivado correctamente.",
+                    calificacionesArchivadas = calificacionesVigentes.Count,
+                    warning = $"Se archivaron {calificacionesVigentes.Count} calificación(es) en el histórico."
+                });
+            }
+
+            return Ok(new
+            {
+                message = "Alumno desactivado y removido de sus clases.",
+                calificacionesArchivadas = 0
+            });
         }
 
         // =========================
@@ -158,15 +187,43 @@ namespace Backend.API.Controllers
             if (alumno == null)
                 return NotFound("Alumno no encontrado.");
 
+            if (alumno.Activo)
+                return BadRequest("El alumno ya está activo.");
+
+            // 🔄 Reactivar calificaciones históricas (opcional)
+            var calificacionesHistoricas = await _context.Calificaciones
+                .Include(c => c.ClaseAlumno)
+                .Where(c => c.ClaseAlumno.IdAlumno == id && !c.Vigente)
+                .ToListAsync();
+
+            foreach (var calif in calificacionesHistoricas)
+            {
+                calif.Vigente = true;
+            }
+
+            // ✅ Reactivar alumno
             alumno.Activo = true;
             await _context.SaveChangesAsync();
 
-            return Ok("Alumno reactivado correctamente.");
+            if (calificacionesHistoricas.Any())
+            {
+                return Ok(new
+                {
+                    message = "Alumno reactivado correctamente.",
+                    calificacionesRestauradas = calificacionesHistoricas.Count,
+                    info = "Se restauraron las calificaciones del histórico. Deberás reinscribir al alumno en las clases."
+                });
+            }
+
+            return Ok(new
+            {
+                message = "Alumno reactivado correctamente.",
+                calificacionesRestauradas = 0
+            });
         }
 
         // =========================
-        // OBTENER ALUMNO POR IDUSUARIO (ALUMNO)
-        // ✅ Para convertir idUsuario -> idAlumno en frontend
+        // OBTENER ALUMNO POR USUARIO (ALUMNO)
         // =========================
         [HttpGet("por-usuario/{idUsuario}")]
         [Authorize(Roles = "Alumno")]
