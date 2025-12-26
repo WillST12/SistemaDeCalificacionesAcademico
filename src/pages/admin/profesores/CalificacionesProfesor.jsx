@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import calificacionService from "../../../services/calificacionService";
 import ClaseService from "../../../services/ClaseService";
 import BackButton from "../../../components/ui/BackButton";
@@ -6,7 +6,8 @@ import { useAuth } from "../../../hooks/useAuth";
 
 export default function CalificacionesProfesor() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("listado");
+
+  const [activeTab, setActiveTab] = useState("listado"); // listado | asignar | archivadas
   const [califs, setCalifs] = useState([]);
   const [clases, setClases] = useState([]);
   const [filtroValor, setFiltroValor] = useState("");
@@ -14,43 +15,80 @@ export default function CalificacionesProfesor() {
   const [alumnosClase, setAlumnosClase] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const clasesMap = useMemo(() => {
+    const map = new Map();
+    clases.forEach((c) => map.set(c.idClase, c));
+    return map;
+  }, [clases]);
+
+  // =========================
   // Cargar clases del profesor
+  // =========================
   useEffect(() => {
     if (!user?.idUsuario) return;
 
     setLoading(true);
     ClaseService.porUsuarioProfesor(user.idUsuario)
-      .then((r) => {
-        setClases(r.data);
-      })
-      .catch(() => {
-        alert("Error cargando tus clases");
-      })
+      .then((r) => setClases(r.data))
+      .catch(() => alert("Error cargando tus clases"))
       .finally(() => setLoading(false));
   }, [user]);
 
-  // Buscar calificaciones por clase
+  // =========================
+  // Limpieza al cambiar de tab
+  // =========================
+  useEffect(() => {
+    // Limpia resultados para evitar confusión visual entre tabs
+    setCalifs([]);
+    // no borro filtroValor para que el usuario no tenga que re-seleccionar siempre
+    if (activeTab !== "asignar") {
+      setClaseSeleccionada("");
+      setAlumnosClase([]);
+    }
+  }, [activeTab]);
+
+  // =========================
+  // Validación de clase del profesor
+  // =========================
+  const validarClaseProfesor = (idClaseStr) => {
+    const idClase = parseInt(idClaseStr);
+    if (!idClaseStr || Number.isNaN(idClase)) return null;
+    return clasesMap.get(idClase) || null;
+  };
+
+  // =========================
+  // Buscar calificaciones (vigentes o archivadas)
+  // =========================
   const buscar = async () => {
     if (!filtroValor) return alert("Selecciona una clase");
 
-    const claseValida = clases.find((c) => c.idClase === parseInt(filtroValor));
-    if (!claseValida) {
-      return alert("No tienes permiso para ver esta clase");
-    }
+    const claseValida = validarClaseProfesor(filtroValor);
+    if (!claseValida) return alert("No tienes permiso para ver esta clase");
 
     setLoading(true);
     try {
-      const res = await calificacionService.porClase(filtroValor);
+      const res =
+        activeTab === "archivadas"
+          ? await calificacionService.archivadasPorClase(filtroValor)
+          : await calificacionService.porClase(filtroValor);
+
       setCalifs(res.data);
-    } catch {
+    } catch (e) {
       alert("Error consultando calificaciones");
     } finally {
       setLoading(false);
     }
   };
 
-  // Cargar alumnos de la clase
+  // =========================
+  // Cargar alumnos de la clase (solo para asignar vigentes)
+  // =========================
   const cargarAlumnosClase = async (idClase) => {
+    if (activeTab === "archivadas") {
+      alert("Las calificaciones archivadas son solo de lectura.");
+      return;
+    }
+
     setClaseSeleccionada(idClase);
 
     if (!idClase) {
@@ -58,7 +96,7 @@ export default function CalificacionesProfesor() {
       return;
     }
 
-    const claseValida = clases.find((c) => c.idClase === parseInt(idClase));
+    const claseValida = validarClaseProfesor(idClase);
     if (!claseValida) {
       alert("No tienes permiso para gestionar esta clase");
       setAlumnosClase([]);
@@ -90,16 +128,20 @@ export default function CalificacionesProfesor() {
     }
   };
 
-  // Guardar calificación
+  // =========================
+  // Guardar calificación (solo vigentes)
+  // =========================
   const guardarCalificacion = async (alumno) => {
-    if (!alumno.nota) return alert("Ingresa una nota");
-
-    const claseValida = clases.find(
-      (c) => c.idClase === parseInt(claseSeleccionada)
-    );
-    if (!claseValida) {
-      return alert("No tienes permiso para calificar en esta clase");
+    if (activeTab === "archivadas") {
+      alert("Las calificaciones archivadas no se pueden modificar.");
+      return;
     }
+
+    if (alumno.nota === "" || alumno.nota === null || alumno.nota === undefined)
+      return alert("Ingresa una nota");
+
+    const claseValida = validarClaseProfesor(claseSeleccionada);
+    if (!claseValida) return alert("No tienes permiso para calificar en esta clase");
 
     setLoading(true);
     try {
@@ -117,8 +159,10 @@ export default function CalificacionesProfesor() {
       }
 
       alert("✓ Calificación guardada exitosamente");
-      cargarAlumnosClase(claseSeleccionada);
-      if (filtroValor) buscar();
+      await cargarAlumnosClase(claseSeleccionada);
+      if (filtroValor && (activeTab === "listado" || activeTab === "archivadas")) {
+        await buscar();
+      }
     } catch {
       alert("Error guardando la calificación");
     } finally {
@@ -126,17 +170,9 @@ export default function CalificacionesProfesor() {
     }
   };
 
-  // Editar calificación
-  const editarCalificacion = (calif) => {
-    const claseValida = clases.find((c) => c.idClase === calif.idClase);
-    if (!claseValida) {
-      return alert("No tienes permiso para editar esta calificación");
-    }
-
-    setActiveTab("asignar");
-    cargarAlumnosClase(calif.idClase.toString());
-  };
-
+  // =========================
+  // Estado sin user
+  // =========================
   if (!user) {
     return (
       <div className="min-h-screen bg-gray-50 p-6">
@@ -153,19 +189,19 @@ export default function CalificacionesProfesor() {
     );
   }
 
+  const isListado = activeTab === "listado" || activeTab === "archivadas";
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         <BackButton />
-        
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Gestión de Calificaciones
           </h1>
-          <p className="text-gray-600">
-            Administra las calificaciones de tus clases
-          </p>
+          <p className="text-gray-600">Administra las calificaciones de tus clases</p>
         </div>
 
         {/* Tabs */}
@@ -178,7 +214,18 @@ export default function CalificacionesProfesor() {
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             }`}
           >
-            📋 Calificaciones Registradas
+            📋 Vigentes
+          </button>
+
+          <button
+            onClick={() => setActiveTab("archivadas")}
+            className={`px-6 py-3 rounded-md font-medium transition-all ${
+              activeTab === "archivadas"
+                ? "bg-blue-600 text-white shadow-sm"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
+          >
+            🗄️ Archivadas (Inactivos)
           </button>
 
           <button
@@ -189,8 +236,8 @@ export default function CalificacionesProfesor() {
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             }`}
           >
-            ✏️ Asignar y Editar Calificación
-          </button>
+            ✏️ Asignar y Editar
+        </button>
         </div>
 
         {/* Loading Overlay */}
@@ -203,14 +250,17 @@ export default function CalificacionesProfesor() {
           </div>
         )}
 
-        {/* TAB LISTADO */}
-        {activeTab === "listado" && (
+        {/* LISTADO (Vigentes + Archivadas) */}
+        {isListado && (
           <div className="space-y-6">
             {/* Filtros */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Filtrar Calificaciones
+                {activeTab === "archivadas"
+                  ? "Filtrar Calificaciones Archivadas"
+                  : "Filtrar Calificaciones Vigentes"}
               </h2>
+
               <div className="flex gap-4">
                 <select
                   className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
@@ -230,7 +280,7 @@ export default function CalificacionesProfesor() {
                   onClick={buscar}
                   disabled={loading}
                 >
-                  🔍 Buscar
+                  {activeTab === "archivadas" ? "📁 Buscar" : "🔍 Buscar"}
                 </button>
               </div>
             </div>
@@ -240,9 +290,7 @@ export default function CalificacionesProfesor() {
               {califs.length === 0 ? (
                 <div className="p-12 text-center">
                   <div className="text-6xl mb-4">📚</div>
-                  <p className="text-gray-500 text-lg">
-                    No hay calificaciones registradas
-                  </p>
+                  <p className="text-gray-500 text-lg">No hay calificaciones</p>
                   <p className="text-gray-400 text-sm mt-2">
                     Selecciona una clase y haz clic en Buscar
                   </p>
@@ -273,9 +321,6 @@ export default function CalificacionesProfesor() {
                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                           Estado
                         </th>
-                        {/*<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                          Acciones
-                        </th>*/}
                       </tr>
                     </thead>
 
@@ -305,11 +350,13 @@ export default function CalificacionesProfesor() {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {new Date(c.fechaRegistro).toLocaleDateString('es-ES', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: 'numeric'
-                            })}
+                            {c.fechaRegistro
+                              ? new Date(c.fechaRegistro).toLocaleDateString("es-ES", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                })
+                              : "-"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span
@@ -322,14 +369,6 @@ export default function CalificacionesProfesor() {
                               {c.publicado ? "✓ Publicado" : "⏳ Borrador"}
                             </span>
                           </td>
-                          {/*<td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <button
-                              className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-600 transition-colors"
-                              onClick={() => editarCalificacion(c)}
-                            >
-                              ✏️ Editar
-                            </button>
-                          </td>*/}
                         </tr>
                       ))}
                     </tbody>
@@ -341,7 +380,8 @@ export default function CalificacionesProfesor() {
             {califs.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm p-4">
                 <p className="text-sm text-gray-600 text-center">
-                  Mostrando <span className="font-semibold">{califs.length}</span>{" "}
+                  Mostrando{" "}
+                  <span className="font-semibold">{califs.length}</span>{" "}
                   calificación{califs.length !== 1 ? "es" : ""}
                 </p>
               </div>
@@ -349,7 +389,7 @@ export default function CalificacionesProfesor() {
           </div>
         )}
 
-        {/* TAB ASIGNAR */}
+        {/* ASIGNAR */}
         {activeTab === "asignar" && (
           <div className="space-y-6">
             {/* Selector de Clase */}
@@ -390,7 +430,9 @@ export default function CalificacionesProfesor() {
                       Alumnos de la Clase
                     </h3>
                     <p className="text-blue-100 text-sm">
-                      {alumnosClase.length} alumno{alumnosClase.length !== 1 ? "s" : ""} inscrito{alumnosClase.length !== 1 ? "s" : ""}
+                      {alumnosClase.length} alumno
+                      {alumnosClase.length !== 1 ? "s" : ""} inscrito
+                      {alumnosClase.length !== 1 ? "s" : ""}
                     </p>
                   </div>
 
@@ -423,7 +465,8 @@ export default function CalificacionesProfesor() {
                               <div className="flex items-center">
                                 <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
                                   <span className="text-blue-600 font-semibold">
-                                    {a.nombre?.charAt(0)}{a.apellido?.charAt(0)}
+                                    {a.nombre?.charAt(0)}
+                                    {a.apellido?.charAt(0)}
                                   </span>
                                 </div>
                                 <div className="ml-4">
