@@ -123,102 +123,67 @@ namespace Backend.API.Controllers
             return Ok("Alumno actualizado correctamente.");
         }
 
-        // =========================
-        // DESACTIVAR ALUMNO (ADMIN)
-        // =========================
+        // PUT: api/Alumnos/desactivar/{id}
         [HttpPut("desactivar/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DesactivarAlumno(int id)
         {
             var alumno = await _context.Alumnos.FindAsync(id);
             if (alumno == null)
-                return NotFound("Alumno no encontrado.");
+                return NotFound("Alumno no encontrado");
 
-            // 🔍 Buscar calificaciones vigentes del alumno
-            var calificacionesVigentes = await _context.Calificaciones
-                .Include(c => c.ClaseAlumno)
-                .Where(c => c.ClaseAlumno.IdAlumno == id && c.Vigente)
-                .ToListAsync();
-
-            // 📊 Marcar calificaciones como no vigentes (histórico)
-            foreach (var calif in calificacionesVigentes)
-            {
-                calif.Vigente = false;
-            }
-
-            // 🗑️ Eliminar inscripciones a clases
-            var inscripciones = await _context.ClaseAlumnos
-                .Where(ca => ca.IdAlumno == id)
-                .ToListAsync();
-
-            if (inscripciones.Any())
-                _context.ClaseAlumnos.RemoveRange(inscripciones);
-
-            // 🔒 Desactivar alumno
+            // Desactivar alumno
             alumno.Activo = false;
-            await _context.SaveChangesAsync();
 
-            // 📢 Respuesta con información del histórico
-            if (calificacionesVigentes.Any())
+            // ✅ Marcar TODAS sus calificaciones como NO vigentes
+            var calificaciones = await _context.Calificaciones
+                .Include(c => c.ClaseAlumno)
+                .Where(c => c.ClaseAlumno.IdAlumno == id)
+                .ToListAsync();
+
+            foreach (var cal in calificaciones)
             {
-                return Ok(new
-                {
-                    message = "Alumno desactivado correctamente.",
-                    calificacionesArchivadas = calificacionesVigentes.Count,
-                    warning = $"Se archivaron {calificacionesVigentes.Count} calificación(es) en el histórico."
-                });
+                cal.Vigente = false;
             }
+
+            await _context.SaveChangesAsync();
 
             return Ok(new
             {
-                message = "Alumno desactivado y removido de sus clases.",
-                calificacionesArchivadas = 0
+                message = "Alumno desactivado correctamente",
+                calificacionesArchivadas = calificaciones.Count
             });
         }
 
-        // =========================
-        // REACTIVAR ALUMNO (ADMIN)
-        // =========================
+        // PUT: api/Alumnos/reactivar/{id}
         [HttpPut("reactivar/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ReactivarAlumno(int id)
         {
             var alumno = await _context.Alumnos.FindAsync(id);
             if (alumno == null)
-                return NotFound("Alumno no encontrado.");
+                return NotFound("Alumno no encontrado");
 
-            if (alumno.Activo)
-                return BadRequest("El alumno ya está activo.");
+            // Reactivar alumno
+            alumno.Activo = true;
 
-            // 🔄 Reactivar calificaciones históricas (opcional)
-            var calificacionesHistoricas = await _context.Calificaciones
+            // ✅ Marcar TODAS sus calificaciones como vigentes nuevamente
+            var calificaciones = await _context.Calificaciones
                 .Include(c => c.ClaseAlumno)
-                .Where(c => c.ClaseAlumno.IdAlumno == id && !c.Vigente)
+                .Where(c => c.ClaseAlumno.IdAlumno == id)
                 .ToListAsync();
 
-            foreach (var calif in calificacionesHistoricas)
+            foreach (var cal in calificaciones)
             {
-                calif.Vigente = true;
+                cal.Vigente = true;
             }
 
-            // ✅ Reactivar alumno
-            alumno.Activo = true;
             await _context.SaveChangesAsync();
-
-            if (calificacionesHistoricas.Any())
-            {
-                return Ok(new
-                {
-                    message = "Alumno reactivado correctamente.",
-                    calificacionesRestauradas = calificacionesHistoricas.Count,
-                    info = "Se restauraron las calificaciones del histórico. Deberás reinscribir al alumno en las clases."
-                });
-            }
 
             return Ok(new
             {
-                message = "Alumno reactivado correctamente.",
-                calificacionesRestauradas = 0
+                message = "Alumno reactivado correctamente",
+                calificacionesRestauradas = calificaciones.Count
             });
         }
 

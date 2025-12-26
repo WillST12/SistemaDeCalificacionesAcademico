@@ -21,18 +21,21 @@ namespace Backend.API.Controllers
         {
             var claseAlumno = await _context.ClaseAlumnos
                 .Include(ca => ca.Alumno)
-                .Include(ca => ca.Clase)
                 .FirstOrDefaultAsync(ca => ca.IdClaseAlumno == dto.IdClaseAlumno);
 
             if (claseAlumno == null)
                 return BadRequest("Inscripción no existe");
+
+            // 🔒 VALIDACIÓN CLAVE
+            if (!claseAlumno.Alumno.Activo)
+                return BadRequest("No se puede registrar calificación: el alumno está inactivo.");
 
             var cal = new Calificaciones
             {
                 IdClaseAlumno = dto.IdClaseAlumno,
                 Nota = dto.Nota,
                 Publicado = dto.Publicado,
-                Vigente = true,  // ✅ Nueva calificación siempre vigente
+                Vigente = true,
                 FechaRegistro = DateTime.Now
             };
 
@@ -41,6 +44,7 @@ namespace Backend.API.Controllers
 
             return Ok(new { message = "Calificación registrada correctamente" });
         }
+
 
         // GET: obtener una calificación por ID
         [HttpGet("{id}")]
@@ -79,15 +83,17 @@ namespace Backend.API.Controllers
             var cal = await _context.Calificaciones.FindAsync(id);
             if (cal == null) return NotFound("Calificación no encontrada.");
 
+            if (!cal.Vigente)
+                return BadRequest("No se puede editar una calificación archivada.");
+
             cal.Nota = dto.Nota;
             cal.Publicado = dto.Publicado;
-            // No modificar Vigente aquí, se maneja al desactivar alumno
 
             await _context.SaveChangesAsync();
             return Ok("Calificación actualizada.");
         }
 
-        // PUT: publicar/despublicar
+
         [HttpPut("publicar/{id}")]
         [Authorize(Roles = "Admin,Profesor")]
         public async Task<IActionResult> Publicar(int id, [FromBody] PublicarDTO dto)
@@ -95,11 +101,15 @@ namespace Backend.API.Controllers
             var cal = await _context.Calificaciones.FindAsync(id);
             if (cal == null) return NotFound("No existe la calificación");
 
+            if (!cal.Vigente)
+                return BadRequest("No se puede publicar una calificación archivada.");
+
             cal.Publicado = dto.Publicado;
             await _context.SaveChangesAsync();
 
             return Ok(new { message = cal.Publicado ? "Calificación publicada" : "Calificación despublicada" });
         }
+
 
         // GET por alumno (Admin/Profesor)
         // Admin/Profesor: ven TODAS (vigentes e históricas)
@@ -218,5 +228,68 @@ namespace Backend.API.Controllers
 
             return Ok(res);
         }
+        // ✅ NUEVO: Calificaciones archivadas (alumnos inactivos)
+        [HttpGet("archivadas")]
+        [Authorize(Roles = "Admin,Profesor")]
+        public async Task<IActionResult> CalificacionesArchivadas()
+        {
+            var res = await _context.Calificaciones
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Alumno)
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Clase)
+                        .ThenInclude(cl => cl.ProfesorMateria)
+                            .ThenInclude(pm => pm.Materia)
+                .Where(c => c.Vigente == false)  // ✅ Solo NO vigentes
+                .OrderByDescending(c => c.FechaRegistro)
+                .Select(c => new
+                {
+                    idCalificacion = c.IdCalificacion,
+                    alumnoNombre = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
+                    matricula = c.ClaseAlumno.Alumno.Matricula,
+                    nota = c.Nota,
+                    materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
+                    periodo = c.ClaseAlumno.Clase.Periodo,
+                    fechaRegistro = c.FechaRegistro,
+                    publicado = c.Publicado,
+                    alumnoActivo = c.ClaseAlumno.Alumno.Activo
+                })
+                .ToListAsync();
+
+            return Ok(res);
+        }
+
+        // ✅ NUEVO: Calificaciones archivadas por clase
+        [HttpGet("archivadas/clase/{idClase}")]
+        [Authorize(Roles = "Admin,Profesor")]
+        public async Task<IActionResult> CalificacionesArchivadasPorClase(int idClase)
+        {
+            var res = await _context.Calificaciones
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Alumno)
+                .Include(c => c.ClaseAlumno)
+                    .ThenInclude(ca => ca.Clase)
+                        .ThenInclude(cl => cl.ProfesorMateria)
+                            .ThenInclude(pm => pm.Materia)
+                .Where(c =>
+                    c.ClaseAlumno.Clase.IdClase == idClase &&
+                    c.Vigente == false
+                )
+                .Select(c => new
+                {
+                    idCalificacion = c.IdCalificacion,
+                    alumnoNombre = c.ClaseAlumno.Alumno.Nombre + " " + c.ClaseAlumno.Alumno.Apellido,
+                    nota = c.Nota,
+                    materia = c.ClaseAlumno.Clase.ProfesorMateria.Materia.Nombre,
+                    periodo = c.ClaseAlumno.Clase.Periodo,
+                    fechaRegistro = c.FechaRegistro,
+                    publicado = c.Publicado,
+                    vigente = c.Vigente
+                })
+                .ToListAsync();
+
+            return Ok(res);
+        }
+
     }
 }

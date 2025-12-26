@@ -319,6 +319,32 @@
   },
   {
     "ContainingType": "Backend.API.Controllers.CalificacionesController",
+    "Method": "CalificacionesArchivadas",
+    "RelativePath": "api/Calificaciones/archivadas",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.CalificacionesController",
+    "Method": "CalificacionesArchivadasPorClase",
+    "RelativePath": "api/Calificaciones/archivadas/clase/{idClase}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idClase",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.Controllers.CalificacionesController",
     "Method": "PorClase",
     "RelativePath": "api/Calificaciones/clase/{idClase}",
     "HttpMethod": "GET",
