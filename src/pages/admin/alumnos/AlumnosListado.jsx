@@ -88,9 +88,11 @@ export default function AlumnosListado() {
                 <span className={`font-semibold ${
                   a.indice >= 70
                     ? "text-green-600"
-                    : a.indice >= 50
+                    : a.indice >= 60 && a.indice < 70
                     ? "text-yellow-600"
-                    : "text-red-600"
+                    : a.indice < 60
+                    ? "text-red-600"
+                    : ""
                 }`}>
                   {a.indice.toFixed(1)}
                 </span>
